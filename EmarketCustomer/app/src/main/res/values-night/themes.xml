@@ -6,6 +6,7 @@
         <item name="colorPrimaryVariant">@color/dark_gray</item>
         <item name="colorOnPrimary">@color/bright_green</item>
         <item name="titleTextColor">@color/bright_green</item>
+        <item name="subtitleTextColor">@color/dark_gray</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/dark_gray</item>
         <item name="colorSecondaryVariant">@color/black</item>
