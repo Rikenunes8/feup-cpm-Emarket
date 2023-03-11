@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Emarket API
+  description: The API for the ACME Eletronical Supermarket project
+  version: 1.0.0
+paths:
+  /heartbeat:
+    get:
+      tags:
+      - Health check
+      description: Checks the server connection
+      operationId: heartbeat
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/status_ok'
+
+components:
+  schemas:
+    status_ok:
+      type: object
+      properties:
+        status:
+          type: string
+      example:
+        status: ok
