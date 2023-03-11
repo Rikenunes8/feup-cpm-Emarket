@@ -27,16 +27,20 @@ class Emarket(metaclass=EmarketMeta):
     if (private): return rsa.PrivateKey.load_pkcs1(data)
     else:         return rsa.PublicKey.load_pkcs1(data)
 
+
   def register(self, data: dict) -> dict:
     pubKey = data.get('pubKey')
     cardNo = data.get('cardNo')
     if (pubKey is None or cardNo is None):
       return {'error': 'Missing pubKey or cardNo property!'}
-    
+    if (self._db.findUserByKey(pubKey) != None):
+      return {'error': 'A user with this public key already exists!'}
+
     uid = str(uuid.uuid4())
-    self._db.regist(uid, pubKey, cardNo)
+    self._db.register(uid, pubKey, cardNo)
 
     # TODO: Encrypt uid with user pubKey?
     # TODO: Sign response with private key?
     return {'uuid': uid, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
+      
 
