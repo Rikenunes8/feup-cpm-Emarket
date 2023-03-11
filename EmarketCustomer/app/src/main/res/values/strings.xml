@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Emarket Customer</string>
+    <string name="registration_title">Registration</string>
+    <string name="personal_info_title">Personal information</string>
+    <string name="card_info_title">Payment information</string>
+    <string name="name_label">Name:</string>
+    <string name="nickname_label">Nickname:</string>
+    <string name="password_label">Password:</string>
+    <string name="card_no_label">Card no.:</string>
+    <string name="register_btn">Register</string>
 </resources>
