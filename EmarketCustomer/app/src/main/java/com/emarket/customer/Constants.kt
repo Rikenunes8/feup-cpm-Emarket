@@ -6,8 +6,9 @@ object Constants {
     const val KEY_ALGO = "RSA"
     const val SIGN_ALGO = "SHA256WithRSA"
     const val ENC_ALGO = "RSA/ECB/PKCS1Padding"
-    const val keyname = "myIdKey"
+    const val keyname = "EmarketKey"
     const val serialNr = 1234567890L
+    const val serverUrl = "http://127.0.0.1:5000/"
 }
 
 /*

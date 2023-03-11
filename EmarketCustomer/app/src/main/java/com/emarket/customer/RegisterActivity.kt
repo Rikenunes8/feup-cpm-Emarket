@@ -10,9 +10,13 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import java.io.BufferedReader
 import java.math.BigInteger
+import java.net.HttpURLConnection
+import java.net.URL
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.PublicKey
 import java.util.*
 import javax.security.auth.x500.X500Principal
 
@@ -61,8 +65,16 @@ class RegisterActivity : AppCompatActivity() {
 
             // generate key pair
             if (generateAndStoreKeys()) {
-                // go to app page
-                Toast.makeText(this, "Key pair generated: " + Utils.getPubKey(), Toast.LENGTH_LONG).show()
+                // send registration data to server
+                val pubKey = Utils.getPubKey()
+                if (pubKey != null) {
+                    sendRegistrationData(pubKey, card)
+                } else {
+                    Log.e("RegisterActivity", "Key pair generation failed")
+                    Toast.makeText(this,
+                        "Could not get the public key from the key store",
+                        Toast.LENGTH_LONG).show()
+                }
             } else {
                 Log.e("RegisterActivity", "Key pair generation failed")
             }
@@ -99,12 +111,9 @@ class RegisterActivity : AppCompatActivity() {
                     generateKeyPair()
                 }
             } else {
-                Toast.makeText(this, getString(R.string.already_registered_err), Toast.LENGTH_SHORT).show()
-                val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
-                    load(null)
-                    getEntry(Constants.keyname, null)
-                }
-                Log.e("RegisterActivity", entry.toString())
+                Toast.makeText(this, "Key pair already present", Toast.LENGTH_LONG).show()
+                Log.e("RegisterActivity", "Key pair already present")
+                return false
             }
         }
         catch (ex: Exception) {
@@ -114,6 +123,43 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         return true
+    }
+
+    /**
+     * Send the registration data to the server
+     * @param pubKey public key of the user
+     * @param cardNo card number of the user
+     */
+    private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
+        /*
+        val publicKeyStr = Base64.getEncoder().encodeToString(pubKey.encoded)
+        val jsonInputString = "{\"publicKey\": \"$publicKeyStr\", \"cardNumber\": \"$cardNo\"}"
+
+        val url = URL(Constants.serverUrl + "register")
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "POST"
+        connection.setRequestProperty("Content-Type", "application/json; utf-8")
+        connection.setRequestProperty("Accept", "application/json")
+        connection.doOutput = true
+        connection.outputStream.use { os ->
+            val input = jsonInputString.toByteArray(charset("utf-8"))
+            os.write(input, 0, input.size)
+            os.close()
+        }
+
+        val responseCode = connection.responseCode
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            val inputStream = connection.inputStream
+            val response = inputStream.bufferedReader().use(BufferedReader::readText)
+            inputStream.close()
+            // Do something with the response
+            Log.d("RegisterActivity", response)
+        } else {
+            // Handle error response
+        }
+
+        connection.disconnect()
+        */
     }
 
 
