@@ -15,10 +15,10 @@ def makeResponse(res):
 def heartbeat():
   return jsonify({'status': 'ok'})
 
-@routes.post('/regist')
-def regist():
+@routes.post('/register')
+def register():
   if (not isContentJson(request)): return notJson()
-  res = Emarket().regist(request.json)
+  res = Emarket().register(request.json)
   return makeResponse(res)
   
 

@@ -27,7 +27,7 @@ class Emarket(metaclass=EmarketMeta):
     if (private): return rsa.PrivateKey.load_pkcs1(data)
     else:         return rsa.PublicKey.load_pkcs1(data)
 
-  def regist(self, data: dict) -> dict:
+  def register(self, data: dict) -> dict:
     pubKey = data.get('pubKey')
     cardNo = data.get('cardNo')
     if (pubKey is None or cardNo is None):
