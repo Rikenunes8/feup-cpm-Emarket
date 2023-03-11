@@ -1,3 +1,9 @@
+## API
+
+The swagger documentation for the API is available at /swagger endpoint when the server is running. 
+
+**NOTE:** The documentation is not self generated, so it can be outdated sometimes.
+
 ## Requirements
 
 To install the dependecies, you may run the following command:
