@@ -8,6 +8,12 @@ pip install -r requirements.txt
 
 ### How to run
 
+You can have a `.env` file with the following variables:
+
+```bash
+MONGO_URI=mongodb://localhost:27017/ # default value
+```
+
 Run the following command to start the flask application exposing the REST API to the private network on port 5000 (by default):
 
 ```bash
