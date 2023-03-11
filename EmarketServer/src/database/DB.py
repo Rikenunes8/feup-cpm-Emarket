@@ -25,3 +25,14 @@ class DB(metaclass=DBMeta):
     if DB._name not in dblist:
       print(f"Creating database {DB._name}.")
     self._db = self._client[DB._name]
+    self._users = self._db['users']
+
+  def regist(self, uuid, pubKey: str, cardNo: str):
+    user = {
+      'uuid': uuid,
+      'pubKey': pubKey,
+      'cardNo': cardNo
+    }
+    res = self._users.insert_one(user)
+    print(f"Inserted user with id {res.inserted_id} of type {type(res.inserted_id)}")
+    return res.inserted_id
