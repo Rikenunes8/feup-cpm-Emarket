@@ -14,7 +14,7 @@
 
     <style name="FormLabel" parent="TextAppearance.AppCompat">
         <item name="android:gravity">center_vertical</item>
-        <item name="android:layout_weight">1</item>
+        <item name="android:layout_weight">0</item>
         <item name="android:layout_marginEnd">10dp</item>
         <item name="android:textAlignment">textEnd</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
@@ -23,8 +23,7 @@
     </style>
 
     <style name="FormEdit">
-        <item name="android:layout_weight">1.5</item>
-        <item name="android:ems">8</item>
+        <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/input_background</item>
         <item name="android:paddingVertical">2.5dp</item>
         <item name="android:paddingStart">10dp</item>

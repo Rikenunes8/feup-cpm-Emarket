@@ -93,7 +93,7 @@
                         android:id="@+id/edt_reg_pass"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPassword" />
                 </TableRow>
 
             </TableLayout>
