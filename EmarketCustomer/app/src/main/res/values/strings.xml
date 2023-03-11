@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Emarket Customer</string>
+
+    <!-- Registration -->
     <string name="registration_title">Registration</string>
     <string name="personal_info_title">Personal information</string>
     <string name="card_info_title">Payment information</string>
@@ -8,4 +10,5 @@
     <string name="password_label">Password:</string>
     <string name="card_no_label">Card no.:</string>
     <string name="register_btn">Register</string>
+    <string name="already_registered_err">Error: Already registered an account on this device</string>
 </resources>
