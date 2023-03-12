@@ -1,15 +1,17 @@
 package com.emarket.customer
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
-import android.util.AttributeSet
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.math.BigInteger
 import java.net.HttpURLConnection
@@ -60,9 +62,6 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // example: show a toast message with the name
-            //Toast.makeText(this, "Name: $name : $nick : $pass : $card", Toast.LENGTH_SHORT).show()
-
             // generate key pair
             if (generateAndStoreKeys()) {
                 // send registration data to server
@@ -70,13 +69,12 @@ class RegisterActivity : AppCompatActivity() {
                 if (pubKey != null) {
                     sendRegistrationData(pubKey, card)
                 } else {
-                    Log.e("RegisterActivity", "Key pair generation failed")
+                    Log.e("RegisterActivity",
+                        "Could not get the public key from the key store")
                     Toast.makeText(this,
                         "Could not get the public key from the key store",
                         Toast.LENGTH_LONG).show()
                 }
-            } else {
-                Log.e("RegisterActivity", "Key pair generation failed")
             }
         }
     }
@@ -111,7 +109,8 @@ class RegisterActivity : AppCompatActivity() {
                     generateKeyPair()
                 }
             } else {
-                Toast.makeText(this, "Key pair already present", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Already registered on this device",
+                    Toast.LENGTH_LONG).show()
                 Log.e("RegisterActivity", "Key pair already present")
                 return false
             }
@@ -131,35 +130,53 @@ class RegisterActivity : AppCompatActivity() {
      * @param cardNo card number of the user
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
-        /*
-        val publicKeyStr = Base64.getEncoder().encodeToString(pubKey.encoded)
-        val jsonInputString = "{\"publicKey\": \"$publicKeyStr\", \"cardNumber\": \"$cardNo\"}"
+        val jsonInputString = "{" +
+                "\"pubKey\": \"${Base64.getEncoder().encodeToString(pubKey.encoded)}\", " +
+                "\"cardNo\": \"$cardNo\"" +
+            "}"
 
-        val url = URL(Constants.serverUrl + "register")
-        val connection = url.openConnection() as HttpURLConnection
-        connection.requestMethod = "POST"
-        connection.setRequestProperty("Content-Type", "application/json; utf-8")
-        connection.setRequestProperty("Accept", "application/json")
-        connection.doOutput = true
-        connection.outputStream.use { os ->
-            val input = jsonInputString.toByteArray(charset("utf-8"))
-            os.write(input, 0, input.size)
-            os.close()
+        CoroutineScope(Dispatchers.IO).launch {
+            val connection = withContext(Dispatchers.IO) {
+                URL(Constants.serverUrl + getString(R.string.register_endoint))
+                    .openConnection()
+            } as HttpURLConnection
+
+            try {
+                connection.requestMethod = "POST"
+                connection.setRequestProperty("Content-Type", "application/json")
+                connection.setRequestProperty("Accept", "application/json")
+                connection.doOutput = true
+                connection.doInput = true
+
+                connection.outputStream.use { os ->
+                    val input = jsonInputString.toByteArray(charset("utf-8"))
+                    os.write(input, 0, input.size)
+                }
+
+                val responseCode = connection.responseCode
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    val inputStream = connection.inputStream
+                    val response = inputStream.bufferedReader().use(BufferedReader::readText)
+                    // Parse the JSON response using Gson
+                    val responseJson = JSONObject(response)
+
+                    val uuid = responseJson.getString("uuid")
+                    val serverPubKey = responseJson.getString("serverPubKey")
+
+                    inputStream.close()
+                    // Do something with the response
+                    Log.d("RegisterActivity", "$uuid : $serverPubKey")
+                } else {
+                    // Handle error response
+                    Log.e("RegisterActivity", "Error $responseCode" +
+                            " : ${connection.responseMessage}")
+                }
+            } catch (ex: Exception) {
+                Log.e("RegisterActivity", ex.message!!)
+            } finally {
+                connection.disconnect()
+            }
         }
-
-        val responseCode = connection.responseCode
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            val inputStream = connection.inputStream
-            val response = inputStream.bufferedReader().use(BufferedReader::readText)
-            inputStream.close()
-            // Do something with the response
-            Log.d("RegisterActivity", response)
-        } else {
-            // Handle error response
-        }
-
-        connection.disconnect()
-        */
     }
 
 
