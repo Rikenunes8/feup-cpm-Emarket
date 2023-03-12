@@ -1,5 +1,6 @@
 package com.emarket.customer
 
+import android.content.Context
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
 import android.util.Log
@@ -30,7 +31,8 @@ class RegisterActivity : AppCompatActivity() {
 
         val registerButton = findViewById<Button>(R.id.btn_reg_submit)
         registerButton.setOnClickListener {
-            // retrieve form data here
+
+            // get the registration data
             val nameEditText = findViewById<EditText>(R.id.edt_reg_name)
             val name = nameEditText.text.toString()
 
@@ -43,7 +45,7 @@ class RegisterActivity : AppCompatActivity() {
             val cardEditText = findViewById<EditText>(R.id.edt_reg_card)
             val card = cardEditText.text.toString()
 
-            // perform validation and processing here
+            // perform validation on the registration data
             if (name.isEmpty()) {
                 nameEditText.error = "Name is required"
                 nameEditText.requestFocus()
@@ -69,10 +71,9 @@ class RegisterActivity : AppCompatActivity() {
                 if (pubKey != null) {
                     sendRegistrationData(pubKey, card)
                 } else {
-                    Log.e("RegisterActivity",
-                        "Could not get the public key from the key store")
+                    Log.e("RegisterActivity", getString(R.string.error_getting_keys))
                     Toast.makeText(this,
-                        "Could not get the public key from the key store",
+                        getString(R.string.error_getting_keys),
                         Toast.LENGTH_LONG).show()
                 }
             }
@@ -85,7 +86,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun keysPresent(): Boolean {
         val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
             load(null)
-            getEntry(Constants.keyname, null)
+            getEntry(Constants.STORE_KEY, null)
         }
         return (entry != null)
     }
@@ -98,8 +99,8 @@ class RegisterActivity : AppCompatActivity() {
             if (!keysPresent()) {
                 val spec = KeyPairGeneratorSpec.Builder(this)
                     .setKeySize(Constants.KEY_SIZE)
-                    .setAlias(Constants.keyname)
-                    .setSubject(X500Principal("CN=" + Constants.keyname))
+                    .setAlias(Constants.STORE_KEY)
+                    .setSubject(X500Principal("CN=" + Constants.STORE_KEY))
                     .setSerialNumber(BigInteger.valueOf(Constants.serialNr))
                     .setStartDate(GregorianCalendar().time)
                     .setEndDate(GregorianCalendar().apply { add(Calendar.YEAR, 10) }.time)
@@ -109,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
                     generateKeyPair()
                 }
             } else {
-                Toast.makeText(this, "Already registered on this device",
+                Toast.makeText(this, getString(R.string.already_registered_err),
                     Toast.LENGTH_LONG).show()
                 Log.e("RegisterActivity", "Key pair already present")
                 return false
@@ -163,21 +164,36 @@ class RegisterActivity : AppCompatActivity() {
                     val uuid = responseJson.getString("uuid")
                     val serverPubKey = responseJson.getString("serverPubKey")
 
-                    inputStream.close()
-                    // Do something with the response
-                    Log.d("RegisterActivity", "$uuid : $serverPubKey")
+                    withContext(Dispatchers.IO) {
+                        inputStream.close()
+                    }
+
+                    savePersistently(uuid, serverPubKey)
                 } else {
                     // Handle error response
-                    Log.e("RegisterActivity", "Error $responseCode" +
+                    Log.e("RegisterActivity", "ERROR $responseCode" +
                             " : ${connection.responseMessage}")
                 }
             } catch (ex: Exception) {
-                Log.e("RegisterActivity", ex.message!!)
+                Log.e("RegisterActivity","ERROR: " + ex.message!!)
             } finally {
                 connection.disconnect()
             }
         }
     }
 
+    /**
+     * Save the public key and user uuid persistently
+     */
+    private fun savePersistently(uuid: String, serverPubKey: String) {
+        // Store the UUID and server public key
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(Constants.UUID_KEY, uuid)
+
+        // TODO: check if this should be a string and if ok to store in SharedPreferences
+        editor.putString(Constants.SERVER_PUB_KEY, serverPubKey)
+        editor.apply()
+    }
 
 }

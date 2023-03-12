@@ -12,4 +12,6 @@
     <string name="register_btn">Register</string>
     <string name="already_registered_err">Error: Already registered an account on this device</string>
     <string name="register_endoint">register</string>
+    <string name="error_getting_keys">Could not get the public key from the key store</string>
+
 </resources>

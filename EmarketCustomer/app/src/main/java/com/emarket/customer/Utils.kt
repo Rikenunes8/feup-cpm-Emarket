@@ -15,7 +15,7 @@ object Utils {
         try {
             val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
                 load(null)
-                getEntry(Constants.keyname, null)
+                getEntry(Constants.STORE_KEY, null)
             }
             return (entry as KeyStore.PrivateKeyEntry).certificate.publicKey
         } catch (ex: Exception) {
@@ -32,7 +32,7 @@ object Utils {
         try {
             val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
                 load(null)
-                getEntry(Constants.keyname, null)
+                getEntry(Constants.STORE_KEY, null)
             }
             priv = (entry as KeyStore.PrivateKeyEntry).privateKey
         }
