@@ -17,6 +17,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/status_ok'
+  /register:
+    post:
+      tags:
+      - Authentication
+      description: Register a user in the Emarket server
+      operationId: register
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registration_complete'
+        "400":
+          descritption:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
 
 components:
   schemas:
@@ -27,3 +47,20 @@ components:
           type: string
       example:
         status: ok
+    error:
+      type: object
+      properties:
+        error:
+          type: string
+      example:
+        error: Content-Type not supported!
+    registration_complete:
+      type: object
+      properties:
+        uuid:
+          type: string
+        serverPubKey:
+          type: string
+      example:
+        uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+        serverPubKey: "-----BEGIN RSA PUBLIC KEY-----\nMEgCQQChrfHt3j8cPskHq4WbXYvbzg3q+lsQyA1JdPxghPWR2DsG2ersL/ELAReg\nhtspgEmg+YfU6apHVMtHWefUacelAgMBAAE=\n-----END RSA PUBLIC KEY-----\n"
