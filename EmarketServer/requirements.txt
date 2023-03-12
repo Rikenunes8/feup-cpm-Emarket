@@ -1,2 +1,4 @@
 Flask==2.2.3
 flask_swagger_ui==4.11.1
+pymongo==4.3.3
+python-dotenv==1.0.0
