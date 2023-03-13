@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
@@ -25,51 +27,31 @@ import javax.security.auth.x500.X500Principal
 
 class RegisterActivity : AppCompatActivity() {
 
+    private val loadingIcon by lazy { findViewById<ProgressBar>(R.id.loading_icon) }
+    private val registerButton by lazy { findViewById<Button>(R.id.btn_reg_submit) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val registerButton = findViewById<Button>(R.id.btn_reg_submit)
         registerButton.setOnClickListener {
 
-            // get the registration data
-            val nameEditText = findViewById<EditText>(R.id.edt_reg_name)
-            val name = nameEditText.text.toString()
-
-            val nickEditText = findViewById<EditText>(R.id.edt_reg_nick)
-            val nick = nickEditText.text.toString()
-
-            val passEditText = findViewById<EditText>(R.id.edt_reg_pass)
-            val pass = passEditText.text.toString()
+            if (!validateInputData()) return@setOnClickListener
 
             val cardEditText = findViewById<EditText>(R.id.edt_reg_card)
             val card = cardEditText.text.toString()
-
-            // perform validation on the registration data
-            if (name.isEmpty()) {
-                nameEditText.error = "Name is required"
-                nameEditText.requestFocus()
-                return@setOnClickListener
-            } else if (nick.isEmpty()) {
-                nickEditText.error = "Nick is required"
-                nickEditText.requestFocus()
-                return@setOnClickListener
-            } else if (pass.isEmpty()) {
-                passEditText.error = "Password is required"
-                passEditText.requestFocus()
-                return@setOnClickListener
-            } else if (card.isEmpty()) {
-                cardEditText.error = "Card is required"
-                cardEditText.requestFocus()
-                return@setOnClickListener
-            }
 
             // generate key pair
             if (generateAndStoreKeys()) {
                 // send registration data to server
                 val pubKey = Utils.getPubKey()
                 if (pubKey != null) {
+                    // show progress bar and hide register button
+                    loadingIcon.visibility = View.VISIBLE
+                    registerButton.visibility = View.GONE
+
                     sendRegistrationData(pubKey, card)
+
                 } else {
                     Log.e("RegisterActivity", getString(R.string.error_getting_keys))
                     Toast.makeText(this,
@@ -78,6 +60,36 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * Validates all the input data
+     * @return true if all the data is valid, false otherwise
+     */
+    private fun validateInputData(): Boolean {
+        if (!validateData("Name", R.id.edt_reg_name)) return false
+        if (!validateData("Nickname", R.id.edt_reg_nick)) return false
+        if (!validateData("Password", R.id.edt_reg_pass)) return false
+        if (!validateData("Card no.", R.id.edt_reg_card)) return false
+
+        return true
+    }
+
+    /**
+     * Validate the input data of the input view
+     * @param paramName the name of the parameter
+     * @param viewId the id of the view
+     * @return true if the data is valid, false otherwise
+     */
+    private fun validateData(paramName: String, viewId: Int): Boolean {
+        val editText = findViewById<EditText>(viewId)
+        val value = editText.text.toString()
+        if (value.isEmpty()) {
+            editText.error = "$paramName is required"
+            editText.requestFocus()
+            return false
+        }
+        return true
     }
 
     /**
@@ -138,7 +150,7 @@ class RegisterActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val connection = withContext(Dispatchers.IO) {
-                URL(Constants.serverUrl + getString(R.string.register_endoint))
+                URL(Constants.serverUrl + Constants.registerEndpoint)
                     .openConnection()
             } as HttpURLConnection
 
@@ -152,6 +164,8 @@ class RegisterActivity : AppCompatActivity() {
                 connection.outputStream.use { os ->
                     val input = jsonInputString.toByteArray(charset("utf-8"))
                     os.write(input, 0, input.size)
+                    os.flush()
+                    os.close()
                 }
 
                 val responseCode = connection.responseCode
@@ -179,6 +193,13 @@ class RegisterActivity : AppCompatActivity() {
             } finally {
                 connection.disconnect()
             }
+
+            withContext(Dispatchers.Main) {
+                // show register button and hide progress bar
+                registerButton.visibility = View.VISIBLE
+                loadingIcon.visibility = View.GONE
+            }
+
         }
     }
 
