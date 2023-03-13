@@ -10,6 +10,8 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.emarket.customer.Services.NetworkService
+import com.emarket.customer.Services.RequestType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -149,50 +151,44 @@ class RegisterActivity : AppCompatActivity() {
             "}"
 
         CoroutineScope(Dispatchers.IO).launch {
-            val connection = withContext(Dispatchers.IO) {
-                URL(Constants.serverUrl + Constants.registerEndpoint)
-                    .openConnection()
-            } as HttpURLConnection
 
             try {
-                connection.requestMethod = "POST"
-                connection.setRequestProperty("Content-Type", "application/json")
-                connection.setRequestProperty("Accept", "application/json")
-                connection.doOutput = true
-                connection.doInput = true
+                val response = NetworkService.makeRequest(
+                    RequestType.POST,
+            Constants.SERVER_URL + Constants.REGISTER_ENDPOINT,
+                    jsonInputString
+                )
 
-                connection.outputStream.use { os ->
-                    val input = jsonInputString.toByteArray(charset("utf-8"))
-                    os.write(input, 0, input.size)
-                    os.flush()
-                    os.close()
-                }
-
-                val responseCode = connection.responseCode
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    val inputStream = connection.inputStream
-                    val response = inputStream.bufferedReader().use(BufferedReader::readText)
-                    // Parse the JSON response using Gson
-                    val responseJson = JSONObject(response)
-
-                    val uuid = responseJson.getString("uuid")
-                    val serverPubKey = responseJson.getString("serverPubKey")
-
-                    withContext(Dispatchers.IO) {
-                        inputStream.close()
+                val jsonResponse = JSONObject(response)
+                if (jsonResponse.has("error")) {
+                    Log.d("RegisterActivity", "Resp: $jsonResponse")
+                    // show a red toast message with the error message
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@RegisterActivity,
+                            jsonResponse.getString("error"),
+                            Toast.LENGTH_LONG).show()
                     }
 
-                    savePersistently(uuid, serverPubKey)
-                } else {
-                    // Handle error response
-                    Log.e("RegisterActivity", "ERROR $responseCode" +
-                            " : ${connection.responseMessage}")
+                    withContext(Dispatchers.Main) {
+                        // show register button and hide progress bar
+                        registerButton.visibility = View.VISIBLE
+                        loadingIcon.visibility = View.GONE
+                    }
+
+                    return@launch
                 }
+
+                val uuid = jsonResponse.getString("uuid")
+                val serverPubKey = jsonResponse.getString("serverPubKey")
+
+                Log.d("RegisterActivity", "UUID: $uuid\nServerPubKey: $serverPubKey" )
+
+                savePersistently(uuid, serverPubKey)
+
             } catch (ex: Exception) {
                 Log.e("RegisterActivity","ERROR: " + ex.message!!)
-            } finally {
-                connection.disconnect()
             }
+
 
             withContext(Dispatchers.Main) {
                 // show register button and hide progress bar
