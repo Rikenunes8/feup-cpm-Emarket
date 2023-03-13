@@ -8,4 +8,6 @@
     <string name="password_label">Password:</string>
     <string name="card_no_label">Card no.:</string>
     <string name="register_btn">Register</string>
+    <string name="shopping_title">Basket</string>
+    <string name="profile_title">Profile</string>
 </resources>
