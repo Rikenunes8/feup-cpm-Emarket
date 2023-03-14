@@ -10,4 +10,6 @@
     <string name="register_btn">Register</string>
     <string name="shopping_title">Basket</string>
     <string name="profile_title">Profile</string>
+    <string name="total_label">Total:</string>
+    <string name="checkout_label">Checkout</string>
 </resources>
