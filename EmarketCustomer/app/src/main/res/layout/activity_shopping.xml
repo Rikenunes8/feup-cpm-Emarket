@@ -55,10 +55,12 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dip"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="center_vertical|left"
                 android:textColor="?attr/colorOnPrimary" />
 
             <Button
