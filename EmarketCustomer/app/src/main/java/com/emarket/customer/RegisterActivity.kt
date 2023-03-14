@@ -194,10 +194,11 @@ class RegisterActivity : AppCompatActivity() {
                 val password = findViewById<EditText>(R.id.edt_reg_pass).text.toString()
                 val cardNo = findViewById<EditText>(R.id.edt_reg_card).text.toString()
 
-                val user = User(uuid, name, nickname, hashPassword(password), cardNo)
+                val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
 
                 savePersistently(user, serverPubKey)
 
+                // TODO: start the main activity
             } catch (ex: Exception) {
                 Log.e("RegisterActivity","ERROR: " + ex.message!!)
 
@@ -233,16 +234,5 @@ class RegisterActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    /**
-     * Hash the password using SHA-256
-     * @param password the password to hash
-     * @return the hashed password
-     */
-    fun hashPassword(password: String): String {
-        val bytes = password.toByteArray(Charsets.UTF_8)
-        val digest = MessageDigest.getInstance("SHA-256")
-        val hashBytes = digest.digest(bytes)
-        return hashBytes.joinToString("") { "%02x".format(it) }
-    }
 
 }
