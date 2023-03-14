@@ -31,6 +31,7 @@ class NetworkService {
                 }
                 connection.setRequestProperty("Content-Type", "application/json")
                 connection.setRequestProperty("Accept", "application/json")
+                connection.connectTimeout = 5000 // 5 seconds
 
                 if (requestType == RequestType.POST) {
                     connection.doOutput = true
