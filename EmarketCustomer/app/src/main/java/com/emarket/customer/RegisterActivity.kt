@@ -10,22 +10,27 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.emarket.customer.Models.User
 import com.emarket.customer.Services.NetworkService
 import com.emarket.customer.Services.RequestType
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.io.BufferedReader
 import java.math.BigInteger
-import java.net.HttpURLConnection
-import java.net.URL
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.MessageDigest
 import java.security.PublicKey
 import java.util.*
 import javax.security.auth.x500.X500Principal
+
+data class ServerResponse (
+    val uuid: String,
+    val serverPubKey: String
+)
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -143,6 +148,7 @@ class RegisterActivity : AppCompatActivity() {
      * Send the registration data to the server
      * @param pubKey public key of the user
      * @param cardNo card number of the user
+     * @return the response from the server (json string)
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
         val jsonInputString = "{" +
@@ -161,7 +167,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("error")) {
-                    Log.d("RegisterActivity", "Resp: $jsonResponse")
+
                     // show a red toast message with the error message
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@RegisterActivity,
@@ -175,18 +181,31 @@ class RegisterActivity : AppCompatActivity() {
                         loadingIcon.visibility = View.GONE
                     }
 
-                    return@launch
+                    throw Exception(jsonResponse.getString("error"))
                 }
 
-                val uuid = jsonResponse.getString("uuid")
-                val serverPubKey = jsonResponse.getString("serverPubKey")
+                val serverResp = Gson().fromJson<ServerResponse>(jsonResponse.toString(), ServerResponse::class.java)
 
-                Log.d("RegisterActivity", "UUID: $uuid\nServerPubKey: $serverPubKey" )
+                val uuid = serverResp.uuid
+                val serverPubKey = serverResp.serverPubKey
 
-                savePersistently(uuid, serverPubKey)
+                val name = findViewById<EditText>(R.id.edt_reg_name).text.toString()
+                val nickname = findViewById<EditText>(R.id.edt_reg_nick).text.toString()
+                val password = findViewById<EditText>(R.id.edt_reg_pass).text.toString()
+                val cardNo = findViewById<EditText>(R.id.edt_reg_card).text.toString()
+
+                val user = User(uuid, name, nickname, hashPassword(password), cardNo)
+
+                savePersistently(user, serverPubKey)
 
             } catch (ex: Exception) {
                 Log.e("RegisterActivity","ERROR: " + ex.message!!)
+
+                // remove the key pair from the Android Key Store if registration failed
+                KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
+                    load(null)
+                    deleteEntry(Constants.STORE_KEY)
+                }
             }
 
 
@@ -202,15 +221,28 @@ class RegisterActivity : AppCompatActivity() {
     /**
      * Save the public key and user uuid persistently
      */
-    private fun savePersistently(uuid: String, serverPubKey: String) {
+    private fun savePersistently(user: User, serverPubKey: String) {
         // Store the UUID and server public key
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putString(Constants.UUID_KEY, uuid)
 
-        // TODO: check if this should be a string and if ok to store in SharedPreferences
+        editor.putString(Constants.USER_KEY, Gson().toJson(user))
+
+        // TODO: check if this should be a string and if it is ok to store in SharedPreferences
         editor.putString(Constants.SERVER_PUB_KEY, serverPubKey)
         editor.apply()
+    }
+
+    /**
+     * Hash the password using SHA-256
+     * @param password the password to hash
+     * @return the hashed password
+     */
+    fun hashPassword(password: String): String {
+        val bytes = password.toByteArray(Charsets.UTF_8)
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(bytes)
+        return hashBytes.joinToString("") { "%02x".format(it) }
     }
 
 }
