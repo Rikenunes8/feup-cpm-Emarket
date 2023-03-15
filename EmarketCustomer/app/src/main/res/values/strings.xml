@@ -13,4 +13,9 @@
     <string name="already_registered_err">Error: Already registered an account on this device</string>
     <string name="error_getting_keys">Could not get the public key from the key store</string>
 
+    <!-- Login -->
+    <string name="login_title">Login</string>
+    <string name="login_btn">Login</string>
+    <string name="log_invalid_credentials">Invalid nickname or password</string>
+
 </resources>

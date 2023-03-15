@@ -2,6 +2,7 @@ package com.emarket.customer
 
 import android.util.Log
 import java.security.KeyStore
+import java.security.MessageDigest
 import java.security.PrivateKey
 import java.security.PublicKey
 
@@ -27,7 +28,7 @@ object Utils {
     /**
      * Get the private exponent of the private key
      */
-    public fun getPrivKey(): PrivateKey? {
+    fun getPrivKey(): PrivateKey? {
         var priv: PrivateKey? = null
         try {
             val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
@@ -40,5 +41,17 @@ object Utils {
             Log.e("getPrivExp", ex.message ?: "")
         }
         return priv
+    }
+
+    /**
+     * Hash the password using SHA-256
+     * @param password the password to hash
+     * @return the hashed password
+     */
+    fun hashPassword(password: String): String {
+        val bytes = password.toByteArray(Charsets.UTF_8)
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(bytes)
+        return hashBytes.joinToString("") { "%02x".format(it) }
     }
 }
