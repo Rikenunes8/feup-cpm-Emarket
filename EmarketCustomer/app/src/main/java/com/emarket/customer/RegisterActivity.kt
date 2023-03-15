@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
@@ -28,6 +27,11 @@ import kotlin.concurrent.thread
 data class ServerResponse (
     val uuid: String,
     val serverPubKey: String
+)
+
+data class CustomerRegistrationBody (
+    val pubKey: String,
+    val cardNo : String
 )
 
 class RegisterActivity : AppCompatActivity() {
@@ -139,10 +143,10 @@ class RegisterActivity : AppCompatActivity() {
      * @return the response from the server (json string)
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
-        val jsonInputString = "{" +
-                "\"pubKey\": \"${Base64.getEncoder().encodeToString(pubKey.encoded)}\", " +
-                "\"cardNo\": \"$cardNo\"" +
-            "}"
+        val jsonInputString = Gson().toJson(CustomerRegistrationBody(
+            Base64.getEncoder().encodeToString(pubKey.encoded),
+            cardNo
+        )).toString()
 
         thread(start = true) {
             try {
