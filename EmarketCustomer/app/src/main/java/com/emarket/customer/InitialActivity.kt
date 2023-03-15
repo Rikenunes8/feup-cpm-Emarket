@@ -15,7 +15,7 @@ class InitialActivity : AppCompatActivity() {
 
         // check if user already registered
         val sharedPref = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val user = Gson().fromJson<User>(sharedPref.getString(Constants.USER_KEY, null), User::class.java)
+        val user = Gson().fromJson(sharedPref.getString(Constants.USER_KEY, null), User::class.java)
         if (user != null) {
             // user already registered
             startActivity(Intent(this, LoginActivity::class.java))

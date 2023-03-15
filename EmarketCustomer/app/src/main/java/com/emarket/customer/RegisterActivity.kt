@@ -1,6 +1,7 @@
 package com.emarket.customer
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
 import android.util.Log
@@ -10,14 +11,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.math.BigInteger
 import java.security.KeyPairGenerator
@@ -25,6 +23,7 @@ import java.security.KeyStore
 import java.security.PublicKey
 import java.util.*
 import javax.security.auth.x500.X500Principal
+import kotlin.concurrent.thread
 
 data class ServerResponse (
     val uuid: String,
@@ -49,20 +48,13 @@ class RegisterActivity : AppCompatActivity() {
 
             // generate key pair
             if (generateAndStoreKeys()) {
-                // send registration data to server
                 val pubKey = Utils.getPubKey()
                 if (pubKey != null) {
-                    // show progress bar and hide register button
-                    loadingIcon.visibility = View.VISIBLE
-                    registerButton.visibility = View.GONE
-
-                    sendRegistrationData(pubKey, card)
-
+                    startLoading()
+                    sendRegistrationData(pubKey, card) // send registration data to server
                 } else {
                     Log.e("RegisterActivity", getString(R.string.error_getting_keys))
-                    Toast.makeText(this,
-                        getString(R.string.error_getting_keys),
-                        Toast.LENGTH_LONG).show()
+                    showToast(this, getString(R.string.error_getting_keys))
                 }
             }
         }
@@ -128,18 +120,15 @@ class RegisterActivity : AppCompatActivity() {
                     generateKeyPair()
                 }
             } else {
-                Toast.makeText(this, getString(R.string.already_registered_err),
-                    Toast.LENGTH_LONG).show()
+                showToast(this, getString(R.string.already_registered_err))
                 Log.e("RegisterActivity", "Key pair already present")
                 return false
             }
         }
         catch (ex: Exception) {
-            // show a red toast message with the exception message
-            Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
+            showToast(this, ex.message)
             return false
         }
-
         return true
     }
 
@@ -155,8 +144,7 @@ class RegisterActivity : AppCompatActivity() {
                 "\"cardNo\": \"$cardNo\"" +
             "}"
 
-        CoroutineScope(Dispatchers.IO).launch {
-
+        thread(start = true) {
             try {
                 val response = NetworkService.makeRequest(
                     RequestType.POST,
@@ -166,24 +154,13 @@ class RegisterActivity : AppCompatActivity() {
 
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("error")) {
-
-                    // show a red toast message with the error message
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@RegisterActivity,
-                            jsonResponse.getString("error"),
-                            Toast.LENGTH_LONG).show()
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        // show register button and hide progress bar
-                        registerButton.visibility = View.VISIBLE
-                        loadingIcon.visibility = View.GONE
-                    }
+                    runOnUiThread { showToast(this@RegisterActivity, jsonResponse.getString("error")) }
+                    runOnUiThread { stopLoading() }
 
                     throw Exception(jsonResponse.getString("error"))
                 }
 
-                val serverResp = Gson().fromJson<ServerResponse>(jsonResponse.toString(), ServerResponse::class.java)
+                val serverResp = Gson().fromJson(jsonResponse.toString(), ServerResponse::class.java)
 
                 val uuid = serverResp.uuid
                 val serverPubKey = serverResp.serverPubKey
@@ -196,8 +173,7 @@ class RegisterActivity : AppCompatActivity() {
                 val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
 
                 savePersistently(user, serverPubKey)
-
-                // TODO: start the main activity
+                startActivity(Intent(this, LoginActivity::class.java))
             } catch (ex: Exception) {
                 Log.e("RegisterActivity","ERROR: " + ex.message!!)
 
@@ -208,12 +184,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
 
-
-            withContext(Dispatchers.Main) {
-                // show register button and hide progress bar
-                registerButton.visibility = View.VISIBLE
-                loadingIcon.visibility = View.GONE
-            }
+            runOnUiThread { stopLoading() }
 
         }
     }
@@ -233,5 +204,14 @@ class RegisterActivity : AppCompatActivity() {
         editor.apply()
     }
 
-
+    private fun startLoading() {
+        // show progress bar and hide register button
+        loadingIcon.visibility = View.VISIBLE
+        registerButton.visibility = View.GONE
+    }
+    private fun stopLoading() {
+        // show register button and hide progress bar
+        registerButton.visibility = View.VISIBLE
+        loadingIcon.visibility = View.GONE
+    }
 }
