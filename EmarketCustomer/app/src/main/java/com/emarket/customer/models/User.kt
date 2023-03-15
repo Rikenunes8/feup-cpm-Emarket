@@ -1,4 +1,4 @@
-package com.emarket.customer.Models
+package com.emarket.customer.models
 
 data class User(
     val userId: String,

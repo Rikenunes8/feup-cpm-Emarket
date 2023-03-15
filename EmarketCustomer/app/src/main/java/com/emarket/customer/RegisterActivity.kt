@@ -10,9 +10,9 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.emarket.customer.Models.User
-import com.emarket.customer.Services.NetworkService
-import com.emarket.customer.Services.RequestType
+import com.emarket.customer.models.User
+import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,6 @@ import org.json.JSONObject
 import java.math.BigInteger
 import java.security.KeyPairGenerator
 import java.security.KeyStore
-import java.security.MessageDigest
 import java.security.PublicKey
 import java.util.*
 import javax.security.auth.x500.X500Principal
