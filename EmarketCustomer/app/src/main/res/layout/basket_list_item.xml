@@ -59,7 +59,7 @@
                     android:id="@+id/delete_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:src="@drawable/delete_icon"
+                    android:src="@drawable/delete_icon"
                     app:backgroundTint="@android:color/transparent"
                     app:tint="?attr/colorOnSecondary" />
 
