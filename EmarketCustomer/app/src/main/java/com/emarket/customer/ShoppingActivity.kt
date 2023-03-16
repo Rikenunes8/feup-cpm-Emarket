@@ -29,12 +29,11 @@ class ShoppingActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rv_basket)
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        rv.layoutManager = LinearLayoutManager(this, orientation, false)
+        rv.layoutManager = LinearLayoutManager(this, orientation, true)
         rv.adapter = adapter
 
         val totalView by lazy {findViewById<TextView>(R.id.total_price)}
-        var sum = 0.0
-        productItems.forEach{sum += it.price}
+        val sum = productItems.fold(0.0) { total, product -> total + product.price }
         totalView.text = "$sum€"
 
         val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
@@ -98,8 +97,5 @@ class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerV
         return productItems[pos]
     }
 
-    fun addProductItem(product : Product) {
-
-    }
 }
 
