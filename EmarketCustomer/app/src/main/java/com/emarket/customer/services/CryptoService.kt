@@ -4,10 +4,10 @@ import android.content.Context
 import android.security.KeyPairGeneratorSpec
 import android.util.Log
 import com.emarket.customer.Constants
-import com.emarket.customer.R
 import com.emarket.customer.Utils
 import java.math.BigInteger
 import java.security.*
+import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
@@ -126,6 +126,13 @@ class CryptoService {
                 e.message?.let { Log.e("VERIFY", it) }
             }
             return null
+        }
+
+        fun pubKeyFactory(keyData : String) : PublicKey{
+            val keyBase64 = Base64.getDecoder().decode(keyData)
+            val keySpec = X509EncodedKeySpec(keyBase64);
+            val keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(keySpec);
         }
 
         /**

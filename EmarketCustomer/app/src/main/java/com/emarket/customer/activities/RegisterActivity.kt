@@ -104,12 +104,10 @@ class RegisterActivity : AppCompatActivity() {
      * @return the response from the server (json string)
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
-        val jsonInputString = Gson().toJson(
-            CustomerRegistrationBody(
+        val jsonInputString = Gson().toJson(CustomerRegistrationBody(
             Base64.getEncoder().encodeToString(pubKey.encoded),
             cardNo
-        )
-        ).toString()
+        )).toString()
 
         thread(start = true) {
             try {
