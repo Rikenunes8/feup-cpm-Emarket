@@ -25,6 +25,7 @@
     <style name="FormEdit">
         <item name="android:layout_weight">1</item>
         <item name="android:background">@drawable/input_background</item>
+        <item name="android:tint">?colorAccent</item>
         <item name="android:paddingVertical">2.5dp</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">4dp</item>

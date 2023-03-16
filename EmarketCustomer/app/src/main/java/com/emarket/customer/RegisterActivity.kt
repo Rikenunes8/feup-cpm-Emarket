@@ -1,5 +1,7 @@
 package com.emarket.customer
 
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
@@ -9,7 +11,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.models.User
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
@@ -39,6 +40,8 @@ class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+
+        //startActivity(Intent(this, ShoppingActivity::class.java))
 
         registerButton.setOnClickListener {
 
