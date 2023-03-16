@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -15,7 +16,7 @@ import com.emarket.customer.model.Product
 
 val product1 = Product(R.drawable.icon, "Apple", 3.0, 1, 3.0)
 val product2 = Product(R.drawable.icon, "Banana", 4.0, 3, 12.0)
-
+private val productItems : Array<Product> = arrayOf(product1, product2, product1, product2, product1, product2, product1, product2, product1, product2)
 
 class ShoppingActivity : AppCompatActivity() {
 
@@ -27,15 +28,23 @@ class ShoppingActivity : AppCompatActivity() {
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
         rv.layoutManager = LinearLayoutManager(this, orientation, false)
-        rv.adapter = BasketAdapter()
+        rv.adapter = BasketAdapter(productItems)
+
+        val totalView by lazy {findViewById<TextView>(R.id.total_price)}
+        var sum = 0.0
+        productItems.forEach{sum += it.price}
+        totalView.text = "$sum€"
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
 
 }
 
-class BasketAdapter : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
-
-    private val productItems : Array<Product> = arrayOf(product1, product2, product1, product2, product1, product2, product1, product2, product1, product2)
+class BasketAdapter(private val productItems : Array<Product>) : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
 
 
     class ProductItem(val item: View) :  RecyclerView.ViewHolder(item) {
