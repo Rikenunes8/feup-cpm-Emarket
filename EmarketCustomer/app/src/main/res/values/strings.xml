@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Emarket Customer</string>
+
+    <!-- Registration -->
     <string name="registration_title">Registration</string>
     <string name="personal_info_title">Personal information</string>
     <string name="card_info_title">Payment information</string>
@@ -12,4 +14,12 @@
     <string name="profile_title">Profile</string>
     <string name="total_label">Total:</string>
     <string name="checkout_label">Checkout</string>
+    <string name="already_registered_err">Error: Already registered an account on this device</string>
+    <string name="error_getting_keys">Could not get the public key from the key store</string>
+
+    <!-- Login -->
+    <string name="login_title">Login</string>
+    <string name="login_btn">Login</string>
+    <string name="log_invalid_credentials">Invalid nickname or password</string>
+
 </resources>

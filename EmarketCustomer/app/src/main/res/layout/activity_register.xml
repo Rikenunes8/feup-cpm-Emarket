@@ -136,6 +136,15 @@
                 android:paddingHorizontal="70dp"
                 android:text="@string/register_btn" />
 
+            <ProgressBar
+                android:id="@+id/loading_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                style="@android:style/Widget.ProgressBar" />
+
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

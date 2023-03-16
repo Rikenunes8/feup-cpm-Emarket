@@ -36,7 +36,7 @@ class ShoppingActivity : AppCompatActivity() {
         var sum = 0.0
         productItems.forEach{sum += it.price}
         totalView.text = "$sum€"
-BasketAdapter(productItems)
+
         val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
         addBtn.setOnClickListener{
             productItems.add(Product(R.drawable.icon, "new", 40.0, 1, 40.0))
@@ -84,8 +84,9 @@ class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerV
 
         holder.delete.setOnClickListener(View.OnClickListener {
             // remove your item from data base
-            productItems.removeAt(pos) // remove the item from list
-            notifyItemRemoved(pos) // notify the adapter about the removed item
+            val itemPosition = holder.adapterPosition
+            productItems.removeAt(itemPosition) // remove the item from list
+            notifyItemRemoved(itemPosition)
         })
     }
 
