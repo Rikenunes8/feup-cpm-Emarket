@@ -1,5 +1,6 @@
 import uuid
 import rsa
+import base64
 
 from src.database.DB import DB
 
@@ -22,8 +23,11 @@ class Emarket(metaclass=EmarketMeta):
     self._privkey : rsa.PrivateKey = self._readKey('private.pem', True)
     self._pubkey : rsa.PublicKey = self._readKey('public.pem', False)
 
-  def _readKey(self, path: str, private = True) -> str:
+  def _readKey(self, path: str, private = True) -> rsa.PrivateKey or rsa.PublicKey:
     with open(path, 'r') as f: data = f.read()
+    print(data)
+    print(data.encode('utf-8'))
+    print(base64.b64decode(data.encode('utf-8')))
     if (private): return rsa.PrivateKey.load_pkcs1(data)
     else:         return rsa.PublicKey.load_pkcs1(data)
 
@@ -37,10 +41,22 @@ class Emarket(metaclass=EmarketMeta):
       return {'error': 'A user with this public key already exists!'}
 
     uid = str(uuid.uuid4())
+    print(uid)
     self._db.addUser(uid, pubKey, cardNo)
+
+    pk = self.getUserPublicKey(uid)
+    print(pk)
+    #uidBytes = rsa.encrypt(uid.encode(), pk, 'SHA-256')
+    #uid = base64.b64encode(uidBytes).decode('utf-8')
+
 
     # TODO: Encrypt uid with user pubKey?
     # TODO: Sign response with private key?
     return {'uuid': uid, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
       
-
+  def getUserPublicKey(self, uuid: str) -> rsa.PublicKey:
+    user = DB().findUserById(uuid)
+    key : str = user.get('pubKey')
+    print(key)
+    if (key is None): return None
+    return rsa.PublicKey.load_pkcs1(key)

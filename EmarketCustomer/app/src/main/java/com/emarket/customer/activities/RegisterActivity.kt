@@ -14,7 +14,9 @@ import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
+import com.emarket.customer.services.CryptoService.Companion.decryptContent
 import com.emarket.customer.services.CryptoService.Companion.generateAndStoreKeys
+import com.emarket.customer.services.CryptoService.Companion.getPrivKey
 import com.emarket.customer.services.CryptoService.Companion.getPubKey
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
@@ -104,10 +106,15 @@ class RegisterActivity : AppCompatActivity() {
      * @return the response from the server (json string)
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
+        println("pubKey: ${pubKey.encoded}")
+        println("mimeencoder: ${Base64.getMimeEncoder().encodeToString(pubKey.encoded)}")
+        println("encoder: ${Base64.getEncoder().encodeToString(pubKey.encoded)}")
         val jsonInputString = Gson().toJson(CustomerRegistrationBody(
-            Base64.getEncoder().encodeToString(pubKey.encoded),
+            Base64.getMimeEncoder().encodeToString(pubKey.encoded),
             cardNo
         )).toString()
+
+
 
         thread(start = true) {
             try {
@@ -127,8 +134,13 @@ class RegisterActivity : AppCompatActivity() {
 
                 val serverResp = Gson().fromJson(jsonResponse.toString(), ServerResponse::class.java)
 
-                val uuid = serverResp.uuid
+                val uuidDecoded = serverResp.uuid
                 val serverPubKey = serverResp.serverPubKey
+
+                //val pk : PublicKey = pubKeyFactory(serverPubKey)
+                val uuid = decryptContent(uuidDecoded.encodeToByteArray(), getPrivKey())
+                Log.d("UUID", uuid!!)
+
 
                 val name = findViewById<EditText>(R.id.edt_reg_name).text.toString()
                 val nickname = findViewById<EditText>(R.id.edt_reg_nick).text.toString()
