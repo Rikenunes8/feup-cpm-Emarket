@@ -1,4 +1,4 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +9,9 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import com.emarket.customer.Constants
+import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
 import com.emarket.customer.services.CryptoService.Companion.generateAndStoreKeys
@@ -101,10 +104,12 @@ class RegisterActivity : AppCompatActivity() {
      * @return the response from the server (json string)
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
-        val jsonInputString = Gson().toJson(CustomerRegistrationBody(
+        val jsonInputString = Gson().toJson(
+            CustomerRegistrationBody(
             Base64.getEncoder().encodeToString(pubKey.encoded),
             cardNo
-        )).toString()
+        )
+        ).toString()
 
         thread(start = true) {
             try {

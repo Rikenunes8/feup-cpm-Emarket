@@ -1,4 +1,4 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.emarket.customer.R
 import com.emarket.customer.models.Product
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 

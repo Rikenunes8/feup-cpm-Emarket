@@ -78,7 +78,7 @@ class CryptoService {
             return null
         }
 
-        fun decryptResult(content: ByteArray, key: PrivateKey?) : String? {
+        fun decryptContent(content: ByteArray, key: PrivateKey?) : String? {
             if (content.isEmpty()) return null
             if (key == null) return null
             try {

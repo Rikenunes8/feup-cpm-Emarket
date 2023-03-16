@@ -1,13 +1,15 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.Constants
+import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.models.User
 import com.google.gson.Gson
 
@@ -31,7 +33,10 @@ class LoginActivity : AppCompatActivity() {
 
             // just a double check
             if (storedUser != null) {
-                if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
+                if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(
+                        pass
+                    )
+                ) {
                     // login successful
                     showToast(this, "Login successful")
                     startActivity(Intent(this, ShoppingActivity::class.java))

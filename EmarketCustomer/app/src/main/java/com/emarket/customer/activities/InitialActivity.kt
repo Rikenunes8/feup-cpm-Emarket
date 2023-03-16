@@ -1,9 +1,11 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.emarket.customer.Constants
+import com.emarket.customer.R
 import com.emarket.customer.models.User
 import com.google.gson.Gson
 
