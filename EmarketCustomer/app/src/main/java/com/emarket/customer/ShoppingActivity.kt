@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.model.Product
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.*
 
 val product1 = Product(R.drawable.icon, "Apple", 3.0, 1, 3.0)
 val product2 = Product(R.drawable.icon, "Banana", 4.0, 3, 12.0)
@@ -20,6 +19,7 @@ private val productItems : MutableList<Product> = mutableListOf(product1, produc
 
 class ShoppingActivity : AppCompatActivity() {
     var adapter = BasketAdapter(productItems)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shopping)
@@ -57,6 +57,7 @@ class ShoppingActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 
 }
 
