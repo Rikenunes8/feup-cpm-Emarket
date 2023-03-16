@@ -12,7 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.emarket.customer.model.Product
+import com.emarket.customer.models.Product
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 val product1 = Product(R.drawable.icon, "Apple", 3.0, 1, 3.0)
