@@ -1,12 +1,18 @@
 package com.emarket.customer.services
 
 import android.util.Log
+import com.google.gson.Gson
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.DataOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
+
+data class Response(
+    val code : Int?,
+    val error : String
+)
 enum class RequestType {
     GET, POST
 }
@@ -25,20 +31,24 @@ class NetworkService {
 
             try {
                 connection = URL(endpoint).openConnection() as HttpURLConnection
-                connection.requestMethod = when (requestType) {
-                    RequestType.GET -> "GET"
-                    RequestType.POST -> "POST"
+                connection.run {
+                    requestMethod = when (requestType) {
+                        RequestType.GET -> "GET"
+                        RequestType.POST -> "POST"
+                    }
+                    setRequestProperty("Content-Type", "application/json")
+                    setRequestProperty("Accept", "application/json")
+                    connectTimeout = 5000 // 5 seconds
+                    useCaches = false
                 }
-                connection.setRequestProperty("Content-Type", "application/json")
-                connection.setRequestProperty("Accept", "application/json")
-                connection.connectTimeout = 5000 // 5 seconds
 
                 if (requestType == RequestType.POST) {
                     connection.doOutput = true
-                    val outputStream = DataOutputStream(connection.outputStream)
-                    outputStream.writeBytes(requestBody)
-                    outputStream.flush()
-                    outputStream.close()
+                    DataOutputStream(connection.outputStream).run {
+                        writeBytes(requestBody)
+                        flush()
+                        close()
+                    }
                 }
 
                 val responseCode = connection.responseCode
@@ -49,19 +59,15 @@ class NetworkService {
                     response = responseJson.toString()
                     inputStream.close()
                 } else {
-                    response = "{" +
-                            "\"code\": $responseCode ," +
-                            "\"error\": \"${connection.responseMessage}\"" +
-                            "}"
+                    response = Gson().toJson(Response(responseCode, connection.responseMessage))
                 }
             } catch (e: Exception) {
-                //e.printStackTrace()
                 Log.e("NetworkService", e.message ?: "")
             } finally {
                 connection?.disconnect()
             }
 
-            return response ?: ("{" + "\"error\": \"Unexpected error requesting to the server\"" + "}")
+            return response ?: Gson().toJson(Response(null, "Unexpected error requesting to the server"))
         }
     }
 }
