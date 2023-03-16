@@ -7,15 +7,19 @@ import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import java.math.BigInteger
-import java.security.KeyPairGenerator
-import java.security.KeyStore
-import java.security.PrivateKey
-import java.security.PublicKey
+import java.security.*
 import java.util.*
+import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
 
 class CryptoService {
     companion object {
+        private fun byteArrayToHex(ba: ByteArray): String {
+            val sb = StringBuilder(ba.size * 2)
+            for (b in ba) sb.append(String.format("%02x", b))
+            return sb.toString()
+        }
+
         /**
          * Check if the key pair is already present in the Android Key Store
          */
@@ -58,6 +62,72 @@ class CryptoService {
             return true
         }
 
+        fun encryptContent(content: ByteArray, key: PublicKey?) : String? {
+            if (content.isEmpty()) return null
+            if (key == null) return null
+
+            try {
+                val result = Cipher.getInstance(Constants.ENC_ALGO).run {
+                    init(Cipher.ENCRYPT_MODE, key)
+                    doFinal(content)
+                }
+                return byteArrayToHex(result)
+            } catch (e: Exception) {
+                e.message?.let { Log.e("ENCRYPT", it) }
+            }
+            return null
+        }
+
+        fun decryptResult(content: ByteArray, key: PrivateKey?) : String? {
+            if (content.isEmpty()) return null
+            if (key == null) return null
+            try {
+                val result = Cipher.getInstance(Constants.ENC_ALGO).run {
+                    init(Cipher.DECRYPT_MODE, key)
+                    doFinal(content)
+                }
+                return byteArrayToHex(result)
+            }
+            catch (e: Exception) {
+                e.message?.let { Log.e("DECRYPT", it) }
+            }
+            return null
+        }
+
+        fun signContent(content : ByteArray, key: PrivateKey?) : String? {
+            if (content.isEmpty()) return null
+            if (key == null) return null
+            try {
+                val result = Signature.getInstance(Constants.SIGN_ALGO).run {
+                    initSign(key)
+                    update(content)
+                    sign()
+                }
+                return byteArrayToHex(result)
+            }
+            catch  (e: Exception) {
+                e.message?.let { Log.e("SIGN", it) }
+            }
+            return null
+        }
+
+        fun verifySignature(content: ByteArray, key : PublicKey?) : Boolean? {
+            if (content.isEmpty()) return null
+            if (key == null) return null
+            try {
+                val verified = Signature.getInstance(Constants.SIGN_ALGO).run {
+                    initVerify(key)
+                    update(content)
+                    verify(content)
+                }
+                return verified
+            }
+            catch (e: Exception) {
+                e.message?.let { Log.e("VERIFY", it) }
+            }
+            return null
+        }
+
         /**
          * Get the public key modulus and exponent
          */
@@ -88,6 +158,7 @@ class CryptoService {
             }
             catch (ex: Exception) {
                 Log.e("getPrivExp", ex.message ?: "")
+                priv = null
             }
             return priv
         }
