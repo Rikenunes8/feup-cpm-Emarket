@@ -1,7 +1,8 @@
 package com.emarket.customer
 
-import android.content.Context
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
 import android.security.KeyPairGeneratorSpec
 import android.util.Log
@@ -9,7 +10,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
 import com.emarket.customer.services.NetworkService
@@ -172,7 +172,6 @@ class RegisterActivity : AppCompatActivity() {
                 val name = findViewById<EditText>(R.id.edt_reg_name).text.toString()
                 val nickname = findViewById<EditText>(R.id.edt_reg_nick).text.toString()
                 val password = findViewById<EditText>(R.id.edt_reg_pass).text.toString()
-                val cardNo = findViewById<EditText>(R.id.edt_reg_card).text.toString()
 
                 val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
 

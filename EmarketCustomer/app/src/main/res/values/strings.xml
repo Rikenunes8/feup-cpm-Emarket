@@ -10,6 +10,10 @@
     <string name="password_label">Password:</string>
     <string name="card_no_label">Card no.:</string>
     <string name="register_btn">Register</string>
+    <string name="shopping_title">Basket</string>
+    <string name="profile_title">Profile</string>
+    <string name="total_label">Total:</string>
+    <string name="checkout_label">Checkout</string>
     <string name="already_registered_err">Error: Already registered an account on this device</string>
     <string name="error_getting_keys">Could not get the public key from the key store</string>
 

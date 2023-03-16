@@ -1,6 +1,7 @@
 package com.emarket.customer
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -31,8 +32,8 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    // TODO: start main activity
                     Toast.makeText(this, "Login successful", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this, ShoppingActivity::class.java))
                 } else {
                     // login failed
                     Toast.makeText(this, getString(R.string.log_invalid_credentials), Toast.LENGTH_LONG).show()

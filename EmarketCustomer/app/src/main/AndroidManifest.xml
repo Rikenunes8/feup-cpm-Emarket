@@ -40,6 +40,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ShoppingActivity"
+            android:label="Basket"
+            android:exported="true">
+        </activity>
+
     </application>
 
 </manifest>
