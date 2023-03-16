@@ -20,7 +20,7 @@
             android:paddingHorizontal="20dip" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/add_item"
             android:layout_width="50dip"
             android:layout_height="50dip"
             android:layout_gravity="end|bottom"
