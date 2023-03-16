@@ -37,7 +37,7 @@ class Emarket(metaclass=EmarketMeta):
       return {'error': 'A user with this public key already exists!'}
 
     uid = str(uuid.uuid4())
-    self._db.register(uid, pubKey, cardNo)
+    self._db.addUser(uid, pubKey, cardNo)
 
     # TODO: Encrypt uid with user pubKey?
     # TODO: Sign response with private key?

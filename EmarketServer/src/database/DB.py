@@ -27,7 +27,7 @@ class DB(metaclass=DBMeta):
     self._db = self._client[DB._name]
     self._users = self._db['users']
 
-  def register(self, uuid, pubKey: str, cardNo: str):
+  def addUser(self, uuid, pubKey: str, cardNo: str):
     user = {
       'uuid': uuid,
       'pubKey': pubKey,
