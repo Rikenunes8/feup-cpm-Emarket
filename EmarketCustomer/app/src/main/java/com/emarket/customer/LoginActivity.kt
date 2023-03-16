@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
 import com.google.gson.Gson
 
@@ -32,16 +33,16 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_LONG).show()
+                    showToast(this, "Login successful")
                     startActivity(Intent(this, ShoppingActivity::class.java))
                 } else {
                     // login failed
-                    Toast.makeText(this, getString(R.string.log_invalid_credentials), Toast.LENGTH_LONG).show()
+                    showToast(this, getString(R.string.log_invalid_credentials))
                 }
             } else {
                 // user not registered
                 // THIS SHOULD NEVER HAPPEN
-                Toast.makeText(this, "User not registered", Toast.LENGTH_LONG).show()
+                showToast(this, "User not registered")
             }
 
         }
