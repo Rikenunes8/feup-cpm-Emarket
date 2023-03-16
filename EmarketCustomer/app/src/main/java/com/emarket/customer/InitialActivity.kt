@@ -13,6 +13,10 @@ class InitialActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_initial)
 
+        startActivity(Intent(this, ProfileActivity::class.java))
+
+        /*
+
         // check if user already registered
         val sharedPref = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val user = Gson().fromJson(sharedPref.getString(Constants.USER_KEY, null), User::class.java)
@@ -23,6 +27,9 @@ class InitialActivity : AppCompatActivity() {
             // user not registered
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+
+         */
     }
+
 
 }

@@ -21,5 +21,8 @@
     <string name="login_title">Login</string>
     <string name="login_btn">Login</string>
     <string name="log_invalid_credentials">Invalid nickname or password</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 
 </resources>
