@@ -27,7 +27,7 @@ class ShoppingActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rv_basket)
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        rv.layoutManager = LinearLayoutManager(this, orientation, true)
+        rv.layoutManager = LinearLayoutManager(this, orientation, false)
         rv.adapter = adapter
 
         val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -36,8 +36,9 @@ class ShoppingActivity : AppCompatActivity() {
 
         val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
         addBtn.setOnClickListener{
-            productItems.add(Product(R.drawable.icon, "new", 40.0, 1, 40.0))
-            adapter.notifyItemInserted(productItems.size-1)
+            productItems.add(0, Product(R.drawable.icon, "new", 40.0, 1, 40.0))
+            adapter.notifyItemInserted(0)
+            rv.scrollToPosition(0)
         }
 
     }
