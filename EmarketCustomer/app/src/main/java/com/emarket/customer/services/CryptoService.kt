@@ -6,6 +6,7 @@ import android.util.Log
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils
 import java.math.BigInteger
+import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.RSAPublicKeySpec
@@ -16,12 +17,6 @@ import javax.security.auth.x500.X500Principal
 
 class CryptoService {
     companion object {
-        private fun byteArrayToHex(ba: ByteArray): String {
-            val sb = StringBuilder(ba.size * 2)
-            for (b in ba) sb.append(String.format("%02x", b))
-            return sb.toString()
-        }
-
         /**
          * Check if the key pair is already present in the Android Key Store
          */
@@ -64,7 +59,7 @@ class CryptoService {
             return true
         }
 
-        fun encryptContent(content: ByteArray, key: PublicKey?) : String? {
+        fun encryptContent(content: ByteArray, key: PublicKey?) : ByteArray? {
             if (content.isEmpty()) return null
             if (key == null) return null
 
@@ -73,7 +68,7 @@ class CryptoService {
                     init(Cipher.ENCRYPT_MODE, key)
                     doFinal(content)
                 }
-                return byteArrayToHex(result)
+                return result
             } catch (e: Exception) {
                 e.message?.let { Log.e("ENCRYPT", it) }
             }
@@ -88,7 +83,7 @@ class CryptoService {
                     init(Cipher.DECRYPT_MODE, key)
                     doFinal(content)
                 }
-                return byteArrayToHex(result)
+                return String(result, StandardCharsets.UTF_8)
             }
             catch (e: Exception) {
                 e.message?.let { Log.e("DECRYPT", it) }
@@ -96,7 +91,7 @@ class CryptoService {
             return null
         }
 
-        fun signContent(content : ByteArray, key: PrivateKey?) : String? {
+        fun signContent(content : ByteArray, key: PrivateKey?) : ByteArray? {
             if (content.isEmpty()) return null
             if (key == null) return null
             try {
@@ -105,7 +100,7 @@ class CryptoService {
                     update(content)
                     sign()
                 }
-                return byteArrayToHex(result)
+                return result
             }
             catch  (e: Exception) {
                 e.message?.let { Log.e("SIGN", it) }
@@ -170,6 +165,11 @@ class CryptoService {
                 priv = null
             }
             return priv
+        }
+
+        fun publicKeyToPKCS1(pubKey : PublicKey) : String {
+            val encPubKey = Base64.getEncoder().encodeToString(pubKey.encoded)
+            return "-----BEGIN PUBLIC KEY-----\n$encPubKey\n-----END PUBLIC KEY-----\n"
         }
     }
 }

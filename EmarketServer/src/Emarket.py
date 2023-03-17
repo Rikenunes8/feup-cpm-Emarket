@@ -25,38 +25,34 @@ class Emarket(metaclass=EmarketMeta):
 
   def _readKey(self, path: str, private = True) -> rsa.PrivateKey or rsa.PublicKey:
     with open(path, 'r') as f: data = f.read()
-    print(data)
-    print(data.encode('utf-8'))
-    print(base64.b64decode(data.encode('utf-8')))
     if (private): return rsa.PrivateKey.load_pkcs1(data)
     else:         return rsa.PublicKey.load_pkcs1(data)
+  
+  def _getUserPublicKey(self, uuid: str) -> rsa.PublicKey:
+    user = DB().findUserById(uuid)
+    key : str = user.get('pubKey')
+    return self._pkcs8ToPublicKey(key)
+  
+  def _pkcs8ToPublicKey(self, pkcs8: str) -> rsa.PublicKey:
+    if (pkcs8 is None): return None
+    return rsa.PublicKey.load_pkcs1_openssl_pem(pkcs8)
 
 
   def register(self, data: dict) -> dict:
-    pubKey = data.get('pubKey')
+    pubKeyPKCS8 = data.get('pubKey')
     cardNo = data.get('cardNo')
-    if (pubKey is None or cardNo is None):
+    if (pubKeyPKCS8 is None or cardNo is None):
       return {'error': 'Missing pubKey or cardNo property!'}
-    if (self._db.findUserByKey(pubKey) != None):
+    if (self._db.findUserByKey(pubKeyPKCS8) != None):
       return {'error': 'A user with this public key already exists!'}
 
     uid = str(uuid.uuid4())
-    print(uid)
-    self._db.addUser(uid, pubKey, cardNo)
+    self._db.addUser(uid, pubKeyPKCS8, cardNo)
 
-    pk = self.getUserPublicKey(uid)
-    print(pk)
-    #uidBytes = rsa.encrypt(uid.encode(), pk, 'SHA-256')
-    #uid = base64.b64encode(uidBytes).decode('utf-8')
+    pubKey = self._pkcs8ToPublicKey(pubKeyPKCS8)
+    uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
+    uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
 
-
-    # TODO: Encrypt uid with user pubKey?
     # TODO: Sign response with private key?
-    return {'uuid': uid, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
+    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
       
-  def getUserPublicKey(self, uuid: str) -> rsa.PublicKey:
-    user = DB().findUserById(uuid)
-    key : str = user.get('pubKey')
-    print(key)
-    if (key is None): return None
-    return rsa.PublicKey.load_pkcs1(key)
