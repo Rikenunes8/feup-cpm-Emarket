@@ -6,11 +6,13 @@
         android:id="@+id/action_shop"
         android:icon="@drawable/shopping_cart_icon"
         android:title="@string/shopping_title"
+        app:iconTint="?attr/colorOnPrimary"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_profile"
         android:icon="@drawable/profile_icon"
         android:title="@string/profile_title"
+        app:iconTint="?attr/colorOnPrimary"
         app:showAsAction="ifRoom" />
 </menu>
