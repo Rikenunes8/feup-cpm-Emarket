@@ -8,8 +8,6 @@ import com.emarket.customer.Utils
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
-import java.security.interfaces.RSAPublicKey
-import java.security.spec.RSAPublicKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
@@ -31,7 +29,7 @@ class CryptoService {
         /**
          * Generate a new key pair and store it in the Android Key Store
          */
-        fun generateAndStoreKeys(ctx: Context, successMsg: String): Boolean {
+        fun generateAndStoreKeys(ctx: Context, errorMsg: String): Boolean {
             try {
                 if (!keysPresent()) {
                     val spec = KeyPairGeneratorSpec.Builder(ctx)
@@ -47,8 +45,8 @@ class CryptoService {
                         generateKeyPair()
                     }
                 } else {
-                    Utils.showToast(ctx, successMsg)
-                    Log.e("RegisterActivity", "Key pair already present")
+                    Utils.showToast(ctx, errorMsg)
+                    Log.e("RegisterActivity", errorMsg)
                     return false
                 }
             }
