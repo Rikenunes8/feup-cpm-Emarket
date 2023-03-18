@@ -1,12 +1,12 @@
-package com.emarket.customer.controller
+package com.emarket.customer.controllers
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.emarket.customer.ProfileFragment
+import com.emarket.customer.activities.ProfileFragment
 import com.emarket.customer.R
-import com.emarket.customer.TransactionsFragment
+import com.emarket.customer.activities.TransactionsFragment
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -18,7 +18,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     override fun getItem(position: Int): Fragment {
         return when (position) {
             1 -> TransactionsFragment()
-            else -> {ProfileFragment()}
+            else -> {
+                ProfileFragment()
+            }
         }
     }
 

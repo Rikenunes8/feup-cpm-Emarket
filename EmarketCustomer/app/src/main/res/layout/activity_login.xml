@@ -6,7 +6,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="30dp"
-    tools:context=".LoginActivity">
+    tools:context=".activities.LoginActivity">
 
     <TextView
         style="@style/Title"

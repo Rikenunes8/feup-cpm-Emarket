@@ -1,4 +1,4 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

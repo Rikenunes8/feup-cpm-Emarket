@@ -1,27 +1,31 @@
-package com.emarket.customer
+package com.emarket.customer.activities
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Bundle
-import android.security.KeyPairGeneratorSpec
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
+import com.emarket.customer.Constants
+import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.User
+import com.emarket.customer.services.CryptoService.Companion.decryptContent
+import com.emarket.customer.services.CryptoService.Companion.generateAndStoreKeys
+import com.emarket.customer.services.CryptoService.Companion.getPrivKey
+import com.emarket.customer.services.CryptoService.Companion.getPubKey
+import com.emarket.customer.services.CryptoService.Companion.publicKeyToPKCS1
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import org.json.JSONObject
-import java.math.BigInteger
-import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.PublicKey
 import java.util.*
-import javax.security.auth.x500.X500Principal
 import kotlin.concurrent.thread
 
 data class ServerResponse (
@@ -51,8 +55,8 @@ class RegisterActivity : AppCompatActivity() {
             val card = cardEditText.text.toString()
 
             // generate key pair
-            if (generateAndStoreKeys()) {
-                val pubKey = Utils.getPubKey()
+            if (generateAndStoreKeys(this, getString(R.string.already_registered_err))) {
+                val pubKey = getPubKey()
                 if (pubKey != null) {
                     startLoading()
                     sendRegistrationData(pubKey, card) // send registration data to server
@@ -94,47 +98,6 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
-    /**
-     * Check if the key pair is already present in the Android Key Store
-     */
-    private fun keysPresent(): Boolean {
-        val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
-            load(null)
-            getEntry(Constants.STORE_KEY, null)
-        }
-        return (entry != null)
-    }
-
-    /**
-     * Generate a new key pair and store it in the Android Key Store
-     */
-    private fun generateAndStoreKeys(): Boolean {
-        try {
-            if (!keysPresent()) {
-                val spec = KeyPairGeneratorSpec.Builder(this)
-                    .setKeySize(Constants.KEY_SIZE)
-                    .setAlias(Constants.STORE_KEY)
-                    .setSubject(X500Principal("CN=" + Constants.STORE_KEY))
-                    .setSerialNumber(BigInteger.valueOf(Constants.serialNr))
-                    .setStartDate(GregorianCalendar().time)
-                    .setEndDate(GregorianCalendar().apply { add(Calendar.YEAR, 10) }.time)
-                    .build()
-                KeyPairGenerator.getInstance(Constants.KEY_ALGO, Constants.ANDROID_KEYSTORE).run {
-                    initialize(spec)
-                    generateKeyPair()
-                }
-            } else {
-                showToast(this, getString(R.string.already_registered_err))
-                Log.e("RegisterActivity", "Key pair already present")
-                return false
-            }
-        }
-        catch (ex: Exception) {
-            showToast(this, ex.message)
-            return false
-        }
-        return true
-    }
 
     /**
      * Send the registration data to the server
@@ -144,7 +107,7 @@ class RegisterActivity : AppCompatActivity() {
      */
     private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
         val jsonInputString = Gson().toJson(CustomerRegistrationBody(
-            Base64.getEncoder().encodeToString(pubKey.encoded),
+            publicKeyToPKCS1(pubKey),
             cardNo
         )).toString()
 
@@ -165,9 +128,11 @@ class RegisterActivity : AppCompatActivity() {
                 }
 
                 val serverResp = Gson().fromJson(jsonResponse.toString(), ServerResponse::class.java)
-
-                val uuid = serverResp.uuid
+                val uuidEncoded = serverResp.uuid
                 val serverPubKey = serverResp.serverPubKey
+
+                val encryptedUUID = Base64.getDecoder().decode(uuidEncoded)
+                val uuid = decryptContent(encryptedUUID, getPrivKey())!!
 
                 val name = findViewById<EditText>(R.id.edt_reg_name).text.toString()
                 val nickname = findViewById<EditText>(R.id.edt_reg_nick).text.toString()

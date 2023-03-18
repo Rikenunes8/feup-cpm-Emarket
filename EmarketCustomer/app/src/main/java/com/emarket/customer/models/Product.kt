@@ -1,4 +1,4 @@
-package com.emarket.customer.model
+package com.emarket.customer.models
 
 data class Product (
     var imgRes: Int,

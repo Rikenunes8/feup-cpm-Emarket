@@ -27,7 +27,7 @@ class DB(metaclass=DBMeta):
     self._db = self._client[DB._name]
     self._users = self._db['users']
 
-  def register(self, uuid, pubKey: str, cardNo: str):
+  def addUser(self, uuid, pubKey: str, cardNo: str):
     user = {
       'uuid': uuid,
       'pubKey': pubKey,
@@ -37,5 +37,8 @@ class DB(metaclass=DBMeta):
     print(f"Inserted user with id {res.inserted_id} of type {type(res.inserted_id)}")
     return res.inserted_id
   
-  def findUserByKey(self, key):
+  def findUserByKey(self, key) -> dict:
     return self._users.find_one({'pubKey': key})
+
+  def findUserById(self, id) -> dict:
+    return self._users.find_one({'uuid': id})
