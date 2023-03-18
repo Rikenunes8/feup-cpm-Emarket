@@ -25,6 +25,8 @@ class InitialActivity : AppCompatActivity() {
             // user not registered
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+
     }
+
 
 }
