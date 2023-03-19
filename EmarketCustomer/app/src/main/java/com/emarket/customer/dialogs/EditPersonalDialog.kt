@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialog
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 
 typealias EditPersonalListener = (String) -> Unit
 
@@ -25,13 +26,9 @@ class EditPersonalDialog(ctx: Context,
         setTitle(R.string.edit_personal_title)
         setContentView(R.layout.edit_personal_info)
 
-        with(edtName) {
-            setText(name)
-        }
+        edtName.setText(name)
 
         window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-
-
         saveBtn.setOnClickListener {
 
             val value = edtName.text.toString()
@@ -44,9 +41,7 @@ class EditPersonalDialog(ctx: Context,
             listener(edtName.text.toString())
             dismiss()
 
-            Toast.makeText(context,
-                context.getString(R.string.edit_personal_success),
-                Toast.LENGTH_LONG).show()
+            Utils.showToast(context, context.getString(R.string.edit_personal_success))
         }
 
         cancelBtn.setOnClickListener {

@@ -23,12 +23,11 @@ class ProfileFragment() : Fragment() {
         binding.editPersonalBtn.setOnClickListener {
             val fragment = EditPersonalDialogFragment.newInstance(user.name) { name ->
                 user.name = name
-                UserViewModel(application = requireActivity().application).user = user
+                UserViewModel(requireActivity().application).user = user
                 binding.nameTv.text = user.name
             }
             fragment.show(requireActivity().supportFragmentManager, "EditPersonalDialogFragment")
         }
-
 
         return binding.root
     }
