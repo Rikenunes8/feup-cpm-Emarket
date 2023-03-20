@@ -16,7 +16,7 @@ class EditPersonalDialog(ctx: Context,
                          private val name: String,
                          val listener: EditPersonalListener ) : AppCompatDialog(ctx) {
 
-    private val edtName by lazy { findViewById<EditText>(R.id.edt_name)!! }
+    private val edtName by lazy { findViewById<EditText>(R.id.edit_personal_title)!! }
     private val saveBtn by lazy { findViewById<Button>(R.id.edt_personal_bt_ok)!! }
     private val cancelBtn by lazy { findViewById<Button>(R.id.edt_personal_bt_cancel)!! }
 

@@ -28,12 +28,17 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="profile_tab">Profile</string>
     <string name="transactions_tab">Transactions</string>
+    <string name="select_voucher">Pick a voucher</string>
+    <string name="accumulated">Accumulated amount</string>
+    <string name="amount_label">Amount:</string>
+    <string name="discount_label">Discount</string>
+    <string name="supermarket_name">ACME</string>
 
-    <!-- Edit profile -->
+    <string name="edit_personal_name">name:</string>
     <string name="edit_personal_title">Edit personal information</string>
-    <string name="edit_personal_name">Name</string>
-    <string name="edit_personal_btn">Save</string>
+    <string name="edit_personal_btn">Edit</string>
     <string name="edit_personal_cancel_btn">Cancel</string>
-    <string name="edit_personal_success">Personal information updated successfully</string>
+    <string name="edit_personal_success">Success</string>
+
 
 </resources>

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -40,6 +41,12 @@ class ShoppingActivity : AppCompatActivity() {
             productItems.add(0, Product(R.drawable.icon, "new", 40.0, 1, 40.0))
             adapter.notifyItemInserted(0)
             rv.scrollToPosition(0)
+        }
+
+        val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
+        checkoutBtn.setOnClickListener {
+            intent = Intent(this, CheckoutActivity::class.java)
+            startActivity(intent)
         }
 
     }
