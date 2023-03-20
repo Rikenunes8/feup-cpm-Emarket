@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatDialog
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 
-typealias EditPersonalListener = (String) -> Unit
+typealias EditPaymentListener = (String) -> Unit
 
-class EditPersonalDialog(ctx: Context,
-                         private val name: String,
-                         val listener: EditPersonalListener ) : AppCompatDialog(ctx) {
+class EditPaymentDialog(ctx: Context,
+                         private val cardNumber: String,
+                         val listener: EditPaymentListener ) : AppCompatDialog(ctx) {
 
-    private val edtName by lazy { findViewById<EditText>(R.id.edt_field)!! }
+    private val edtCardNo by lazy { findViewById<EditText>(R.id.edt_field)!! }
     private val saveBtn by lazy { findViewById<Button>(R.id.edt_btn_ok)!! }
     private val cancelBtn by lazy { findViewById<Button>(R.id.edt_btn_cancel)!! }
 
@@ -25,22 +25,23 @@ class EditPersonalDialog(ctx: Context,
         setTitle(R.string.edit_personal_title)
         setContentView(R.layout.edit_single_info)
 
-        edtName.setText(name)
+        edtCardNo.setText(cardNumber)
+        edtCardNo.setHint(R.string.edit_payment_cardNo)
 
         window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         saveBtn.setOnClickListener {
 
-            val value = edtName.text.toString()
+            val value = edtCardNo.text.toString()
             if (value.isEmpty()) {
-                edtName.error = "${context.getString(R.string.edit_personal_name)} is required"
-                edtName.requestFocus()
+                edtCardNo.error = "${context.getString(R.string.edit_payment_cardNo)} is required"
+                edtCardNo.requestFocus()
                 return@setOnClickListener
             }
 
-            listener(edtName.text.toString())
+            listener(edtCardNo.text.toString())
             dismiss()
 
-            Utils.showToast(context, context.getString(R.string.edit_personal_success))
+            Utils.showToast(context, context.getString(R.string.edit_payment_success))
         }
 
         cancelBtn.setOnClickListener {

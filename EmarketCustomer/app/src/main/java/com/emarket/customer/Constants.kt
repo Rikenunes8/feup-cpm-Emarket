@@ -9,7 +9,7 @@ object Constants {
     const val ENC_ALGO = "RSA/ECB/PKCS1Padding"
     const val STORE_KEY = "EmarketKey"
     const val serialNr = 1234567890L
-    const val SERVER_URL = "http://192.168.1.240:5000/"
+    const val SERVER_URL = "http://10.227.150.62:5000/"
     const val REGISTER_ENDPOINT = "register"
     const val USER_KEY = "USER_KEY"
     const val SERVER_PUB_KEY = "SERVER_PUB_KEY"

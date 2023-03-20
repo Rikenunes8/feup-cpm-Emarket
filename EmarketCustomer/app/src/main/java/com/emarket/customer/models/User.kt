@@ -11,7 +11,7 @@ data class User(
     var name: String,
     val nickname: String,
     val password: String,
-    val cardNumber: String
+    var cardNumber: String
 )
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {

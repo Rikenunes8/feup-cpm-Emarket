@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.emarket.customer.databinding.FragmentProfileBinding
+import com.emarket.customer.dialogs.EditPaymentDialogFragment
 import com.emarket.customer.dialogs.EditPersonalDialogFragment
 import com.emarket.customer.models.UserViewModel
 
@@ -19,6 +20,7 @@ class ProfileFragment() : Fragment() {
 
         binding.nameTv.text = user.name
         binding.nicknameTv.text = user.nickname
+        binding.cardNoTv.text = user.cardNumber
 
         binding.editPersonalBtn.setOnClickListener {
             val fragment = EditPersonalDialogFragment.newInstance(user.name) { name ->
@@ -27,6 +29,15 @@ class ProfileFragment() : Fragment() {
                 binding.nameTv.text = user.name
             }
             fragment.show(requireActivity().supportFragmentManager, "EditPersonalDialogFragment")
+        }
+
+        binding.editPaymentBtn.setOnClickListener {
+            val fragment = EditPaymentDialogFragment.newInstance(user.cardNumber) { cardNumber ->
+                user.cardNumber = cardNumber
+                UserViewModel(requireActivity().application).user = user
+                binding.cardNoTv.text = user.cardNumber
+            }
+            fragment.show(requireActivity().supportFragmentManager, "EditPaymentDialogFragment")
         }
 
         return binding.root

@@ -30,10 +30,14 @@
     <string name="transactions_tab">Transactions</string>
 
     <!-- Edit profile -->
-    <string name="edit_personal_title">Edit personal information</string>
+    <string name="edit_personal_title">Edit Personal Information</string>
     <string name="edit_personal_name">Name</string>
-    <string name="edit_personal_btn">Save</string>
-    <string name="edit_personal_cancel_btn">Cancel</string>
+    <string name="edit_save_btn">Save</string>
+    <string name="edit_cancel_btn">Cancel</string>
     <string name="edit_personal_success">Personal information updated successfully</string>
+    <string name="edit_payment_title">Edit Payment Information</string>
+    <string name="edit_payment_success">Payment information updated successfully</string>
+    <string name="edit_payment_cardNo">Card Number</string>
+
 
 </resources>
