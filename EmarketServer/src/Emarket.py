@@ -1,6 +1,7 @@
 import uuid
 import rsa
 import base64
+import qrcode
 
 from src.database.DB import DB
 
@@ -56,3 +57,15 @@ class Emarket(metaclass=EmarketMeta):
     # TODO: Sign response with private key?
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
       
+
+
+  def addProduct(self, data: dict) -> dict:
+    uuid = data.get('uuid')
+    name = data.get('name')
+    price = data.get('price')
+    if (uuid is None or name is None or price is None):
+      return {'error': 'Missing uuid, name or price property!'}
+    img = qrcode.make(data)
+    img.save(f'{uuid}.png')
+    return {'status': 'ok'}
+    
