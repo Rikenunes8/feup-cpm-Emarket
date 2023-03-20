@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.emarket.customer.databinding.FragmentProfileBinding
-import com.emarket.customer.dialogs.EditPaymentDialogFragment
-import com.emarket.customer.dialogs.EditPersonalDialogFragment
+import com.emarket.customer.dialogs.EditDialogFragment
+import com.emarket.customer.dialogs.EditDialogType
 import com.emarket.customer.models.UserViewModel
 
 class ProfileFragment() : Fragment() {
@@ -23,20 +23,26 @@ class ProfileFragment() : Fragment() {
         binding.cardNoTv.text = user.cardNumber
 
         binding.editPersonalBtn.setOnClickListener {
-            val fragment = EditPersonalDialogFragment.newInstance(user.name) { name ->
-                user.name = name
-                UserViewModel(requireActivity().application).user = user
-                binding.nameTv.text = user.name
-            }
+            val fragment = EditDialogFragment.newInstance(user.name,
+                { name ->
+                    user.name = name
+                    UserViewModel(requireActivity().application).user = user
+                    binding.nameTv.text = user.name
+                },
+                EditDialogType.PERSONAL)
+
             fragment.show(requireActivity().supportFragmentManager, "EditPersonalDialogFragment")
         }
 
         binding.editPaymentBtn.setOnClickListener {
-            val fragment = EditPaymentDialogFragment.newInstance(user.cardNumber) { cardNumber ->
-                user.cardNumber = cardNumber
-                UserViewModel(requireActivity().application).user = user
-                binding.cardNoTv.text = user.cardNumber
-            }
+            val fragment = EditDialogFragment.newInstance(user.cardNumber,
+                { cardNumber ->
+                    user.cardNumber = cardNumber
+                    UserViewModel(requireActivity().application).user = user
+                    binding.cardNoTv.text = user.cardNumber
+                },
+                EditDialogType.PAYMENT)
+
             fragment.show(requireActivity().supportFragmentManager, "EditPaymentDialogFragment")
         }
 
