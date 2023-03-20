@@ -61,11 +61,18 @@ class Emarket(metaclass=EmarketMeta):
 
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')
+    if (uuid is None): return {'error': 'Missing uuid property!'}
     name = data.get('name')
+    if (name is None): return {'error': 'Missing name property!'}
     price = data.get('price')
-    if (uuid is None or name is None or price is None):
-      return {'error': 'Missing uuid, name or price property!'}
-    img = qrcode.make(data)
+    if (price is None): return {'error': 'Missing price property!'}
+    content = {'uuid': uuid, 'name': name, 'price': price}
+
+    if (self._db.findProductById(uuid) != None):
+      return {'error': 'A product with this uuid already exists!'}
+    self._db.addProduct(content)
+
+    img = qrcode.make(str(content))
     img.save(f'{uuid}.png')
-    return {'status': 'ok'}
+    return content
     
