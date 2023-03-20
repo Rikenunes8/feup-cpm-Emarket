@@ -101,7 +101,6 @@ class ShoppingActivity : AppCompatActivity() {
         val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
         if (intentResult != null) {
             if (intentResult.contents != null) {
-                showToast(this, "Success")
                 processQRCode(intentResult)
             } else {
                 showToast(this, "Scan failed")
@@ -110,9 +109,13 @@ class ShoppingActivity : AppCompatActivity() {
     }
 
     private fun processQRCode(result : IntentResult) {
-        val newProductDTO = Gson().fromJson(result.contents, ProductDTO::class.java)
-        val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
-        addProduct(newProduct)
+        try {
+            val newProductDTO = Gson().fromJson(result.contents, ProductDTO::class.java)
+            val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
+            addProduct(newProduct)
+        } catch (e: java.lang.Exception) {
+            showToast(this, "Bad QR code")
+        }
     }
 }
 
