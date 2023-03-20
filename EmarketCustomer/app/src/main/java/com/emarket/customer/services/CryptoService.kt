@@ -18,7 +18,7 @@ class CryptoService {
         /**
          * Check if the key pair is already present in the Android Key Store
          */
-        private fun keysPresent(): Boolean {
+        fun keysPresent(): Boolean {
             val entry = KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
                 load(null)
                 getEntry(Constants.STORE_KEY, null)
