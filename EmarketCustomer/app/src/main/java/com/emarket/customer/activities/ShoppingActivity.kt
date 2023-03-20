@@ -35,7 +35,7 @@ class ShoppingActivity : AppCompatActivity() {
         const val REQUEST_CAMERA_PERMISSION = 1
     }
 
-    private var adapter = BasketAdapter(productItems)
+    private var adapter = BasketAdapter(productItems) { updateTotal() }
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -48,8 +48,7 @@ class ShoppingActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this, orientation, false)
         rv.adapter = adapter
 
-        val sum = productItems.fold(0.0) { total, product -> total + product.price }
-        totalView.text = "$sum€"
+        updateTotal()
 
         addBtn.setOnClickListener {
             if (!requestCameraPermission())
@@ -66,6 +65,12 @@ class ShoppingActivity : AppCompatActivity() {
         productItems.add(0, product)
         adapter.notifyItemInserted(0)
         rv.scrollToPosition(0)
+        updateTotal()
+    }
+
+    private fun updateTotal() {
+        val sum = productItems.fold(0.0) { total, product -> total + product.price }
+        totalView.text = "$sum€"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -111,7 +116,7 @@ class ShoppingActivity : AppCompatActivity() {
     }
 }
 
-class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
+class BasketAdapter(private val productItems : MutableList<Product>, private val updateTotal : () -> Unit ) : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
 
     class ProductItem(item: View) :  RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
@@ -144,6 +149,7 @@ class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerV
             val itemPosition = holder.adapterPosition
             productItems.removeAt(itemPosition) // remove the item from list
             notifyItemRemoved(itemPosition)
+            updateTotal()
         }
     }
 
