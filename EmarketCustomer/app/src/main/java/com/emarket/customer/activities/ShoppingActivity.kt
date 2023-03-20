@@ -1,18 +1,28 @@
 package com.emarket.customer.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
+import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Product
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.zxing.integration.android.IntentIntegrator
+import com.google.zxing.integration.android.IntentResult
 
 val product1 = Product(R.drawable.icon, "Apple", 3.0, 1, 3.0)
 val product2 = Product(R.drawable.icon, "Banana", 4.0, 3, 12.0)
@@ -42,6 +52,11 @@ class ShoppingActivity : AppCompatActivity() {
             rv.scrollToPosition(0)
         }
 
+        addBtn.setOnLongClickListener {
+            if (!requestCameraPermission())
+                read.launch(IntentIntegrator(this).createScanIntent())
+            return@setOnLongClickListener true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -60,11 +75,34 @@ class ShoppingActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun requestCameraPermission(): Boolean {
+        val REQUEST_CAMERA_PERMISSION = 1
+        val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (permission == PackageManager.PERMISSION_GRANTED) return false
+        val requests = arrayOf(Manifest.permission.CAMERA)
+        ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
+        return true
+    }
 
+    private val read = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
+        if (intentResult != null) {
+            if (intentResult.contents != null) {
+                showToast(this, "Success")
+                processQRCode(intentResult)
+            } else {
+                showToast(this, "Scan failed")
+            }
+        }
+    }
+
+    private fun processQRCode(result : IntentResult) {
+        // TODO do something useful
+        Log.d("Print", "QR Code Content: ${result.contents}")
+    }
 }
 
 class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
-
 
     class ProductItem(val item: View) :  RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
@@ -103,10 +141,5 @@ class BasketAdapter(private val productItems : MutableList<Product>) : RecyclerV
     override fun getItemCount(): Int {
         return productItems.size
     }
-
-    fun getItem(pos: Int): Product {
-        return productItems[pos]
-    }
-
 }
 
