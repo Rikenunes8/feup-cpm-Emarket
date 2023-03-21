@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Checkable
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
@@ -18,6 +15,7 @@ import com.emarket.customer.models.Product
 class CheckoutActivity : AppCompatActivity() {
     private var vouchers = mutableListOf(15, 15, 15, 15, 15)
     private val productItems : MutableList<Product> = mutableListOf(product1, product2, product1, product2, product1, product2, product1, product2, product1, product2)
+    private val accAmount = 10
 
     var voucherAdapter = VoucherAdapter(vouchers)
     var basketAdapter = CheckoutBasketAdapter(productItems)
@@ -36,9 +34,23 @@ class CheckoutActivity : AppCompatActivity() {
         basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         basketView.adapter = basketAdapter
 
+        val accAmountView = findViewById<TextView>(R.id.acc_amount)
+        accAmountView.text = "$accAmount€"
+
         val totalView = findViewById<TextView>(R.id.total_price)
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
         totalView.text = "$sum€"
+
+        val discount_check = findViewById<CheckBox>(R.id.discount)
+        discount_check.setOnCheckedChangeListener { checkBoxView, isChecked ->
+            val discountView = findViewById<TextView>(R.id.discount_price)
+            discountView.text = if (isChecked) {
+                "- $accAmount€"
+            } else {
+                ""
+            }
+        }
+
 
     }
 }
@@ -63,7 +75,7 @@ class CheckoutBasketAdapter(private val productItems : MutableList<Product>) : R
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, vType: Int): Item {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.basket_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.checkout_item, parent, false)
         return Item(view)
     }
 
