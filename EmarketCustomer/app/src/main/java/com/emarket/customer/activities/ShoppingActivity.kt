@@ -1,5 +1,6 @@
 package com.emarket.customer.activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.Gson
 
 val product1 = Product(R.drawable.icon, "Apple", 3.0, 1, 3.0)
 val product2 = Product(R.drawable.icon, "Banana", 4.0, 3, 12.0)
@@ -45,6 +47,10 @@ class ShoppingActivity : AppCompatActivity() {
 
         val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
         checkoutBtn.setOnClickListener {
+            val sharedPreferences = getSharedPreferences("ShoppingItems", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("list", Gson().toJson(productItems))
+            editor.apply()
             intent = Intent(this, CheckoutActivity::class.java)
             startActivity(intent)
         }

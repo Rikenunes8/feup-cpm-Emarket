@@ -1,5 +1,6 @@
 package com.emarket.customer.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,22 +13,29 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 
 class CheckoutActivity : AppCompatActivity() {
     private var vouchers = mutableListOf(15, 15, 15, 15, 15)
-    private val productItems : MutableList<Product> = mutableListOf(product1, product2, product1, product2, product1, product2, product1, product2, product1, product2)
-    private val accAmount = 10
+    private lateinit var productItems : MutableList<Product>
+    private val accAmount = 13.04
 
-    var voucherAdapter = VoucherAdapter(vouchers)
-    var basketAdapter = CheckoutBasketAdapter(productItems)
+    private lateinit var voucherAdapter : VoucherAdapter
+    private lateinit var basketAdapter: CheckoutBasketAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
 
-        //TODO: get products from last activity
-        //productItems = intent.getParcelableArrayExtra("PRODUCTS") as MutableList<Product>
+        val sharedPreferences = getSharedPreferences("ShoppingItems", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("list", null)
+        productItems = Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
+
+        var voucherAdapter = VoucherAdapter(vouchers)
+        var basketAdapter = CheckoutBasketAdapter(productItems)
+
 
         val voucherView = findViewById<RecyclerView>(R.id.rv_voucher)
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
