@@ -54,7 +54,8 @@ class Emarket(metaclass=EmarketMeta):
     uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
     uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
 
-    # TODO: Sign response with private key?
+    print(self._pubkey.save_pkcs1().decode())
+
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
       
 
@@ -71,8 +72,11 @@ class Emarket(metaclass=EmarketMeta):
     if (self._db.findProductById(uuid) != None):
       return {'error': 'A product with this uuid already exists!'}
     self._db.addProduct(content)
+    
+    signature = rsa.sign(str(content).encode(), self._privkey, 'SHA-256')
+    signatureEncoded = base64.b64encode(signature).decode('utf-8')
 
-    img = qrcode.make(str(content))
+    img = qrcode.make(str( {'product': str(content), 'signature': signatureEncoded}))
     img.save(f'{uuid}.png')
     return content
     

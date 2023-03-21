@@ -8,7 +8,7 @@ import com.emarket.customer.Utils
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
-import java.security.spec.X509EncodedKeySpec
+import java.security.spec.RSAPublicKeySpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
@@ -106,14 +106,14 @@ class CryptoService {
             return null
         }
 
-        fun verifySignature(content: ByteArray, key : PublicKey?) : Boolean? {
+        fun verifySignature(content: ByteArray, signature: ByteArray, key : PublicKey?) : Boolean? {
             if (content.isEmpty()) return null
             if (key == null) return null
             try {
                 val verified = Signature.getInstance(Constants.SIGN_ALGO).run {
                     initVerify(key)
                     update(content)
-                    verify(content)
+                    verify(signature)
                 }
                 return verified
             }
@@ -123,11 +123,16 @@ class CryptoService {
             return null
         }
 
-        fun pubKeyFactory(keyData : String) : PublicKey{
-            val keyBase64 = Base64.getDecoder().decode(keyData)
-            val keySpec = X509EncodedKeySpec(keyBase64);
-            val keyFactory = KeyFactory.getInstance("RSA");
-            return keyFactory.generatePublic(keySpec);
+        fun pubKeyFactory(keyData : String) : PublicKey {
+            val pubkeyBytes = keyData.toByteArray(Charsets.UTF_8)
+            // TODO this is wrong
+            Log.d("FIRST", pubkeyBytes.sliceArray(26..141).decodeToString())
+            Log.d("LAST", pubkeyBytes.sliceArray(150..153).decodeToString())
+            val modulus = BigInteger(1, pubkeyBytes.sliceArray(26..141))
+            val exponent = BigInteger(1, pubkeyBytes.sliceArray(150..153))
+            val keySpec = RSAPublicKeySpec(modulus, exponent)
+            val keyFactory = KeyFactory.getInstance("RSA")
+            return keyFactory.generatePublic(keySpec)
         }
 
         /**
