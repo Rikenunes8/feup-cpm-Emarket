@@ -77,6 +77,6 @@ class Emarket(metaclass=EmarketMeta):
     signatureEncoded = base64.b64encode(signature).decode('utf-8')
 
     img = qrcode.make(str( {'product': str(content), 'signature': signatureEncoded}))
-    img.save(f'{uuid}.png')
+    img.save(f'qrcodes/{uuid}.png')
     return content
     
