@@ -1,17 +1,19 @@
 package com.emarket.customer.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.Checkable
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
+
 
 class CheckoutActivity : AppCompatActivity() {
     private var vouchers = mutableListOf(15, 15, 15, 15, 15)
@@ -33,6 +35,10 @@ class CheckoutActivity : AppCompatActivity() {
         val basketView = findViewById<RecyclerView>(R.id.rv_basket)
         basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         basketView.adapter = basketAdapter
+
+        val totalView = findViewById<TextView>(R.id.total_price)
+        val sum = productItems.fold(0.0) { total, product -> total + product.price }
+        totalView.text = "$sum€"
 
     }
 }
@@ -78,7 +84,7 @@ class VoucherAdapter(private val vouchers : MutableList<Int>) : RecyclerView.Ada
         private val discount: TextView = item.findViewById(R.id.voucher_discount)
 
         fun bindData(discount_value: Int) {
-            discount.text = "$discount_value %"
+            discount.text = "$discount_value%"
         }
     }
 
