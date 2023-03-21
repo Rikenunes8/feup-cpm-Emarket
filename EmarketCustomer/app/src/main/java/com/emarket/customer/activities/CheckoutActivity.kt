@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
@@ -41,14 +42,10 @@ class CheckoutActivity : AppCompatActivity() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
         totalView.text = "$sum€"
 
-        val discount_check = findViewById<CheckBox>(R.id.discount)
-        discount_check.setOnCheckedChangeListener { checkBoxView, isChecked ->
+        val discountCheck = findViewById<CheckBox>(R.id.discount)
+        discountCheck.setOnCheckedChangeListener { _, isChecked ->
             val discountView = findViewById<TextView>(R.id.discount_price)
-            discountView.text = if (isChecked) {
-                "- $accAmount€"
-            } else {
-                ""
-            }
+            discountView.text = if (isChecked) "- $accAmount€" else ""
         }
 
 
@@ -72,6 +69,7 @@ class CheckoutBasketAdapter(private val productItems : MutableList<Product>) : R
             qnt.text = "${product.qnt} x"
             total.text = "${product.total} €"
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, vType: Int): Item {
@@ -90,27 +88,55 @@ class CheckoutBasketAdapter(private val productItems : MutableList<Product>) : R
 }
 
 class VoucherAdapter(private val vouchers : MutableList<Int>) : RecyclerView.Adapter<VoucherAdapter.ProductItem>() {
+    private var checkedPosition = -1
 
-
-    class ProductItem(val item: View) :  RecyclerView.ViewHolder(item) {
+    class ProductItem(private val item: View) : RecyclerView.ViewHolder(item) {
         private val discount: TextView = item.findViewById(R.id.voucher_discount)
 
-        fun bindData(discount_value: Int) {
+        fun bindData(discount_value: Int, position: Int, checkedPosition: Int, listener: OnItemClickListener) {
             discount.text = "$discount_value%"
+
+            val cardView: CardView = item.findViewById(R.id.voucher_card)
+
+            if (position == checkedPosition) {
+                cardView.setBackgroundResource(R.color.light_green)
+            } else {
+                cardView.setBackgroundResource(R.color.white)
+            }
+
+            item.setOnClickListener { view ->
+                listener.onItemClick(position)
+            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, vType: Int): ProductItem {
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductItem {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.voucher, parent, false)
         return ProductItem(view)
     }
 
-    override fun onBindViewHolder(holder: ProductItem, pos: Int) {
-        holder.bindData(vouchers[pos])
+    override fun onBindViewHolder(holder: ProductItem, position: Int) {
+        holder.bindData(vouchers[position], position, checkedPosition, object : OnItemClickListener {
+            override fun onItemClick(position: Int) {
+                if (checkedPosition != position) {
+                    val prevCheckedPosition = checkedPosition
+                    checkedPosition = position
+                    notifyItemChanged(prevCheckedPosition)
+                    notifyItemChanged(checkedPosition)
+                } else {
+                    val prevCheckedPosition = checkedPosition
+                    checkedPosition = -1
+                    notifyItemChanged(prevCheckedPosition)
+                }
+            }
+        })
     }
 
     override fun getItemCount(): Int {
         return vouchers.size
     }
-
 }
