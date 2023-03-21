@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
@@ -99,9 +100,9 @@ class VoucherAdapter(private val vouchers : MutableList<Int>) : RecyclerView.Ada
             val cardView: CardView = item.findViewById(R.id.voucher_card)
 
             if (position == checkedPosition) {
-                cardView.setBackgroundResource(R.color.light_green)
+                cardView.setCardBackgroundColor(ContextCompat.getColor(item.context, R.color.light_green))
             } else {
-                cardView.setBackgroundResource(R.color.white)
+                cardView.setCardBackgroundColor(ContextCompat.getColor(item.context, R.color.white))
             }
 
             item.setOnClickListener { view ->
