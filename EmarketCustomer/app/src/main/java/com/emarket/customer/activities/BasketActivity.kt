@@ -89,13 +89,11 @@ class BasketActivity : AppCompatActivity() {
 
     private fun updateTotal() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
-
         totalView.text = getString(R.string.template_price, sum)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
+        menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
@@ -130,15 +128,14 @@ class BasketActivity : AppCompatActivity() {
 
     private fun processQRCode(result : IntentResult) {
         try {
-            val productSign = Gson().fromJson(result.contents, ProductSignature::class.java)
-            val signature = Base64.getDecoder().decode(productSign.signature)
-
             val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
             val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
+            val productSign = Gson().fromJson(result.contents, ProductSignature::class.java)
 
+            val productBytes = productSign.product.toByteArray(Charsets.UTF_8)
             val serverPubKey = constructRSAPubKey(keyData)
-
-            val verified = verifySignature(productSign.product.toByteArray(Charsets.UTF_8), signature, serverPubKey)
+            val signature = Base64.getDecoder().decode(productSign.signature)
+            val verified = verifySignature(productBytes, signature, serverPubKey)
 
             if (verified == null || !verified) {
                 showToast(this, "Unreliable QR code")
@@ -148,7 +145,6 @@ class BasketActivity : AppCompatActivity() {
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
             val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
             addProduct(newProduct)
-
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
@@ -165,7 +161,6 @@ class BasketAdapter(private val productItems : MutableList<Product>, private val
         private val qnt: TextView = item.findViewById(R.id.item_qnt)
         private val total: TextView = item.findViewById(R.id.item_total_price)
         internal val delete: ImageButton = item.findViewById(R.id.delete_btn)
-
 
         fun bindData(product: Product) {
             icon.setImageResource(product.imgRes)

@@ -26,8 +26,12 @@ class CheckoutActivity : AppCompatActivity() {
     private lateinit var productItems : MutableList<Product>
     private val accAmount = 13.04
 
-    private lateinit var voucherAdapter : VoucherAdapter
-    private lateinit var basketAdapter: CheckoutBasketAdapter
+    private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }
+    private val basketView by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
+    private val accAmountView by lazy { findViewById<TextView>(R.id.acc_amount) }
+    private val totalView by lazy { findViewById<TextView>(R.id.total_price) }
+    private val discountCheck by lazy { findViewById<CheckBox>(R.id.discount) }
+    private val discountView by lazy { findViewById<TextView>(R.id.discount_price) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,31 +41,20 @@ class CheckoutActivity : AppCompatActivity() {
         val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
         productItems = Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
 
-        voucherAdapter = VoucherAdapter(vouchers)
-        basketAdapter = CheckoutBasketAdapter(productItems)
-
-
-        val voucherView = findViewById<RecyclerView>(R.id.rv_voucher)
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        voucherView.adapter = voucherAdapter
-        val basketView = findViewById<RecyclerView>(R.id.rv_basket)
         basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        basketView.adapter = basketAdapter
+        voucherView.adapter = VoucherAdapter(vouchers)
+        basketView.adapter = CheckoutBasketAdapter(productItems)
 
-        val accAmountView = findViewById<TextView>(R.id.acc_amount)
-        accAmountView.text = "$accAmount€"
+        accAmountView.text = getString(R.string.template_price, accAmount)
 
-        val totalView = findViewById<TextView>(R.id.total_price)
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
         totalView.text = getString(R.string.template_price, sum)
 
-        val discountCheck = findViewById<CheckBox>(R.id.discount)
         discountCheck.setOnCheckedChangeListener { _, isChecked ->
-            val discountView = findViewById<TextView>(R.id.discount_price)
             totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
-            discountView.text = if (isChecked) "${DecimalFormat("#.##").format(sum - accAmount)}€" else ""
+            discountView.text = if (isChecked) getString(R.string.template_price, sum - accAmount) else ""
         }
-
     }
 }
 
