@@ -5,10 +5,14 @@ import android.security.KeyPairGeneratorSpec
 import android.util.Log
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils
+import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
+import org.bouncycastle.openssl.PEMParser
+import java.io.StringReader
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
-import java.security.spec.RSAPublicKeySpec
+import java.security.interfaces.RSAPublicKey
+import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
@@ -123,17 +127,6 @@ class CryptoService {
             return null
         }
 
-        fun pubKeyFactory(keyData : String) : PublicKey {
-            val pubkeyBytes = keyData.toByteArray(Charsets.UTF_8)
-            // TODO this is wrong
-            Log.d("FIRST", pubkeyBytes.sliceArray(26..141).decodeToString())
-            Log.d("LAST", pubkeyBytes.sliceArray(150..153).decodeToString())
-            val modulus = BigInteger(1, pubkeyBytes.sliceArray(26..141))
-            val exponent = BigInteger(1, pubkeyBytes.sliceArray(150..153))
-            val keySpec = RSAPublicKeySpec(modulus, exponent)
-            val keyFactory = KeyFactory.getInstance("RSA")
-            return keyFactory.generatePublic(keySpec)
-        }
 
         /**
          * Get the public key modulus and exponent
@@ -173,6 +166,14 @@ class CryptoService {
         fun publicKeyToPKCS1(pubKey : PublicKey) : String {
             val encPubKey = Base64.getEncoder().encodeToString(pubKey.encoded)
             return "-----BEGIN PUBLIC KEY-----\n$encPubKey\n-----END PUBLIC KEY-----\n"
+        }
+
+        fun constructRSAPubKey(data: String) : RSAPublicKey {
+            val pemParser = PEMParser(StringReader(data))
+            val publicKeyInfo = pemParser.readObject() as SubjectPublicKeyInfo
+            val keySpec = X509EncodedKeySpec(publicKeyInfo.encoded)
+            val keyFactory = KeyFactory.getInstance("RSA")
+            return keyFactory.generatePublic(keySpec) as RSAPublicKey
         }
     }
 }
