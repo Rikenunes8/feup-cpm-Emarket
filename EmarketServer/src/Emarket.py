@@ -2,6 +2,7 @@ import uuid
 import rsa
 import base64
 import qrcode
+import json
 
 from src.database.DB import DB
 
@@ -64,9 +65,11 @@ class Emarket(metaclass=EmarketMeta):
     uuid = data.get('uuid')
     if (uuid is None): return {'error': 'Missing uuid property!'}
     name = data.get('name')
-    if (name is None): return {'error': 'Missing name property!'}
+    if (name is None or not isinstance(name, str)): 
+      return {'error': 'Missing name property or invalid type!'}
     price = data.get('price')
-    if (price is None): return {'error': 'Missing price property!'}
+    if (price is None or not isinstance(price, float)): 
+      return {'error': 'Missing price property or invalid type!'}
     content = {'uuid': uuid, 'name': name, 'price': price}
 
     if (self._db.findProductById(uuid) != None):
@@ -76,7 +79,7 @@ class Emarket(metaclass=EmarketMeta):
     signature = rsa.sign(str(content).encode(), self._privkey, 'SHA-256')
     signatureEncoded = base64.b64encode(signature).decode('utf-8')
 
-    img = qrcode.make(str( {'product': str(content), 'signature': signatureEncoded}))
+    img = qrcode.make(str({'product': str(content), 'signature': signatureEncoded}))
     img.save(f'qrcodes/{uuid}.png')
     return content
     
