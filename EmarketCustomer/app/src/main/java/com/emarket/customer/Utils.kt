@@ -1,13 +1,9 @@
 package com.emarket.customer
 
 import android.content.Context
-import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import java.security.KeyStore
 import java.security.MessageDigest
-import java.security.PrivateKey
-import java.security.PublicKey
 
 
 object Utils {
@@ -26,5 +22,11 @@ object Utils {
 
     fun showToast(ctx: Context, message : String?) {
         Toast.makeText(ctx, message, Toast.LENGTH_LONG).show()
+    }
+
+    fun getAttributeColor(context: Context, attributeId : Int) : Int {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(attributeId, typedValue, true)
+        return typedValue.resourceId
     }
 }
