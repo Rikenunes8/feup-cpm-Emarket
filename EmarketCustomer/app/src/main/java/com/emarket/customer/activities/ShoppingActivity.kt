@@ -1,5 +1,4 @@
 package com.emarket.customer.activities
-
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -8,6 +7,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -67,6 +67,16 @@ class ShoppingActivity : AppCompatActivity() {
         addBtn.setOnLongClickListener {
             addProduct(Product(R.drawable.icon, "0", "FAKE", 40.0))
             return@setOnLongClickListener true
+        }
+
+        val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
+        checkoutBtn.setOnClickListener {
+            val sharedPreferences = getSharedPreferences("ShoppingItems", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("list", Gson().toJson(productItems))
+            editor.apply()
+            intent = Intent(this, CheckoutActivity::class.java)
+            startActivity(intent)
         }
     }
 
