@@ -1,6 +1,7 @@
 package com.emarket.customer.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -16,10 +17,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
+import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
@@ -119,22 +122,24 @@ class ShoppingActivity : AppCompatActivity() {
             val productSign = Gson().fromJson(result.contents, ProductSignature::class.java)
             val signature = Base64.getDecoder().decode(productSign.signature)
 
-            // TODO make this work ------------------------------
-            //val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            //val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
-            //val serverPubKey = pubKeyFactory(keyData)
-            val verified = verifySignature(productSign.product.toByteArray(Charsets.UTF_8), signature, null) // TODO replace null by the server public key
-            Log.d("Verification", verified.toString())
-            if (verified != null && !verified!!) {
+            val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
+
+            val serverPubKey = constructRSAPubKey(keyData)
+
+            val verified = verifySignature(productSign.product.toByteArray(Charsets.UTF_8), signature, serverPubKey)
+
+            if (verified == null || !verified) {
                 showToast(this, "Unreliable QR code")
+                return
             }
-            // TODO --------------------------------------------
 
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
             val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
             addProduct(newProduct)
-        } catch (e: java.lang.Exception) {
 
+        } catch (e: java.lang.Exception) {
+            Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
         }
     }
