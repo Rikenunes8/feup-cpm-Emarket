@@ -36,7 +36,7 @@ class ProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_shop -> {
-                startActivity(Intent(this, ShoppingActivity::class.java))
+                startActivity(Intent(this, BasketActivity::class.java))
                 return true
             }
         }

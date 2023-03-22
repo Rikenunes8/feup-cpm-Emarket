@@ -39,7 +39,7 @@ data class ProductSignature (
     val signature : String
 )
 
-class ShoppingActivity : AppCompatActivity() {
+class BasketActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CAMERA_PERMISSION = 1
     }
@@ -51,7 +51,7 @@ class ShoppingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_shopping)
+        setContentView(R.layout.activity_basket)
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
         rv.layoutManager = LinearLayoutManager(this, orientation, false)
