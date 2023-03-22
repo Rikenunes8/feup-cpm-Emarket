@@ -12,7 +12,6 @@ import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.interfaces.RSAPublicKey
-import java.security.spec.RSAPublicKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
@@ -128,17 +127,6 @@ class CryptoService {
             return null
         }
 
-        fun pubKeyFactory(keyData : String) : PublicKey {
-            val pubkeyBytes = keyData.toByteArray(Charsets.UTF_8)
-            // TODO this is wrong
-            Log.d("FIRST", pubkeyBytes.sliceArray(26..141).decodeToString())
-            Log.d("LAST", pubkeyBytes.sliceArray(150..153).decodeToString())
-            val modulus = BigInteger(1, pubkeyBytes.sliceArray(26..141))
-            val exponent = BigInteger(1, pubkeyBytes.sliceArray(150..153))
-            val keySpec = RSAPublicKeySpec(modulus, exponent)
-            val keyFactory = KeyFactory.getInstance("RSA")
-            return keyFactory.generatePublic(keySpec)
-        }
 
         /**
          * Get the public key modulus and exponent
