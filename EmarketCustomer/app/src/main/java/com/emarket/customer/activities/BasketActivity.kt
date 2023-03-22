@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
 import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
@@ -44,7 +43,7 @@ class BasketActivity : AppCompatActivity() {
         const val REQUEST_CAMERA_PERMISSION = 1
     }
 
-    private var adapter = BasketAdapter(productItems) { updateTotal() }
+    private var adapter = ProductsListAdapter(productItems) { updateTotal() }
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -149,46 +148,5 @@ class BasketActivity : AppCompatActivity() {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
         }
-    }
-}
-
-class BasketAdapter(private val productItems : MutableList<Product>, private val updateTotal : () -> Unit ) : RecyclerView.Adapter<BasketAdapter.ProductItem>() {
-
-    class ProductItem(item: View) :  RecyclerView.ViewHolder(item) {
-        private val icon: ImageView = item.findViewById(R.id.item_icon)
-        private val name: TextView = item.findViewById(R.id.item_name)
-        private val price: TextView = item.findViewById(R.id.item_price)
-        private val qnt: TextView = item.findViewById(R.id.item_qnt)
-        private val total: TextView = item.findViewById(R.id.item_total_price)
-        internal val delete: ImageButton = item.findViewById(R.id.delete_btn)
-
-        fun bindData(product: Product) {
-            icon.setImageResource(product.imgRes)
-            name.text = product.name
-            price.text = "Price: ${product.price} €"
-            qnt.text = "${1} x"
-            total.text = "${product.price} €"
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, vType: Int): ProductItem {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.basket_item, parent, false)
-        return ProductItem(view)
-    }
-
-    override fun onBindViewHolder(holder: ProductItem, pos: Int) {
-        holder.bindData(productItems[pos])
-
-        holder.delete.setOnClickListener {
-            // remove your item from data base
-            val itemPosition = holder.adapterPosition
-            productItems.removeAt(itemPosition) // remove the item from list
-            notifyItemRemoved(itemPosition)
-            updateTotal()
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return productItems.size
     }
 }
