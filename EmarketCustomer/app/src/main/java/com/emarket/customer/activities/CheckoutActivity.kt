@@ -1,6 +1,7 @@
 package com.emarket.customer.activities
 
 import android.content.Context
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,9 +55,10 @@ class CheckoutActivity : AppCompatActivity() {
         val discountCheck = findViewById<CheckBox>(R.id.discount)
         discountCheck.setOnCheckedChangeListener { _, isChecked ->
             val discountView = findViewById<TextView>(R.id.discount_price)
-            discountView.text = if (isChecked) "- $accAmount€" else ""
-        }
+            totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
 
+            discountView.text = if (isChecked) "${sum - accAmount}€" else ""
+        }
 
     }
 }
