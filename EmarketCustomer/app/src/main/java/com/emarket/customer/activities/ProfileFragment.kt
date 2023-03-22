@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.emarket.customer.R
+import com.emarket.customer.controllers.VoucherListAdapter
 import com.emarket.customer.databinding.FragmentProfileBinding
 import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType
@@ -13,10 +17,17 @@ import com.emarket.customer.models.UserViewModel
 class ProfileFragment() : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
+    private val vouchers = mutableListOf(15, 15, 15, 15, 15)
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentProfileBinding.inflate(layoutInflater)
 
         val user = UserViewModel(application = requireActivity().application).user
+
+        binding.rvVoucher.apply {
+            layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
+            adapter = VoucherListAdapter(vouchers)
+        }
 
         binding.nameTv.text = user.name
         binding.nicknameTv.text = user.nickname
