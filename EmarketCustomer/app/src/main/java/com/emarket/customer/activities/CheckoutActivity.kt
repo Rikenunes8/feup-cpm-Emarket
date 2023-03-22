@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
 import com.google.gson.Gson
@@ -32,12 +33,12 @@ class CheckoutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
 
-        val sharedPreferences = getSharedPreferences("ShoppingItems", Context.MODE_PRIVATE)
-        val json = sharedPreferences.getString("list", null)
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
         productItems = Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
 
-        var voucherAdapter = VoucherAdapter(vouchers)
-        var basketAdapter = CheckoutBasketAdapter(productItems)
+        voucherAdapter = VoucherAdapter(vouchers)
+        basketAdapter = CheckoutBasketAdapter(productItems)
 
 
         val voucherView = findViewById<RecyclerView>(R.id.rv_voucher)
@@ -52,14 +53,12 @@ class CheckoutActivity : AppCompatActivity() {
 
         val totalView = findViewById<TextView>(R.id.total_price)
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
-        totalView.text = "$sum€"
+        totalView.text = getString(R.string.template_price, sum)
 
         val discountCheck = findViewById<CheckBox>(R.id.discount)
         discountCheck.setOnCheckedChangeListener { _, isChecked ->
             val discountView = findViewById<TextView>(R.id.discount_price)
             totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
-
-
             discountView.text = if (isChecked) "${DecimalFormat("#.##").format(sum - accAmount)}€" else ""
         }
 
@@ -68,8 +67,7 @@ class CheckoutActivity : AppCompatActivity() {
 
 class CheckoutBasketAdapter(private val productItems : MutableList<Product>) : RecyclerView.Adapter<CheckoutBasketAdapter.Item>() {
 
-
-    class Item(val item: View) :  RecyclerView.ViewHolder(item) {
+    class Item(item: View) :  RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
         private val name: TextView = item.findViewById(R.id.item_name)
         private val price: TextView = item.findViewById(R.id.item_price)
@@ -118,7 +116,7 @@ class VoucherAdapter(private val vouchers : MutableList<Int>) : RecyclerView.Ada
                 cardView.setCardBackgroundColor(ContextCompat.getColor(item.context, R.color.white))
             }
 
-            item.setOnClickListener { view ->
+            item.setOnClickListener {
                 listener.onItemClick(position)
             }
         }

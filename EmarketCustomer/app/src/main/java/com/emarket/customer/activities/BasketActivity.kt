@@ -48,6 +48,7 @@ class BasketActivity : AppCompatActivity() {
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
+    private val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,14 +70,13 @@ class BasketActivity : AppCompatActivity() {
             return@setOnLongClickListener true
         }
 
-        val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
         checkoutBtn.setOnClickListener {
-            val sharedPreferences = getSharedPreferences("ShoppingItems", Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.putString("list", Gson().toJson(productItems))
-            editor.apply()
-            intent = Intent(this, CheckoutActivity::class.java)
-            startActivity(intent)
+            val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            sharedPreferences.edit().apply {
+                putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
+                apply()
+            }
+            startActivity(Intent(this, CheckoutActivity::class.java))
         }
     }
 
@@ -89,7 +89,8 @@ class BasketActivity : AppCompatActivity() {
 
     private fun updateTotal() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price }
-        totalView.text = "$sum€"
+
+        totalView.text = getString(R.string.template_price, sum)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
