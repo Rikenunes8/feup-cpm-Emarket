@@ -26,6 +26,7 @@ class DB(metaclass=DBMeta):
       print(f"Creating database {DB._name}.")
     self._db = self._client[DB._name]
     self._users = self._db['users']
+    self._products = self._db['products']
 
   def addUser(self, uuid, pubKey: str, cardNo: str):
     user = {
@@ -42,3 +43,10 @@ class DB(metaclass=DBMeta):
 
   def findUserById(self, id) -> dict:
     return self._users.find_one({'uuid': id})
+  
+
+  def addProduct(self, data: dict) -> dict:
+    res = self._products.insert_one({**data})
+    return res.inserted_id
+  def findProductById(self, id) -> dict:
+    return self._products.find_one({'uuid': id})

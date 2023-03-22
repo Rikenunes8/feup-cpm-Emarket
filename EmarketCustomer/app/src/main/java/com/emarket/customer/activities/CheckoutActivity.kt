@@ -77,8 +77,8 @@ class CheckoutBasketAdapter(private val productItems : MutableList<Product>) : R
             icon.setImageResource(product.imgRes)
             name.text = product.name
             price.text = "Price: ${product.price} €"
-            qnt.text = "${product.qnt} x"
-            total.text = "${product.total} €"
+            //qnt.text = "${product.qnt} x"
+            //total.text = "${product.qnt*product.price} €"
         }
 
     }

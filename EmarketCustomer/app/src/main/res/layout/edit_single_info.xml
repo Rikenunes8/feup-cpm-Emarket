@@ -7,7 +7,7 @@
     android:layout_margin="10dp">
 
     <EditText
-        android:id="@+id/edit_personal_title"
+        android:id="@+id/edt_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/edit_personal_name"
@@ -22,20 +22,20 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/edt_personal_bt_ok"
+            android:id="@+id/edt_btn_ok"
             style="@style/Button"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="@string/edit_personal_btn"/>
+            android:text="@string/edit_save_btn"/>
 
         <Button
-            android:id="@+id/edt_personal_bt_cancel"
+            android:id="@+id/edt_btn_cancel"
             style="@style/Button"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="@string/edit_personal_cancel_btn"/>
+            android:text="@string/edit_cancel_btn"/>
 
     </LinearLayout>
 

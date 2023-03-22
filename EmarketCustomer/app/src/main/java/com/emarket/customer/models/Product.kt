@@ -1,10 +1,15 @@
 package com.emarket.customer.models
 
-data class Product (
-    var imgRes: Int,
+data class ProductDTO (
+    var uuid: String,
     var name: String,
     var price: Double,
-    var qnt: Int,
-    var total: Double
+)
+
+data class Product (
+    var imgRes: Int,
+    var uuid: String,
+    var name: String,
+    var price: Double,
 )
 
