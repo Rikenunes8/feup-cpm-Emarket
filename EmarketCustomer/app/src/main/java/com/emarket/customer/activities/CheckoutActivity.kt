@@ -16,6 +16,8 @@ import com.emarket.customer.R
 import com.emarket.customer.models.Product
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 
 class CheckoutActivity : AppCompatActivity() {
@@ -57,7 +59,8 @@ class CheckoutActivity : AppCompatActivity() {
             val discountView = findViewById<TextView>(R.id.discount_price)
             totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
 
-            discountView.text = if (isChecked) "${sum - accAmount}€" else ""
+
+            discountView.text = if (isChecked) "${DecimalFormat("#.##").format(sum - accAmount)}€" else ""
         }
 
     }
