@@ -123,13 +123,13 @@ class ShoppingActivity : AppCompatActivity() {
             val signature = Base64.getDecoder().decode(productSign.signature)
 
             val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            var keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
+            val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
 
             val serverPubKey = constructRSAPubKey(keyData)
 
             val verified = verifySignature(productSign.product.toByteArray(Charsets.UTF_8), signature, serverPubKey)
 
-            if (verified != null && !verified) {
+            if (verified == null || !verified) {
                 showToast(this, "Unreliable QR code")
                 return
             }
