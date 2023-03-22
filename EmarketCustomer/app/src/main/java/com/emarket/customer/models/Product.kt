@@ -11,5 +11,6 @@ data class Product (
     var uuid: String,
     var name: String,
     var price: Double,
+    var qnt: Int = 1
 )
 

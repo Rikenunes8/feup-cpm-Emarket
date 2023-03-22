@@ -31,7 +31,7 @@ import java.util.*
 
 val product1 = Product(R.drawable.icon, "1", "Apple", 3.0)
 val product2 = Product(R.drawable.icon, "2", "Banana", 4.0)
-private val productItems : MutableList<Product> = mutableListOf(product1, product2, product1, product2, product1, product2, product1, product2, product1, product2)
+private val productItems : MutableList<Product> = mutableListOf(product1, product2)
 
 data class ProductSignature (
     val product : String,
@@ -86,8 +86,13 @@ class BasketActivity : AppCompatActivity() {
         updateTotal()
     }
 
+    private fun updateProduct(newProduct : Product) {
+        productItems.forEachIndexed { index, product -> if (product.uuid == newProduct.uuid) adapter.notifyItemChanged(index)}
+        updateTotal()
+    }
+
     private fun updateTotal() {
-        val sum = productItems.fold(0.0) { total, product -> total + product.price }
+        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.qnt }
         totalView.text = getString(R.string.template_price, sum)
     }
 
@@ -142,8 +147,14 @@ class BasketActivity : AppCompatActivity() {
             }
 
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
-            val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
-            addProduct(newProduct)
+            val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
+            if (oldProduct != null) {
+                oldProduct.qnt++
+                updateProduct(oldProduct)
+            } else {
+                val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
+                addProduct(newProduct)
+            }
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
