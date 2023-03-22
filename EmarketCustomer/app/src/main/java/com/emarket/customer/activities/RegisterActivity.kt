@@ -142,6 +142,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 savePersistently(user, serverPubKey)
                 startActivity(Intent(this, LoginActivity::class.java))
+                finish()
             } catch (ex: Exception) {
                 Log.e("RegisterActivity","ERROR: " + ex.message!!)
 
@@ -153,7 +154,6 @@ class RegisterActivity : AppCompatActivity() {
             }
 
             runOnUiThread { stopLoading() }
-
         }
     }
 
