@@ -50,4 +50,5 @@
 
     <string name="confirm">Confirm</string>
     <string name="header_payment">Payment</string>
+    <string name="error_qrcode_generation">Error generating qrcode</string>
 </resources>
