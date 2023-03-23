@@ -13,7 +13,7 @@ import com.emarket.customer.models.Product
 
 class ProductsListAdapter(private val productItems: MutableList<Product>, private val updateTotal: (() -> Unit)? = null ) : RecyclerView.Adapter<ProductsListAdapter.ProductItem>() {
 
-    class ProductItem(item: View) :  RecyclerView.ViewHolder(item) {
+    class ProductItem(private val item: View) :  RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
         private val name: TextView = item.findViewById(R.id.item_name)
         private val price: TextView = item.findViewById(R.id.item_price)
@@ -24,9 +24,9 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         fun bindData(product: Product) {
             icon.setImageResource(product.imgRes)
             name.text = product.name
-            price.text = "Price: ${product.price} €"
-            qnt.text = "${1} x"
-            total.text = "${product.price} €"
+            qnt.text = item.context.getString(R.string.template_quantity_times, product.qnt)
+            price.text = item.context.getString(R.string.template_price, product.price)
+            total.text = item.context.getString(R.string.template_price, product.price*product.qnt)
         }
     }
 
@@ -43,10 +43,15 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
 
         if (updateTotal == null) return
         holder.delete.setOnClickListener {
-            // remove your item from data base
             val itemPosition = holder.adapterPosition
-            productItems.removeAt(itemPosition) // remove the item from list
-            notifyItemRemoved(itemPosition)
+            if (productItems[itemPosition].qnt <= 1) {
+                // remove your item from data base
+                productItems.removeAt(itemPosition)
+                notifyItemRemoved(itemPosition)
+            } else {
+                productItems[itemPosition].qnt--
+                notifyItemChanged(itemPosition)
+            }
             updateTotal!!()
         }
     }

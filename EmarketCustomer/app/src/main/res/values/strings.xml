@@ -45,6 +45,7 @@
     <string name="supermarket_name">ACME</string>
 
     <!-- General -->
+    <string name="template_quantity_times">%d x</string>
     <string name="template_price">%.2f €</string>
     <string name="template_percentage">%d%%</string>
 </resources>
