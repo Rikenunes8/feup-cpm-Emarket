@@ -17,7 +17,7 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/SectionTitle2"
+                style="@style/Subtitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -88,7 +88,7 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/SectionTitle2"
+                style="@style/Subtitle2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -132,7 +132,7 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            style="@style/SectionTitle2"
+            style="@style/Subtitle2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/section_vouchers" />

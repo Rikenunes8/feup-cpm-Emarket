@@ -28,7 +28,7 @@
             android:padding="15dp">
 
             <TextView
-                style="@style/SectionTitle1"
+                style="@style/Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
@@ -98,7 +98,7 @@
             </TableLayout>
 
             <TextView
-                style="@style/SectionTitle1"
+                style="@style/Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
