@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.ImageView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.User
@@ -29,6 +30,8 @@ data class Payment(
 
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
+    private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.titleTextColor)) }
+    private val backgroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorSecondaryVariant)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +60,7 @@ class PaymentActivity : AppCompatActivity() {
         val qrContent = String(signature + dataByteArray, StandardCharsets.ISO_8859_1)
         thread(start = true) {
             try {
-                val bitmap = encodeAsBitmap(qrContent)
+                val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
                 runOnUiThread { qrCodeImageview.setImageBitmap(bitmap) }
             } catch (e: Exception) {
                 showToast(this, getString(R.string.error_qrcode_generation))
@@ -66,7 +69,7 @@ class PaymentActivity : AppCompatActivity() {
         }
     }
 
-    private fun encodeAsBitmap(str: String): Bitmap? {
+    private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
         val DIMENSION = 1000
 
         val hints = Hashtable<EncodeHintType, String>().also {
@@ -83,7 +86,7 @@ class PaymentActivity : AppCompatActivity() {
         for (y in 0 until h) {
             val offset = y * w
             for (x in 0 until w) {
-                pixels[offset + x] = if (result.get(x, y)) Color.BLUE else Color.WHITE
+                pixels[offset + x] = if (result.get(x, y)) foregroundColor else backgroundColor
             }
         }
         val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
