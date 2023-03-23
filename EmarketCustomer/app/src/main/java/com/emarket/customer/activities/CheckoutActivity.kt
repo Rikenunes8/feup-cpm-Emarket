@@ -74,8 +74,6 @@ class CheckoutActivity : AppCompatActivity() {
             }
             startActivity(qrcode)
         }
-
-
     }
 }
 
