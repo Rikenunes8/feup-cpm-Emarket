@@ -1,14 +1,19 @@
 package com.emarket.customer.activities
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
+import com.emarket.customer.models.User
+import com.emarket.customer.services.CryptoService.Companion.getPrivKey
+import com.emarket.customer.services.CryptoService.Companion.signContent
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -17,6 +22,11 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
 
+data class Payment(
+    val userUUID: String,
+    val transaction: Transaction
+)
+
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
 
@@ -24,18 +34,27 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
-        val data = intent.getStringExtra("Transaction")!!
+        val transactionJSON = intent.getStringExtra("Transaction")!!
+        val transaction = Gson().fromJson(transactionJSON, Transaction::class.java)
 
         // TODO remove this when the properties of transaction were not hardcoded ---
-        val transaction = Gson().fromJson(data, Transaction::class.java)
         Log.d("Transaction", transaction.voucher.toString())
         Log.d("Transaction", transaction.discounted.toString())
         Log.d("Transaction", transaction.products.size.toString())
         // TODO ---------------------------------------------------------------------
 
-        val dataByteArray = data.toByteArray()
-        val qrContent = String(dataByteArray, StandardCharsets.ISO_8859_1)
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val storedUser = sharedPreferences.getString(Constants.USER_KEY, null)?.let {
+            Gson().fromJson(it, User::class.java)
+        }
+        val userUUID = storedUser!!.userId
 
+        val dataJSON = Gson().toJson(Payment(userUUID, transaction))
+        val dataByteArray = dataJSON.toByteArray()
+        val signature = signContent(dataByteArray, getPrivKey())!!
+
+        // the first 64 bytes are the signature
+        val qrContent = String(signature + dataByteArray, StandardCharsets.ISO_8859_1)
         thread(start = true) {
             try {
                 val bitmap = encodeAsBitmap(qrContent)
