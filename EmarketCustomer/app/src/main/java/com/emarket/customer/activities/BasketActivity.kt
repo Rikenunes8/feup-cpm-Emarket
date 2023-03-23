@@ -65,7 +65,10 @@ class BasketActivity : AppCompatActivity() {
         }
         // TODO: Remove bypass to add a fake product
         addBtn.setOnLongClickListener {
-            addProduct(Product(R.drawable.icon, "0", "FAKE", 40.0))
+            val newProduct = Product(R.drawable.icon, "0", "FAKE", 40.0)
+            val oldProduct = productItems.find { it.uuid == newProduct.uuid }
+            if (oldProduct != null) { oldProduct.qnt++;updateProduct(oldProduct) }
+            else { addProduct(newProduct) }
             return@setOnLongClickListener true
         }
 
