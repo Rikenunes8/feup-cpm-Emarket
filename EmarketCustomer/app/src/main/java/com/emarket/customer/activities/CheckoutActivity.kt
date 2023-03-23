@@ -69,7 +69,7 @@ class CheckoutActivity : AppCompatActivity() {
             transaction.discounted = if (discountCheck.isChecked) minOf(total, accAmount) else 0.0
             transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
 
-            val qrcode = Intent(this, TransactionQRcode::class.java).apply {
+            val qrcode = Intent(this, PaymentActivity::class.java).apply {
                 putExtra("Transaction", Gson().toJson(transaction))
             }
             startActivity(qrcode)

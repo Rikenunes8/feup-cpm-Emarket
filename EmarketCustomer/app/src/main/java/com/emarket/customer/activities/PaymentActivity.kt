@@ -7,10 +7,10 @@ import com.emarket.customer.R
 import com.emarket.customer.models.Transaction
 import com.google.gson.Gson
 
-class TransactionQRcode : AppCompatActivity() {
+class PaymentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_transaction_qrcode)
+        setContentView(R.layout.activity_payment)
 
         val data = intent.getStringExtra("Transaction")
         val transaction = Gson().fromJson(data, Transaction::class.java)
