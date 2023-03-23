@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.Utils.getAttributeColor
+import com.emarket.customer.models.Voucher
 
-class VoucherListAdapter(private val vouchers: MutableList<Int>) : RecyclerView.Adapter<VoucherListAdapter.ProductItem>() {
+class VoucherListAdapter(private val vouchers: MutableList<Voucher>) : RecyclerView.Adapter<VoucherListAdapter.VoucherItem>() {
     private var checkedPosition = -1
 
-    class ProductItem(private val item: View) : RecyclerView.ViewHolder(item) {
+    class VoucherItem(private val item: View) : RecyclerView.ViewHolder(item) {
         private val discount: TextView by lazy { item.findViewById(R.id.voucher_discount) }
         private val cardView: CardView by lazy { item.findViewById(R.id.voucher_card) }
 
@@ -36,13 +36,13 @@ class VoucherListAdapter(private val vouchers: MutableList<Int>) : RecyclerView.
         fun onItemClick(position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductItem {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VoucherItem {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.voucher, parent, false)
-        return ProductItem(view)
+        return VoucherItem(view)
     }
 
-    override fun onBindViewHolder(holder: ProductItem, position: Int) {
-        holder.bindData(vouchers[position], position, checkedPosition, object : OnItemClickListener {
+    override fun onBindViewHolder(holder: VoucherItem, position: Int) {
+        holder.bindData(vouchers[position].percentage, position, checkedPosition, object : OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     if (checkedPosition != position) {
                         val prevCheckedPosition = checkedPosition
@@ -60,5 +60,10 @@ class VoucherListAdapter(private val vouchers: MutableList<Int>) : RecyclerView.
 
     override fun getItemCount(): Int {
         return vouchers.size
+    }
+
+    fun getSelectedItem() : Voucher? {
+        if (checkedPosition < 0) return null
+        return vouchers[checkedPosition]
     }
 }
