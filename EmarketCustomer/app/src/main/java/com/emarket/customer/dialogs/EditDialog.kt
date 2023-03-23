@@ -33,14 +33,14 @@ class EditDialog(ctx: Context,
 
         when (editDialogType) {
             EditDialogType.PAYMENT -> {
-                titleId = R.string.edit_payment_title
-                fieldName = context.getString(R.string.edit_payment_cardNo)
-                confirmationMsg = context.getString(R.string.edit_payment_success)
+                titleId = R.string.dialog_title_edit_payment
+                fieldName = context.getString(R.string.card_number)
+                confirmationMsg = context.getString(R.string.success_edit_payment)
             }
             EditDialogType.PERSONAL -> {
-                titleId = R.string.edit_personal_title
-                fieldName = context.getString(R.string.edit_personal_name)
-                confirmationMsg = context.getString(R.string.edit_personal_success)
+                titleId = R.string.dialog_title_edit_personal
+                fieldName = context.getString(R.string.name)
+                confirmationMsg = context.getString(R.string.success_edit_personal)
             }
         }
 

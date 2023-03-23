@@ -24,7 +24,7 @@
                 android:textStyle="bold"
                 android:gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="@string/personal_info_title" />
+                android:text="@string/subtitle_personal_info" />
 
             <ImageButton
                 android:id="@+id/edit_personal_btn"
@@ -55,7 +55,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/name_label" />
+                        android:text="@string/label_name" />
 
                     <TextView
                         android:id="@+id/name_tv"
@@ -74,7 +74,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/nickname_label" />
+                        android:text="@string/label_nickname" />
 
                     <TextView
                         android:id="@+id/nickname_tv"
@@ -98,7 +98,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="@string/card_info_title"
+                android:text="@string/subtitle_card_info"
                 android:textColor="?attr/titleTextColor"
                 android:textStyle="bold" />
 
@@ -128,7 +128,7 @@
                     style="@style/FormLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/card_no_label" />
+                    android:text="@string/label_card_no" />
 
                 <TextView
                     android:id="@+id/card_no_tv"

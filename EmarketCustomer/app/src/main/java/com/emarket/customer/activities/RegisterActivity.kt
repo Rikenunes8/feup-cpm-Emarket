@@ -55,7 +55,7 @@ class RegisterActivity : AppCompatActivity() {
             val card = cardEditText.text.toString()
 
             // generate key pair
-            if (generateAndStoreKeys(this, getString(R.string.already_registered_err))) {
+            if (generateAndStoreKeys(this, getString(R.string.error_already_registered))) {
                 val pubKey = getPubKey()
                 if (pubKey != null) {
                     startLoading()

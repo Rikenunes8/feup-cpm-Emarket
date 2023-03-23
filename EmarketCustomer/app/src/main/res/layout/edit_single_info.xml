@@ -10,8 +10,8 @@
         android:id="@+id/edt_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/edit_personal_name"
-        android:hint="@string/edit_personal_name"
+        android:text="@string/name"
+        android:hint="@string/name"
         android:textColor="?attr/colorOnSecondary"
         android:backgroundTint="?attr/colorOnSecondary" />
 
@@ -27,7 +27,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="@string/edit_save_btn"/>
+            android:text="@string/btn_save"/>
 
         <Button
             android:id="@+id/edt_btn_cancel"
@@ -35,7 +35,7 @@
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="@string/edit_cancel_btn"/>
+            android:text="@string/btn_cancel"/>
 
     </LinearLayout>
 

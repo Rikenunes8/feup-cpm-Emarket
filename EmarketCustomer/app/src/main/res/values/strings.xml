@@ -1,51 +1,51 @@
 <resources>
     <string name="app_name">Emarket Customer</string>
 
-    <!-- Registration -->
-    <string name="registration_title">Registration</string>
-    <string name="personal_info_title">Personal information</string>
-    <string name="card_info_title">Payment information</string>
-    <string name="name_label">Name:</string>
-    <string name="nickname_label">Nickname:</string>
-    <string name="password_label">Password:</string>
-    <string name="card_no_label">Card no.:</string>
-    <string name="register_btn">Register</string>
-    <string name="already_registered_err">Error: Already registered an account on this device</string>
+    <string name="header_profile">Profile</string>
+    <string name="header_basket">Basket</string>
+    <string name="header_checkout">Checkout</string>
+
+    <string name="title_registration">Registration</string>
+    <string name="title_login">Login</string>
+
+    <string name="subtitle_personal_info">Personal information</string>
+    <string name="subtitle_card_info">Payment information</string>
+    <string name="subtitle_pick_voucher">Pick a voucher</string>
+    <string name="subtitle_accumulated_amount">Accumulated amount</string>
+
+    <string name="label_name">Name:</string>
+    <string name="label_nickname">Nickname:</string>
+    <string name="label_password">Password:</string>
+    <string name="label_card_no">Card no.:</string>
+    <string name="label_total">Total:</string>
+    <string name="label_amount">Amount:</string>
+
+    <string name="tab_profile">Profile</string>
+    <string name="tab_transactions">Transactions</string>
+
+    <string name="dialog_title_edit_personal">Edit Personal Information</string>
+    <string name="dialog_title_edit_payment">Edit Payment Information</string>
+
+    <string name="btn_register">Register</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="success_edit_personal">Personal information updated successfully</string>
+    <string name="success_edit_payment">Payment information updated successfully</string>
+    <string name="error_already_registered">Error: Already registered an account on this device</string>
     <string name="error_getting_keys">Could not get the public key from the key store</string>
+    <string name="error_invalid_credentials">Invalid nickname or password</string>
 
-    <!-- Login -->
-    <string name="login_title">Login</string>
-    <string name="login_btn">Login</string>
-    <string name="log_invalid_credentials">Invalid nickname or password</string>
-
-    <!-- Profile -->
-    <string name="profile_title">Profile</string>
-    <string name="profile_tab">Profile</string>
-    <string name="transactions_tab">Transactions</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <!-- Edit profile -->
-    <string name="edit_personal_title">Edit Personal Information</string>
-    <string name="edit_personal_name">Name</string>
-    <string name="edit_save_btn">Save</string>
-    <string name="edit_cancel_btn">Cancel</string>
-    <string name="edit_personal_success">Personal information updated successfully</string>
-    <string name="edit_payment_title">Edit Payment Information</string>
-    <string name="edit_payment_success">Payment information updated successfully</string>
-    <string name="edit_payment_cardNo">Card Number</string>
-
-    <!-- Basket and Checkout-->
-    <string name="shopping_title">Basket</string>
-    <string name="checkout_label">Checkout</string>
-    <string name="total_label">Total:</string>
-    <string name="select_voucher">Pick a voucher</string>
-    <string name="accumulated">Accumulated amount</string>
-    <string name="amount_label">Amount:</string>
-    <string name="discount_label">Discount</string>
-    <string name="supermarket_name">ACME</string>
-
-    <!-- General -->
-    <string name="template_quantity_times">%d x</string>
     <string name="template_price">%.2f €</string>
     <string name="template_percentage">%d%%</string>
+    <string name="template_quantity_times">%d x</string>
+
+    <string name="name">Name</string>
+    <string name="card_number">Card Number</string>
+    <string name="checkout">Checkout</string>
+    <string name="discount">Discount</string>
+    <string name="supermarket_name">ACME</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
