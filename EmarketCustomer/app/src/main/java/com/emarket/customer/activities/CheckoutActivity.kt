@@ -17,6 +17,7 @@ import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
 
 
 class CheckoutActivity : AppCompatActivity() {
@@ -69,6 +70,7 @@ class CheckoutActivity : AppCompatActivity() {
             transaction.total = transaction.products.fold(0.0) { sum, product -> sum + product.price }
             transaction.discounted = if (discountCheck.isChecked) minOf(transaction.total, accAmount) else 0.0
             transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
+            transaction.date = LocalDate.now()
 
             val qrcode = Intent(this, PaymentActivity::class.java).apply {
                 putExtra("Transaction", Gson().toJson(transaction))
