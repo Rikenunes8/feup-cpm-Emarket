@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
                     // login successful
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
+                    finish()
                 } else {
                     // login failed
                     showToast(this, getString(R.string.log_invalid_credentials))

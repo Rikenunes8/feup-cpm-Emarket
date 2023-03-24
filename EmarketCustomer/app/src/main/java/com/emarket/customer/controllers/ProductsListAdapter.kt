@@ -24,9 +24,9 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         fun bindData(product: Product) {
             icon.setImageResource(product.imgRes)
             name.text = product.name
-            price.text = ""
-            qnt.text = "${product.qnt} x"
-            total.text = item.context.getString(R.string.template_price, product.price)
+            qnt.text = item.context.getString(R.string.template_quantity_times, product.qnt)
+            price.text = item.context.getString(R.string.template_price, product.price)
+            total.text = item.context.getString(R.string.template_price, product.price*product.qnt)
         }
     }
 
