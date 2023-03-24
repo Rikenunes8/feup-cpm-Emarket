@@ -43,11 +43,13 @@ class CheckoutActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
+        val products = Gson().fromJson<MutableList<Product>>(json, object : TypeToken<MutableList<Product>>() {}.type)
 
         transaction = Transaction(
-            Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type),
+            products,
             0.0,
-            null
+            null,
+            products.fold(0.0) { sum, product -> sum + product.price }
         )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
@@ -56,17 +58,16 @@ class CheckoutActivity : AppCompatActivity() {
         basketView.adapter = ProductsListAdapter(transaction.products)
 
         accAmountView.text = getString(R.string.template_price, accAmount)
-
-        val total = transaction.products.fold(0.0) { sum, product -> sum + product.price }
-        totalView.text = getString(R.string.template_price, total)
+        totalView.text = getString(R.string.template_price, transaction.total)
 
         discountCheck.setOnCheckedChangeListener { _, isChecked ->
             totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
-            discountView.text = if (isChecked) getString(R.string.template_price, maxOf(total - accAmount, 0.0) ) else ""
+            discountView.text = if (isChecked) getString(R.string.template_price, maxOf(transaction.total - accAmount, 0.0) ) else ""
         }
 
         confirmButton.setOnClickListener {
-            transaction.discounted = if (discountCheck.isChecked) minOf(total, accAmount) else 0.0
+            transaction.total = transaction.products.fold(0.0) { sum, product -> sum + product.price }
+            transaction.discounted = if (discountCheck.isChecked) minOf(transaction.total, accAmount) else 0.0
             transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
 
             val qrcode = Intent(this, PaymentActivity::class.java).apply {
