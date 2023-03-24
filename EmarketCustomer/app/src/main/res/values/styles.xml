@@ -6,10 +6,17 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Subtitle" parent="TextAppearance.AppCompat">
+    <style name="Subtitle1" parent="TextAppearance.AppCompat">
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Subtitle2" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">?attr/titleTextColor</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="FormLabel" parent="TextAppearance.AppCompat">
@@ -19,7 +26,6 @@
         <item name="android:textAlignment">textEnd</item>
         <item name="android:textColor">?attr/colorOnSecondary</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textStyle"></item>
     </style>
 
     <style name="FormEdit">

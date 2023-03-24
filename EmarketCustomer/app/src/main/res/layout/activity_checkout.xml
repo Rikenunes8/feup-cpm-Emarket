@@ -15,12 +15,11 @@
         android:paddingHorizontal="20dp">
 
         <TextView
-            style="@style/Subtitle"
+            style="@style/Subtitle2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/subtitle_pick_voucher"
-            android:textColor="?attr/titleTextColor" />
+            android:text="@string/subtitle_pick_voucher" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_voucher"
@@ -29,12 +28,12 @@
             android:layout_marginBottom="20dp" />
 
         <TextView
-            style="@style/Subtitle"
+            style="@style/Subtitle2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/subtitle_accumulated_amount"
-            android:textColor="?attr/titleTextColor" />
+            android:text="@string/subtitle_accumulated_amount" />
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -75,12 +74,11 @@
         </androidx.cardview.widget.CardView>
 
         <TextView
-            style="@style/Subtitle"
+            style="@style/Subtitle2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/header_basket"
-            android:textColor="?attr/titleTextColor" />
+            android:text="@string/header_basket" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_basket"

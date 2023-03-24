@@ -38,7 +38,7 @@ class CheckoutActivity : AppCompatActivity() {
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        voucherView.adapter = VoucherListAdapter(vouchers)
+        voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(productItems)
 
         accAmountView.text = getString(R.string.template_price, accAmount)
