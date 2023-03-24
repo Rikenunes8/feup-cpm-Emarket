@@ -18,7 +18,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val sharedPreferences =
         application.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-    var user: User
+    var user: User?
         get() = Gson().fromJson(sharedPreferences.getString(Constants.USER_KEY, null), User::class.java)
         set(value) {
             sharedPreferences.edit().putString(Constants.USER_KEY, Gson().toJson(value)).apply()

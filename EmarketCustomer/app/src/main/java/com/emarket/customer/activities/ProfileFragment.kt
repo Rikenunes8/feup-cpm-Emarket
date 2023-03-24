@@ -16,7 +16,7 @@ class ProfileFragment() : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentProfileBinding.inflate(layoutInflater)
 
-        val user = UserViewModel(application = requireActivity().application).user
+        val user = UserViewModel(application = requireActivity().application).user!!
 
         binding.nameTv.text = user.name
         binding.nicknameTv.text = user.nickname

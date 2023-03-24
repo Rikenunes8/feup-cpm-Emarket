@@ -13,6 +13,7 @@ import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.User
+import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.services.CryptoService.Companion.getPrivKey
 import com.emarket.customer.services.CryptoService.Companion.signContent
 import com.google.gson.Gson
@@ -46,10 +47,7 @@ class PaymentActivity : AppCompatActivity() {
         Log.d("Transaction", transaction.products.size.toString())
         // TODO ---------------------------------------------------------------------
 
-        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val storedUser = sharedPreferences.getString(Constants.USER_KEY, null)?.let {
-            Gson().fromJson(it, User::class.java)
-        }
+        val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId
 
         val dataJSON = Gson().toJson(Payment(userUUID, transaction))
