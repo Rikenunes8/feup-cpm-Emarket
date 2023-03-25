@@ -13,16 +13,23 @@ import com.emarket.customer.databinding.FragmentProfileBinding
 import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType
 import com.emarket.customer.models.UserViewModel
+import com.emarket.customer.models.Voucher
 
 class ProfileFragment() : Fragment() {
     private lateinit var binding: FragmentProfileBinding
 
-    private val vouchers = mutableListOf(15, 15, 15, 15, 15)
+    private val vouchers = mutableListOf(
+        Voucher("1", 15),
+        Voucher("2", 15),
+        Voucher("3", 15),
+        Voucher("4", 15),
+        Voucher("5", 15)
+    ) // TODO get this from other place
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentProfileBinding.inflate(layoutInflater)
 
-        val user = UserViewModel(application = requireActivity().application).user
+        val user = UserViewModel(application = requireActivity().application).user!!
 
         binding.rvVoucher.apply {
             layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)

@@ -11,32 +11,27 @@ import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.models.User
+import com.emarket.customer.models.UserViewModel
 import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
 
-    val loginBtn by lazy { findViewById<Button>(R.id.btn_login) }
+    private val loginBtn by lazy { findViewById<Button>(R.id.btn_login) }
+    private val nicknameTv by lazy { findViewById<EditText>(R.id.edt_log_nickname) }
+    private val passwordTv by lazy { findViewById<EditText>(R.id.edt_log_pass) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         loginBtn.setOnClickListener {
-            val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-
-            val storedUser = sharedPreferences.getString(Constants.USER_KEY, null)?.let {
-                Gson().fromJson(it, User::class.java)
-            }
-
-            val nickname = findViewById<EditText>(R.id.edt_log_nickname).text.toString()
-            val pass = findViewById<EditText>(R.id.edt_log_pass).text.toString()
+            val storedUser = UserViewModel(this.application).user
+            val nickname = nicknameTv.text.toString()
+            val pass = passwordTv.text.toString()
 
             // just a double check
             if (storedUser != null) {
-                if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(
-                        pass
-                    )
-                ) {
+                if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))

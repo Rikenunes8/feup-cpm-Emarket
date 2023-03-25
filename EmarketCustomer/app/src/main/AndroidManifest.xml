@@ -15,14 +15,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activities.PaymentActivity"
+            android:label="@string/header_payment"
+            android:parentActivityName=".activities.CheckoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.BasketActivity"
             android:exported="true"
             android:label="@string/header_basket" />
         <activity
             android:name=".activities.CheckoutActivity"
+            android:exported="false"
             android:label="@string/header_checkout"
-            android:parentActivityName=".activities.BasketActivity"
-            android:exported="false" />
+            android:parentActivityName=".activities.BasketActivity" />
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
@@ -51,4 +56,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

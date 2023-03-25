@@ -126,14 +126,14 @@
                 android:textColor="?attr/colorOnPrimary" />
 
             <Button
-                android:id="@+id/checkout_btn"
+                android:id="@+id/confirm_btn"
                 style="@style/Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="?attr/colorOnPrimary"
                 android:drawableLeft="@drawable/checkout_cart"
                 android:drawableTint="?attr/colorOnContainer"
-                android:text="@string/checkout"
+                android:text="@string/confirm"
                 android:textAllCaps="false"
                 android:textColor="?attr/colorOnContainer"
                 android:textSize="18sp" />

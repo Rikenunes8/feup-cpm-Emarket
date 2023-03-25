@@ -4,6 +4,7 @@
     <string name="header_profile">Profile</string>
     <string name="header_basket">Basket</string>
     <string name="header_checkout">Checkout</string>
+    <string name="header_payment">Payment</string>
 
     <string name="title_registration">Registration</string>
     <string name="title_login">Login</string>
@@ -36,6 +37,7 @@
     <string name="error_already_registered">Error: Already registered an account on this device</string>
     <string name="error_getting_keys">Could not get the public key from the key store</string>
     <string name="error_invalid_credentials">Invalid nickname or password</string>
+    <string name="error_qrcode_generation">Error generating qrcode</string>
 
     <string name="template_price">%.2f €</string>
     <string name="template_percentage">%d%%</string>
@@ -45,6 +47,7 @@
     <string name="card_number">Card Number</string>
     <string name="checkout">Checkout</string>
     <string name="discount">Discount</string>
+    <string name="confirm">Confirm</string>
     <string name="supermarket_name">ACME</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>

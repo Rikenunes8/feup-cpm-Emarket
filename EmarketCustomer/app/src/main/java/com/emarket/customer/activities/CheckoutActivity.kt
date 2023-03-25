@@ -1,6 +1,7 @@
 package com.emarket.customer.activities
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
 import android.widget.*
@@ -12,14 +13,22 @@ import com.emarket.customer.R
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.controllers.VoucherListAdapter
 import com.emarket.customer.models.Product
+import com.emarket.customer.models.Transaction
+import com.emarket.customer.models.Voucher
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.time.LocalDate
 
 
 class CheckoutActivity : AppCompatActivity() {
-    private var vouchers = mutableListOf(15, 15, 15, 15, 15)
-    private lateinit var productItems : MutableList<Product>
-    private val accAmount = 13.04
+    private lateinit var transaction : Transaction
+    private var vouchers = mutableListOf(
+        Voucher("1", 15),
+        Voucher("2", 15),
+        Voucher("3", 15),
+        Voucher("4", 15),
+        Voucher("5", 15)) // TODO get this from other place
+    private val accAmount = 13.04 // TODO get this from other place
 
     private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }
     private val basketView by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
@@ -27,6 +36,7 @@ class CheckoutActivity : AppCompatActivity() {
     private val totalView by lazy { findViewById<TextView>(R.id.total_price) }
     private val discountCheck by lazy { findViewById<CheckBox>(R.id.discount) }
     private val discountView by lazy { findViewById<TextView>(R.id.discount_price) }
+    private val confirmButton by lazy { findViewById<Button>(R.id.confirm_btn) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,21 +44,38 @@ class CheckoutActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
-        productItems = Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
+        val products = Gson().fromJson<MutableList<Product>>(json, object : TypeToken<MutableList<Product>>() {}.type)
+
+        transaction = Transaction(
+            products,
+            0.0,
+            null,
+            products.fold(0.0) { sum, product -> sum + product.price }
+        )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         voucherView.adapter = VoucherListAdapter(vouchers, true)
-        basketView.adapter = ProductsListAdapter(productItems)
+        basketView.adapter = ProductsListAdapter(transaction.products)
 
         accAmountView.text = getString(R.string.template_price, accAmount)
-
-        val sum = productItems.fold(0.0) { total, product -> total + product.price }
-        totalView.text = getString(R.string.template_price, sum)
+        totalView.text = getString(R.string.template_price, transaction.total)
 
         discountCheck.setOnCheckedChangeListener { _, isChecked ->
             totalView.paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
-            discountView.text = if (isChecked) getString(R.string.template_price, sum - accAmount) else ""
+            discountView.text = if (isChecked) getString(R.string.template_price, maxOf(transaction.total - accAmount, 0.0) ) else ""
+        }
+
+        confirmButton.setOnClickListener {
+            transaction.total = transaction.products.fold(0.0) { sum, product -> sum + product.price }
+            transaction.discounted = if (discountCheck.isChecked) minOf(transaction.total, accAmount) else 0.0
+            transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
+            transaction.date = LocalDate.now()
+
+            val qrcode = Intent(this, PaymentActivity::class.java).apply {
+                putExtra("Transaction", Gson().toJson(transaction))
+            }
+            startActivity(qrcode)
         }
     }
 }
