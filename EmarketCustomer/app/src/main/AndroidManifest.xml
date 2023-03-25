@@ -22,16 +22,16 @@
         <activity
             android:name=".activities.BasketActivity"
             android:exported="true"
-            android:label="Basket" />
+            android:label="@string/header_basket" />
         <activity
             android:name=".activities.CheckoutActivity"
             android:exported="false"
-            android:label="@string/checkout_label"
+            android:label="@string/header_checkout"
             android:parentActivityName=".activities.BasketActivity" />
         <activity
             android:name=".activities.ProfileActivity"
             android:exported="false"
-            android:label="Profile" />
+            android:label="@string/header_profile" />
         <activity
             android:name=".activities.InitialActivity"
             android:exported="true">

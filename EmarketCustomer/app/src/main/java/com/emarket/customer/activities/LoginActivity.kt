@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 } else {
                     // login failed
-                    showToast(this, getString(R.string.log_invalid_credentials))
+                    showToast(this, getString(R.string.error_invalid_credentials))
                 }
             } else {
                 // user not registered

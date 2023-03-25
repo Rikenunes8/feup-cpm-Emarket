@@ -26,8 +26,8 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when (position) {
-            0 -> context.resources.getString(R.string.profile_tab)
-            1 -> context.resources.getString(R.string.transactions_tab)
+            0 -> context.resources.getString(R.string.tab_profile)
+            1 -> context.resources.getString(R.string.tab_transactions)
             else -> {""}
         }
     }
