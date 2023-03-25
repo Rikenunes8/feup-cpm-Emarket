@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:text="@string/registration_title"
+        android:text="@string/title_registration"
         android:textAlignment="center" />
 
     <androidx.cardview.widget.CardView
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
-                android:text="@string/personal_info_title" />
+                android:text="@string/subtitle_personal_info" />
 
             <TableLayout
                 android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/name_label" />
+                        android:text="@string/label_name" />
 
                     <EditText
                         style="@style/FormEdit"
@@ -66,7 +66,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/nickname_label" />
+                        android:text="@string/label_nickname" />
 
                     <EditText
                         style="@style/FormEdit"
@@ -85,7 +85,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/password_label" />
+                        android:text="@string/label_password" />
 
                     <EditText
                         style="@style/FormEdit"
@@ -103,7 +103,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="15dp"
-                android:text="@string/card_info_title"/>
+                android:text="@string/subtitle_card_info"/>
 
 
             <LinearLayout
@@ -116,7 +116,7 @@
                     style="@style/FormLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="@string/card_no_label" />
+                    android:text="@string/label_card_no" />
 
                 <EditText
                     style="@style/FormEdit"
@@ -133,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:paddingHorizontal="70dp"
-                android:text="@string/register_btn" />
+                android:text="@string/btn_register" />
 
             <ProgressBar
                 android:id="@+id/loading_icon"

@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/total_label"
+                android:text="@string/label_total"
                 android:textColor="?attr/colorOnPrimary"
                 android:textStyle="bold" />
 
@@ -71,7 +71,7 @@
                 android:backgroundTint="?attr/colorOnPrimary"
                 android:drawableLeft="@drawable/checkout_cart"
                 android:drawableTint="?attr/colorOnContainer"
-                android:text="@string/checkout_label"
+                android:text="@string/checkout"
                 android:textAllCaps="false"
                 android:textColor="?attr/colorOnContainer"
                 android:textSize="18sp" />

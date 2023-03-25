@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/select_voucher" />
+            android:text="@string/subtitle_pick_voucher" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_voucher"
@@ -32,7 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/accumulated" />
+            android:text="@string/subtitle_accumulated_amount" />
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -51,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/amount_label" />
+                    android:text="@string/label_amount" />
 
                 <TextView
                     android:id="@+id/acc_amount"
@@ -65,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/discount_label"
+                    android:text="@string/discount"
                     app:buttonTint="?attr/colorOnSecondary" />
 
 
@@ -77,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="10dp"
-            android:text="@string/shopping_title" />
+            android:text="@string/header_basket" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_basket"
@@ -103,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="@string/total_label"
+                android:text="@string/label_total"
                 android:textColor="?attr/colorOnPrimary"
                 android:textStyle="bold" />
 
@@ -132,7 +133,7 @@
                 android:backgroundTint="?attr/colorOnPrimary"
                 android:drawableLeft="@drawable/checkout_cart"
                 android:drawableTint="?attr/colorOnContainer"
-                android:text="@string/checkout_label"
+                android:text="@string/checkout"
                 android:textAllCaps="false"
                 android:textColor="?attr/colorOnContainer"
                 android:textSize="18sp" />

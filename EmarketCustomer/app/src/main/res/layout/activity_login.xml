@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:text="@string/login_title"
+        android:text="@string/title_login"
         android:textAlignment="center" />
 
     <androidx.cardview.widget.CardView
@@ -40,7 +40,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/nickname_label" />
+                        android:text="@string/label_nickname" />
 
                     <EditText
                         style="@style/FormEdit"
@@ -59,7 +59,7 @@
                         style="@style/FormLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="@string/password_label" />
+                        android:text="@string/label_password" />
 
                     <EditText
                         style="@style/FormEdit"
@@ -79,7 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:paddingHorizontal="70dp"
-                android:text="@string/login_btn" />
+                android:text="@string/btn_login" />
 
         </LinearLayout>
 
