@@ -12,8 +12,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.emarket.terminal.NetworkService.Companion.makeRequest
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,5 +68,9 @@ class MainActivity : AppCompatActivity() {
     private fun processQRCode(result : IntentResult) {
         // TODO do something useful
         findViewById<TextView>(R.id.qr_value).text = result.contents
+        thread(start = true) {
+            val res = makeRequest(RequestType.POST, Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT, result.contents)
+            Log.d("SERVER_RESPONSE", res)
+        }
     }
 }
