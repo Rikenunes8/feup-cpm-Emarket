@@ -13,21 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.emarket.terminal.NetworkService.Companion.makeRequest
-import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import kotlin.concurrent.thread
-
-data class Request (val data: String)
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val TAG = "MainActivity"
+        private const val TAG = "Terminal"
         private const val REQUEST_CAMERA_PERMISSION = 1
-        private const val REQUEST_CODE_QR_SCAN = 49374
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
