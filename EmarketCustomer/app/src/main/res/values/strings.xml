@@ -13,6 +13,7 @@
     <string name="subtitle_card_info">Payment information</string>
     <string name="subtitle_pick_voucher">Pick a voucher</string>
     <string name="subtitle_accumulated_amount">Accumulated amount</string>
+    <string name="subtitle_vouchers">Vouchers</string>
 
     <string name="label_name">Name:</string>
     <string name="label_nickname">Nickname:</string>
