@@ -62,9 +62,10 @@ class MainActivity : AppCompatActivity() {
         if (intentResult != null) {
             if (intentResult.contents != null) {
                 Log.d(TAG, "QR Code Content: ${intentResult.contents}")
-                Toast.makeText(this, intentResult.contents, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show()
                 processQRCode(intentResult)
             } else {
+                Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show()
                 Log.d(TAG, "Scan failed")
             }
         }
@@ -72,14 +73,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun processQRCode(result : IntentResult) {
         val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
-        findViewById<TextView>(R.id.qr_value).text = data
-        println(data)
         thread(start = true) {
             val res = makeRequest(
                 RequestType.POST,
                 Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
                 data)
-            Log.d("SERVER_RESPONSE", res)
+            findViewById<TextView>(R.id.qr_value).text = res
         }
     }
 }
