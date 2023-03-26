@@ -26,6 +26,11 @@ def checkout():
   if (not isContentJson(request)): return notJson()
   res = Emarket().checkout(request.json)
   return makeResponse(res)
+
+@routes.get('/transactions')
+def transactions():
+  res = Emarket().getTransactions(request.args.get('user'))
+  return makeResponse(res)
   
 @routes.post('/products/add')
 def addProduct():
