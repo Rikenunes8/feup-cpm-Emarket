@@ -13,9 +13,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.emarket.terminal.NetworkService.Companion.makeRequest
+import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import java.nio.charset.StandardCharsets
 import kotlin.concurrent.thread
+
+data class Request (val data: String)
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,10 +70,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun processQRCode(result : IntentResult) {
-        // TODO do something useful
-        findViewById<TextView>(R.id.qr_value).text = result.contents
+        val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+        findViewById<TextView>(R.id.qr_value).text = data
+        val jsonInputString = Gson().toJson(Request(data)).toString()
+        println(jsonInputString)
         thread(start = true) {
-            val res = makeRequest(RequestType.POST, Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT, result.contents)
+            val res = makeRequest(
+                RequestType.POST,
+                Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
+                jsonInputString)
             Log.d("SERVER_RESPONSE", res)
         }
     }

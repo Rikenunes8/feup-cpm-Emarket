@@ -20,6 +20,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
@@ -31,7 +32,7 @@ data class Payment(
 
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
-    private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.titleTextColor)) }
+    private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorOnSecondary)) }
     private val backgroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorSecondaryVariant)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +50,7 @@ class PaymentActivity : AppCompatActivity() {
 
         val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId
-
-        val dataJSON = Gson().toJson(Payment(userUUID, transaction))
-        val dataByteArray = dataJSON.toByteArray()
-        val signature = signContent(dataByteArray, getPrivKey())!!
-
-        // the first 64 bytes are the signature
-        val qrContent = String(signature + dataByteArray, StandardCharsets.ISO_8859_1)
+        val qrContent = genQRCode(userUUID, transaction)
         thread(start = true) {
             try {
                 val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
@@ -65,6 +60,22 @@ class PaymentActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    private fun genQRCode(userUUID: String, transaction: Transaction) : String {
+        val dataJSON = Gson().toJson(Payment(userUUID, transaction))
+        val dataByteArray = dataJSON.toByteArray()
+        val signature = signContent(dataByteArray, getPrivKey())!!
+        val signatureEncoded = Base64.getEncoder().encodeToString(signature)
+        val len = 4 + 4 + signatureEncoded.length + dataJSON.length
+        val tag = ByteBuffer.allocate(len).apply {  // building an array of bytes (binary)
+            putInt(signatureEncoded.length)
+            put(signatureEncoded.toByteArray(StandardCharsets.ISO_8859_1))
+            putInt(dataJSON.length)
+            put(dataJSON.toByteArray(StandardCharsets.ISO_8859_1))
+        }
+
+        return String(tag.array(), StandardCharsets.ISO_8859_1)
     }
 
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {

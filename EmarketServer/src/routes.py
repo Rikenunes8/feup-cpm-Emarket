@@ -20,6 +20,12 @@ def register():
   if (not isContentJson(request)): return notJson()
   res = Emarket().register(request.json)
   return makeResponse(res)
+
+@routes.post('/checkout')
+def checkout():
+  if (not isContentJson(request)): return notJson()
+  res = Emarket().checkout(request.json)
+  return makeResponse(res)
   
 @routes.post('/products/add')
 def addProduct():

@@ -58,7 +58,23 @@ class Emarket(metaclass=EmarketMeta):
     print(self._pubkey.save_pkcs1().decode())
 
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
-      
+  
+  def checkout(self, data : dict) -> dict:
+    if (data.get('data' is None)): return {'error': 'Missing data property!'}
+    print(data['data'])
+    dataBytes = data['data'].encode()
+    print(dataBytes)
+    signLen = int(dataBytes[0])
+    signature = dataBytes[1:signLen+1].decode()
+    contentLen = int(dataBytes[signLen+1])
+    content = dataBytes[signLen+2:signLen+2+contentLen].decode()
+
+    print(f'signLen: {signLen}')
+    print(f'contentLen: {contentLen}')
+    print(f'signature: {signature}')
+    print(f'content: {content}')
+    
+    return {}
 
 
   def addProduct(self, data: dict) -> dict:
