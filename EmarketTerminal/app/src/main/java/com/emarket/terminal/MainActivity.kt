@@ -16,6 +16,7 @@ import com.emarket.terminal.NetworkService.Companion.makeRequest
 import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import kotlin.concurrent.thread
 
@@ -72,13 +73,12 @@ class MainActivity : AppCompatActivity() {
     private fun processQRCode(result : IntentResult) {
         val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
         findViewById<TextView>(R.id.qr_value).text = data
-        val jsonInputString = Gson().toJson(Request(data)).toString()
-        println(jsonInputString)
+        println(data)
         thread(start = true) {
             val res = makeRequest(
                 RequestType.POST,
                 Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
-                jsonInputString)
+                data)
             Log.d("SERVER_RESPONSE", res)
         }
     }

@@ -30,6 +30,11 @@ data class Payment(
     val transaction: Transaction
 )
 
+data class Data(
+    val signature: String,
+    val data: String
+)
+
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
     private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorOnSecondary)) }
@@ -63,19 +68,14 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun genQRCode(userUUID: String, transaction: Transaction) : String {
-        val dataJSON = Gson().toJson(Payment(userUUID, transaction))
-        val dataByteArray = dataJSON.toByteArray()
-        val signature = signContent(dataByteArray, getPrivKey())!!
+        val paymentJSON = Gson().toJson(Payment(userUUID, transaction))
+        val paymentByteArray = paymentJSON.toByteArray()
+        val signature = signContent(paymentByteArray, getPrivKey())!!
         val signatureEncoded = Base64.getEncoder().encodeToString(signature)
-        val len = 4 + 4 + signatureEncoded.length + dataJSON.length
-        val tag = ByteBuffer.allocate(len).apply {  // building an array of bytes (binary)
-            putInt(signatureEncoded.length)
-            put(signatureEncoded.toByteArray(StandardCharsets.ISO_8859_1))
-            putInt(dataJSON.length)
-            put(dataJSON.toByteArray(StandardCharsets.ISO_8859_1))
-        }
+        val data = Gson().toJson(Data(signatureEncoded, paymentJSON))
+        println(data.toByteArray().decodeToString())
 
-        return String(tag.array(), StandardCharsets.ISO_8859_1)
+        return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
     }
 
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
