@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                 RequestType.POST,
                 Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
                 data)
-            findViewById<TextView>(R.id.qr_value).text = res
+            runOnUiThread { findViewById<TextView>(R.id.qr_value).text = res }
         }
     }
 }
