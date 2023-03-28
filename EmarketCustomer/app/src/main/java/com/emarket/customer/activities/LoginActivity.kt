@@ -1,18 +1,14 @@
 package com.emarket.customer.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
-import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.models.User
 import com.emarket.customer.models.UserViewModel
-import com.google.gson.Gson
 
 class LoginActivity : AppCompatActivity() {
 

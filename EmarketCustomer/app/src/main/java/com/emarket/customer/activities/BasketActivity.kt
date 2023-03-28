@@ -28,6 +28,7 @@ import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import java.util.*
+import kotlin.concurrent.thread
 
 val product1 = Product(R.drawable.icon, "1", "Apple", 3.25)
 val product2 = Product(R.drawable.icon, "2", "Banana", 4.99)
@@ -154,9 +155,14 @@ class BasketActivity : AppCompatActivity() {
             if (oldProduct != null) {
                 oldProduct.qnt++
                 updateProduct(oldProduct)
+                thread(start=true) { dbLayer.addProduct(oldProduct) }
             } else {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
                 addProduct(newProduct)
+                thread(start=true) {
+                    if (!dbLayer.checkProduct(newProduct))
+                        dbLayer.addProduct(newProduct)
+                }
             }
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())

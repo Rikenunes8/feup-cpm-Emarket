@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
@@ -32,9 +33,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     private val keyTransactionProducts = "TransProdId"
     private val colQuantity = "Quantity"
 
-
+    lateinit var db : SQLiteDatabase
 
     override fun onCreate(db: SQLiteDatabase) {
+        this.db = db
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
                 "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
                 "$colVoucherPercentage INTEGER)"
@@ -61,6 +63,17 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         db.execSQL(sqlCreateProducts)
         db.execSQL(sqlCreateTransactions)
         db.execSQL(sqlCreateTransactionProducts)
+
+        if (!checkBasket()) {
+            val sqlInsertBasket = "INSERT INTO $tableTransactions VALUES (0, NULL, 0, NULL, 0)"
+            db.execSQL(sqlInsertBasket)
+        }
+    }
+
+    private fun checkBasket() : Boolean {
+        val query = "SELECT * FROM $tableTransactions WHERE $keyTransaction = 0"
+        val cursor = db.rawQuery(query, arrayOf())
+        return cursor.count > 0
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -87,6 +100,11 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         }
         return writableDatabase.insert(tableProducts, null, values)
     }
+    fun checkProduct(product: Product) : Boolean {
+        val query = "SELECT * FROM $tableProducts WHERE $keyProductId =?"
+        val cursor = db.rawQuery(query, arrayOf(product.uuid))
+        return cursor.count > 0
+    }
 
     fun addTransaction(transaction: Transaction) : Long {
         for (x in transaction.products) {
@@ -102,4 +120,20 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         return writableDatabase.insert(tableProducts, null, values)
     }
 
+    fun addProductToBasket(product : Product) {
+        val values = ContentValues().also {
+            it.put(keyTransaction, 0)
+            it.put(keyProductId, product.uuid)
+            it.put(colQuantity, product.qnt)
+        }
+        if (product.qnt == 1)
+            writableDatabase.insert(tableTransactionProducts, null, values)
+        else
+            writableDatabase.update(tableTransactionProducts, values, "$keyTransaction =0 AND $keyProductId=?", arrayOf(product.uuid))
+
+    }
+
+    fun removeProductFromBasket(product: Product) {
+        writableDatabase.delete(tableTransactionProducts, "$keyTransaction =? AND $keyProductId =?", arrayOf("0", product.uuid))
+    }
 }
