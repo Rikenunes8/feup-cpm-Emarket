@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.ImageView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
@@ -55,7 +56,9 @@ class PaymentActivity : AppCompatActivity() {
 
         val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId
-        val qrContent = genQRCode(userUUID, transaction)
+        val paymentJson = Gson().toJson(Payment(userUUID, transaction))
+        val qrContent = Utils.genQRCode(paymentJson)
+
         thread(start = true) {
             try {
                 val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
@@ -66,18 +69,6 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun genQRCode(userUUID: String, transaction: Transaction) : String {
-        val paymentJSON = Gson().toJson(Payment(userUUID, transaction))
-        val paymentByteArray = paymentJSON.toByteArray()
-        val signature = signContent(paymentByteArray, getPrivKey())!!
-        val signatureEncoded = Base64.getEncoder().encodeToString(signature)
-        val data = Gson().toJson(Data(signatureEncoded, paymentJSON))
-        println(data.toByteArray().decodeToString())
-
-        return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
-    }
-
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
         val DIMENSION = 1000
 
