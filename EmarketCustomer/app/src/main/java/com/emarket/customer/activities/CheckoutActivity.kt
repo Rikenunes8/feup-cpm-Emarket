@@ -17,7 +17,8 @@ import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class CheckoutActivity : AppCompatActivity() {
@@ -50,7 +51,7 @@ class CheckoutActivity : AppCompatActivity() {
             products,
             0.0,
             null,
-            products.fold(0.0) { sum, product -> sum + product.price }
+            products.fold(0.0) { sum, product -> sum + product.price * product.qnt }
         )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
@@ -67,10 +68,10 @@ class CheckoutActivity : AppCompatActivity() {
         }
 
         confirmButton.setOnClickListener {
-            transaction.total = transaction.products.fold(0.0) { sum, product -> sum + product.price }
+            transaction.total = transaction.products.fold(0.0) { sum, product -> sum + product.price * product.qnt}
             transaction.discounted = if (discountCheck.isChecked) minOf(transaction.total, accAmount) else 0.0
             transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
-            transaction.date = LocalDate.now()
+            transaction.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
 
             val qrcode = Intent(this, PaymentActivity::class.java).apply {
                 putExtra("Transaction", Gson().toJson(transaction))

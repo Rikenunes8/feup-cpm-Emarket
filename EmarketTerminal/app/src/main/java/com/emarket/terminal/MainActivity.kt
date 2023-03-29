@@ -12,15 +12,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.emarket.terminal.NetworkService.Companion.makeRequest
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import java.nio.charset.StandardCharsets
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val TAG = "MainActivity"
+        private const val TAG = "Terminal"
         private const val REQUEST_CAMERA_PERMISSION = 1
-        private const val REQUEST_CODE_QR_SCAN = 49374
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,16 +57,23 @@ class MainActivity : AppCompatActivity() {
         if (intentResult != null) {
             if (intentResult.contents != null) {
                 Log.d(TAG, "QR Code Content: ${intentResult.contents}")
-                Toast.makeText(this, intentResult.contents, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Success", Toast.LENGTH_LONG).show()
                 processQRCode(intentResult)
             } else {
+                Toast.makeText(this, "Scan failed", Toast.LENGTH_LONG).show()
                 Log.d(TAG, "Scan failed")
             }
         }
     }
 
     private fun processQRCode(result : IntentResult) {
-        // TODO do something useful
-        findViewById<TextView>(R.id.qr_value).text = result.contents
+        val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+        thread(start = true) {
+            val res = makeRequest(
+                RequestType.POST,
+                Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
+                data)
+            runOnUiThread { findViewById<TextView>(R.id.qr_value).text = res }
+        }
     }
 }

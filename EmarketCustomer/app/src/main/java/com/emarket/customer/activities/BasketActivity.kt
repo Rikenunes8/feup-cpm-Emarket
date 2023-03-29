@@ -29,8 +29,8 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import java.util.*
 
-val product1 = Product(R.drawable.icon, "1", "Apple", 3.0)
-val product2 = Product(R.drawable.icon, "2", "Banana", 4.0)
+val product1 = Product(R.drawable.icon, "1", "Apple", 3.25)
+val product2 = Product(R.drawable.icon, "2", "Banana", 4.99)
 private val productItems : MutableList<Product> = mutableListOf(product1, product2)
 
 data class ProductSignature (

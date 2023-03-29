@@ -28,25 +28,39 @@ class DB(metaclass=DBMeta):
     self._users = self._db['users']
     self._products = self._db['products']
 
+  # ------------- Users --------------
+
   def addUser(self, uuid, pubKey: str, cardNo: str):
     user = {
       'uuid': uuid,
       'pubKey': pubKey,
-      'cardNo': cardNo
+      'cardNo': cardNo,
+      'transactions': [],
+      'vouchers': []
     }
     res = self._users.insert_one(user)
-    print(f"Inserted user with id {res.inserted_id} of type {type(res.inserted_id)}")
+    print(f"Inserted user with id {uuid}")
     return res.inserted_id
+
+  def addUserTransaction(self, uuid, transaction: dict):
+    res = self._users.update_one(
+      {'uuid': uuid},
+      {'$push': {'transactions': transaction}}
+    )
+    print(f"Updated user with id {uuid}")
   
   def findUserByKey(self, key) -> dict:
     return self._users.find_one({'pubKey': key})
 
   def findUserById(self, id) -> dict:
     return self._users.find_one({'uuid': id})
-  
+
+
+  # ------------ Products ------------
 
   def addProduct(self, data: dict) -> dict:
     res = self._products.insert_one({**data})
     return res.inserted_id
+
   def findProductById(self, id) -> dict:
     return self._products.find_one({'uuid': id})

@@ -58,7 +58,25 @@ class Emarket(metaclass=EmarketMeta):
     print(self._pubkey.save_pkcs1().decode())
 
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
-      
+  
+  def checkout(self, data : dict) -> dict:
+    if (data.get('data') == None): return {'error': 'Missing data property!'}
+    if (data.get('signature' == None)): return {'error': 'Missing signature property!'}
+
+    paymentStr = data['data']
+    payment = json.loads(paymentStr)
+    if (payment.get('userUUID') == None): return {'error': 'Missing userUUID property!'}
+    if (payment.get('transaction') == None): return {'error': 'Missing transaction property!'}
+
+    signatureDecoded = base64.b64decode(data['signature'].encode())
+    uid = payment['userUUID']
+    key = self._getUserPublicKey(uid)
+
+    try: rsa.verify(paymentStr.encode(), signatureDecoded, key)
+    except: return {'error': 'Signature verification failed!'}
+
+    DB().addUserTransaction(uid, payment['transaction'])
+    return {'success': 'You are free to go!'}
 
 
   def addProduct(self, data: dict) -> dict:

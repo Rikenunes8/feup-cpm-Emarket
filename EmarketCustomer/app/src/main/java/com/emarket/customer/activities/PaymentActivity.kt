@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.ImageView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
@@ -20,6 +21,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
+import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
@@ -29,9 +31,14 @@ data class Payment(
     val transaction: Transaction
 )
 
+data class Data(
+    val signature: String,
+    val data: String
+)
+
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
-    private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.titleTextColor)) }
+    private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorOnSecondary)) }
     private val backgroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorSecondaryVariant)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +56,9 @@ class PaymentActivity : AppCompatActivity() {
 
         val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId
+        val paymentJson = Gson().toJson(Payment(userUUID, transaction))
+        val qrContent = Utils.genQRCode(paymentJson)
 
-        val dataJSON = Gson().toJson(Payment(userUUID, transaction))
-        val dataByteArray = dataJSON.toByteArray()
-        val signature = signContent(dataByteArray, getPrivKey())!!
-
-        // the first 64 bytes are the signature
-        val qrContent = String(signature + dataByteArray, StandardCharsets.ISO_8859_1)
         thread(start = true) {
             try {
                 val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
@@ -66,7 +69,6 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
         val DIMENSION = 1000
 
