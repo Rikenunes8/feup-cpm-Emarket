@@ -23,12 +23,7 @@ import java.time.format.DateTimeFormatter
 
 class CheckoutActivity : AppCompatActivity() {
     private lateinit var transaction : Transaction
-    private var vouchers = mutableListOf(
-        Voucher("1", 15),
-        Voucher("2", 15),
-        Voucher("3", 15),
-        Voucher("4", 15),
-        Voucher("5", 15)) // TODO get this from other place
+    private lateinit var vouchers : MutableList<Voucher>
     private val accAmount = 13.04 // TODO get this from other place
 
     private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }
@@ -47,6 +42,7 @@ class CheckoutActivity : AppCompatActivity() {
         val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
         val products = Gson().fromJson<MutableList<Product>>(json, object : TypeToken<MutableList<Product>>() {}.type)
 
+        vouchers = dbLayer.getVouchers()
         transaction = Transaction(
             products,
             0.0,

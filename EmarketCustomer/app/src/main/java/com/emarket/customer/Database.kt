@@ -32,10 +32,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     private val keyTransactionProducts = "TransProdId"
     private val colQuantity = "Quantity"
 
-    lateinit var db : SQLiteDatabase
-
     override fun onCreate(db: SQLiteDatabase) {
-        this.db = db
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
                 "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
                 "$colVoucherDiscount INTEGER)"
@@ -71,8 +68,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
 
     private fun checkBasket() : Boolean {
         val query = "SELECT * FROM $tableTransactions WHERE $keyTransaction = 0"
-        val cursor = db.rawQuery(query, arrayOf())
-        return cursor.count > 0
+        val cursor = readableDatabase.rawQuery(query, arrayOf())
+        val hasProducts = cursor.count > 0
+        cursor.close()
+        return hasProducts
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -90,6 +89,20 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         }
         return writableDatabase.insert(tableVouchers, null, values)
     }
+    fun getVouchers() : MutableList<Voucher> {
+        val vouchers = mutableListOf<Voucher>()
+        val query = "SELECT * FROM $tableVouchers"
+        val cursor = readableDatabase.rawQuery(query, null)
+        if (cursor.count == 0) return vouchers
+        while (cursor.moveToNext()) {
+            vouchers.add(Voucher(
+                cursor.getString(cursor.getColumnIndexOrThrow(keyVoucherId)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount))
+            ))
+        }
+        cursor.close()
+        return vouchers
+    }
 
     fun addProduct(product : Product) : Long {
         val values = ContentValues().also {
@@ -101,7 +114,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     }
     fun checkProduct(product: Product) : Boolean {
         val query = "SELECT * FROM $tableProducts WHERE $keyProductId =?"
-        val cursor = db.rawQuery(query, arrayOf(product.uuid))
+        val cursor = readableDatabase.rawQuery(query, arrayOf(product.uuid))
         return cursor.count > 0
     }
 
@@ -116,7 +129,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
             it.put(colTransactionDiscount, transaction.discounted)
             it.put(keyVoucherId, transaction.voucher?.id)
         }
-        return writableDatabase.insert(tableProducts, null, values)
+        return writableDatabase.insert(tableTransactions, null, values)
     }
 
     fun addProductToBasket(product : Product) {
