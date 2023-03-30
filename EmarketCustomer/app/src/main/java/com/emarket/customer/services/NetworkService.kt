@@ -24,7 +24,7 @@ class NetworkService {
         fun makeRequest(
             requestType: RequestType = RequestType.GET,
             endpoint: String,
-            requestBody: String
+            requestBody: String? = null
         ): String {
             var connection: HttpURLConnection? = null
             var response: String? = null

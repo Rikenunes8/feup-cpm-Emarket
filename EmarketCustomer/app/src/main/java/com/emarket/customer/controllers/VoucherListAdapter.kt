@@ -57,7 +57,7 @@ class VoucherListAdapter(private val vouchers: MutableList<Voucher>, private val
     }
 
     override fun onBindViewHolder(holder: VoucherItem, position: Int) {
-        holder.bindData(vouchers[position].percentage, position, checkedPosition,
+        holder.bindData(vouchers[position].discount, position, checkedPosition,
             if (!selectable) null
             else object : OnItemClickListener {
                 override fun onItemClick(position: Int) {

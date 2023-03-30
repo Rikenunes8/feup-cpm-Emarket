@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
@@ -27,7 +26,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
 
     private val tableVouchers = "Vouchers"
     private val keyVoucherId = "VoucherId"
-    private val colVoucherPercentage = "VoucherPercentage"
+    private val colVoucherDiscount = "VoucherDiscount"
 
     private val tableTransactionProducts = "TransactionProducts"
     private val keyTransactionProducts = "TransProdId"
@@ -39,7 +38,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         this.db = db
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
                 "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
-                "$colVoucherPercentage INTEGER)"
+                "$colVoucherDiscount INTEGER)"
         val sqlCreateProducts = "CREATE TABLE $tableProducts(" +
                 "$keyProductId VARCHAR(100) PRIMARY KEY, " +
                 "$colProductName VARCHAR(100), " +
@@ -87,7 +86,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     fun addVoucher(voucher : Voucher) : Long {
         val values = ContentValues().also {
             it.put(keyVoucherId, voucher.id)
-            it.put(colVoucherPercentage, voucher.percentage)
+            it.put(colVoucherDiscount, voucher.discount)
         }
         return writableDatabase.insert(tableVouchers, null, values)
     }

@@ -155,14 +155,14 @@ class BasketActivity : AppCompatActivity() {
             if (oldProduct != null) {
                 oldProduct.qnt++
                 updateProduct(oldProduct)
-                thread(start=true) { dbLayer.addProduct(oldProduct) }
+                //thread(start=true) { dbLayer.addProduct(oldProduct) }
             } else {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
                 addProduct(newProduct)
-                thread(start=true) {
+                /*thread(start=true) {
                     if (!dbLayer.checkProduct(newProduct))
                         dbLayer.addProduct(newProduct)
-                }
+                }*/
             }
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
