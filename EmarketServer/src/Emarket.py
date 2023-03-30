@@ -78,6 +78,10 @@ class Emarket(metaclass=EmarketMeta):
     DB().addUserTransaction(uid, payment['transaction'])
     return {'success': 'You are free to go!'}
 
+  def getTransactions(self, user_id : str):
+    user = self._db.findUserById(user_id)
+    if (user == None): return {'error': 'User not found!'}
+    return { 'transactions': user.get('transactions', []) }
 
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')
