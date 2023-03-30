@@ -35,6 +35,8 @@ class DB(metaclass=DBMeta):
       'uuid': uuid,
       'pubKey': pubKey,
       'cardNo': cardNo,
+      'accAmount': 0,
+      'accDiscount': 0,
       'transactions': [],
       'vouchers': []
     }
@@ -48,7 +50,28 @@ class DB(metaclass=DBMeta):
       {'$push': {'transactions': transaction}}
     )
     print(f"Updated user with id {uuid}")
-  
+
+  def addUserVoucher(self, uuid, voucher):
+    res = self._users.update_one(
+      {'uuid': uuid},
+      {'$push': {'vouchers': voucher}}
+    )
+    print(f"Updated user with id {uuid}")
+
+  def removeUserVoucher(self, uuid, voucher_id):
+    res = self._users.update_one(
+      {'uuid': uuid},
+      {'$pull': {'vouchers': {'id': voucher_id}}}
+    )
+    print(f"Updated user with id {uuid}")
+
+  def updateUserValues(self, uuid, values):
+    res = self._users.update_one(
+      {'uuid': uuid},
+      {'$set': values}
+    )
+    print(f"Updated user with id {uuid}")
+
   def findUserByKey(self, key) -> dict:
     return self._users.find_one({'pubKey': key})
 

@@ -60,13 +60,13 @@ class Emarket(metaclass=EmarketMeta):
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
   
   def checkout(self, data : dict) -> dict:
-    if (data.get('data') == None): return {'error': 'Missing data property!'}
-    if (data.get('signature' == None)): return {'error': 'Missing signature property!'}
+    if data.get('data') == None: return {'error': 'Missing data property!'}
+    if data.get('signature' == None): return {'error': 'Missing signature property!'}
 
     paymentStr = data['data']
     payment = json.loads(paymentStr)
-    if (payment.get('userUUID') == None): return {'error': 'Missing userUUID property!'}
-    if (payment.get('transaction') == None): return {'error': 'Missing transaction property!'}
+    if payment.get('userUUID') == None: return {'error': 'Missing userUUID property!'}
+    if payment.get('transaction') == None: return {'error': 'Missing transaction property!'}
 
     signatureDecoded = base64.b64decode(data['signature'].encode())
     uid = payment['userUUID']
@@ -75,13 +75,42 @@ class Emarket(metaclass=EmarketMeta):
     try: rsa.verify(paymentStr.encode(), signatureDecoded, key)
     except: return {'error': 'Signature verification failed!'}
 
-    DB().addUserTransaction(uid, payment['transaction'])
-    return {'success': 'You are free to go!'}
+    transaction = payment['transaction']
+    total = transaction.get('total')
+    voucher = transaction.get('voucher')
+    discounted = transaction.get('discounted')
+    if total == None: return {'error': 'Missing total property!'}
+    DB().addUserTransaction(uid, transaction)
+    discounted = discounted if discounted != None else 0
+
+    # Add vouchers and calculate the accumulated amount after voucher generation
+    user = self._db.findUserById(uid)
+    total_paid = total - discounted
+    acc_amount = user.get('accAmount') + total_paid
+    for i in range(int(acc_amount // 100)):
+      new_voucher = {'id': str(uuid.uuid4()), 'discount': 15}
+      DB().addUserVoucher(uid, new_voucher)
+    acc_amount %= 100
+
+    # Calculate discountable accumulated amount
+    acc_discount = user.get('accDiscount') - discounted
+    if voucher != None:
+      acc_discount += total_paid * voucher['percentage']/100
+      DB().removeUserVoucher(uid, voucher['id'])
+
+    DB().updateUserValues(uid, {'accAmount': acc_amount, 'accDiscount': acc_discount})
+
+    return {'success': 'You are free to go!', 'total': total_paid}
 
   def getTransactions(self, user_id : str):
     user = self._db.findUserById(user_id)
     if (user == None): return {'error': 'User not found!'}
     return { 'transactions': user.get('transactions', []) }
+
+  def getVouchers(self, user_id : str):
+    user = self._db.findUserById(user_id)
+    if (user == None): return {'error': 'User not found!'}
+    return { 'vouchers': user.get('vouchers', []) }
 
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')
