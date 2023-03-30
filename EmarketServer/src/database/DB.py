@@ -36,7 +36,7 @@ class DB(metaclass=DBMeta):
       'pubKey': pubKey,
       'cardNo': cardNo,
       'accAmount': 0,
-      'accDisc': 0,
+      'accDiscount': 0,
       'transactions': [],
       'vouchers': []
     }
