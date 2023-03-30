@@ -5,10 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".activities.TransactionsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_transactions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:divider="@android:color/transparent"
+        android:padding="20dp" />
 
 </FrameLayout>
