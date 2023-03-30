@@ -93,7 +93,7 @@ class Emarket(metaclass=EmarketMeta):
 
     DB().updateUserValues(uid, {'accAmount': acc_amount, 'accDisc': acc_disc})
 
-    return {'success': 'You are free to go!'}
+    return {'success': 'You are free to go!', 'total': transaction.get('total')}
 
   def getTransactions(self, user_id : str):
     user = self._db.findUserById(user_id)
