@@ -75,7 +75,24 @@ class Emarket(metaclass=EmarketMeta):
     try: rsa.verify(paymentStr.encode(), signatureDecoded, key)
     except: return {'error': 'Signature verification failed!'}
 
-    DB().addUserTransaction(uid, payment['transaction'])
+    transaction = payment['transaction']
+    DB().addUserTransaction(uid, transaction)
+
+    # Add vouchers and calculate the accumulated amount after voucher generation
+    acc_amount = self._db.findUserById(uid).get('accAmount') + transaction['total']
+    for i in range(int(acc_amount // 100)):
+      voucher = {'id': str(uuid.uuid4()), 'discount': 15}
+      DB().addUserVoucher(uid, voucher)
+    acc_amount = acc_amount % 100
+
+    # Calculate discountable accumulated amount
+    acc_disc = self._db.findUserById(uid).get('accDisc') - transaction['discounted']
+    if transaction.get('voucher') != None:
+      acc_disc += transaction['total']*transaction['voucher']['percentage']/100
+      DB().removeUserVoucher(uid, transaction['voucher']['id'])
+
+    DB().updateUserValues(uid, {'accAmount': acc_amount, 'accDisc': acc_disc})
+
     return {'success': 'You are free to go!'}
 
   def getTransactions(self, user_id : str):
