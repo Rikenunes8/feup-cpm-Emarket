@@ -100,6 +100,11 @@ class Emarket(metaclass=EmarketMeta):
     if (user == None): return {'error': 'User not found!'}
     return { 'transactions': user.get('transactions', []) }
 
+  def getVouchers(self, user_id : str):
+    user = self._db.findUserById(user_id)
+    if (user == None): return {'error': 'User not found!'}
+    return { 'vouchers': user.get('vouchers', []) }
+
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')
     if (uuid is None): return {'error': 'Missing uuid property!'}
