@@ -1,6 +1,5 @@
 package com.emarket.customer.controllers
 
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import com.emarket.customer.models.Product
 
 class ProductsListAdapter(private val productItems: MutableList<Product>, private val updateTotal: (() -> Unit)? = null ) : RecyclerView.Adapter<ProductsListAdapter.ProductItem>() {
 
-    class ProductItem(private val item: View) :  RecyclerView.ViewHolder(item) {
+    class ProductItem(private val item: View) : RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
         private val name: TextView = item.findViewById(R.id.item_name)
         private val price: TextView = item.findViewById(R.id.item_price)
