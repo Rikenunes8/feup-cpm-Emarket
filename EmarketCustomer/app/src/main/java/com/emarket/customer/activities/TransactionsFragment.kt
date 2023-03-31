@@ -19,7 +19,6 @@ import com.emarket.customer.models.Voucher
  */
 class TransactionsFragment : Fragment() {
 
-
     // TODO remove this
     private val productItems : MutableList<Product> = mutableListOf(product1, product2)
 
@@ -29,10 +28,6 @@ class TransactionsFragment : Fragment() {
         Transaction(productItems, 2.37, Voucher("1", 15), 13.32, "2023-03-30"),
     )
     private lateinit var binding: FragmentTransactionsBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,14 +43,4 @@ class TransactionsFragment : Fragment() {
         return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         * @return A new instance of fragment TransactionsFragment.
-         */
-        @JvmStatic
-        fun newInstance() =
-            TransactionsFragment()
-    }
 }

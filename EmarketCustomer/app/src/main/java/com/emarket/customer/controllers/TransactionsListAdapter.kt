@@ -22,9 +22,7 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
 
         fun bindData(transaction: Transaction) {
             // TODO: Confirm this calculation
-            val voucherPercentage = transaction.voucher?.percentage ?: 0
-            val priceAfterVoucher = transaction.total * (1.0 - voucherPercentage / 100.0)
-            val totalPaid = priceAfterVoucher - transaction.discounted
+            val totalPaid = transaction.total - transaction.discounted
 
             total.text = item.context.getString(R.string.template_price, transaction.total)
             paid.text = item.context.getString(R.string.template_price, totalPaid)
