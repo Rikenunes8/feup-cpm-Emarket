@@ -2,6 +2,7 @@ package com.emarket.customer.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +20,12 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 data class TransactionsResponse(
-    val transactions : List<Transaction>
+    val transactions : List<Transaction>,
+    val error: String?
 )
 data class VouchersResponse(
-    val vouchers : List<Voucher>
+    val vouchers : List<Voucher>?,
+    val error : String?
 )
 
 class LoginActivity : AppCompatActivity() {
@@ -60,11 +63,17 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchDatabase() {
+        vouchers = dbLayer.getVouchers()
+        // TODO transactions = dbLayer.getTransactions()
+    }
+
     private fun fetchData() {
         thread(start = true) {
             val userId = UserViewModel(this.application).user?.userId!!
             fetchTransactions(URLEncoder.encode(userId))
             fetchVouchers(URLEncoder.encode(userId))
+            fetchDatabase()
         }
     }
 
@@ -73,9 +82,12 @@ class LoginActivity : AppCompatActivity() {
             RequestType.GET,
             Constants.SERVER_URL + Constants.TRANSACTIONS_ENDPOINT + "?user=$userId"
         )
-        // TODO error handling
-        dbLayer.cleanTransactions()
         val data = Gson().fromJson(response, TransactionsResponse::class.java)
+        if (data.error != null) {
+            runOnUiThread { showToast(this, getString(R.string.error_fetching_transactions)) }
+            return
+        }
+        dbLayer.cleanTransactions()
         data.transactions.forEach { dbLayer.addTransaction(it) }
     }
 
@@ -84,9 +96,12 @@ class LoginActivity : AppCompatActivity() {
             RequestType.GET,
             Constants.SERVER_URL + Constants.VOUCHERS_ENDPOINT + "?user=$userId"
         )
-        // TODO error handling
-        dbLayer.cleanVouchers()
         val data = Gson().fromJson(response, VouchersResponse::class.java)
-        data.vouchers.forEach { dbLayer.addVoucher(it) }
+        if (data.error != null) {
+            runOnUiThread { showToast(this, getString(R.string.error_fetching_vouchers)) }
+            return
+        }
+        dbLayer.cleanVouchers()
+        data.vouchers?.forEach { dbLayer.addVoucher(it) }
     }
 }

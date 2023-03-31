@@ -76,7 +76,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         writableDatabase.insert(tableVouchers, null, values)
     }
     fun cleanVouchers() {
-        writableDatabase.execSQL("DELETE FROM $tableVouchers")
+        cleanTable(tableVouchers)
     }
     fun getVouchers() : MutableList<Voucher> {
         val vouchers = mutableListOf<Voucher>()
@@ -94,6 +94,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     }
 
     fun addProduct(product : Product) {
+        if (checkProduct(product)) return
         val values = ContentValues().also {
             it.put(keyProductId, product.uuid)
             it.put(colProductName, product.name)
@@ -101,7 +102,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         }
         writableDatabase.insert(tableProducts, null, values)
     }
-    fun checkProduct(product: Product) : Boolean {
+    private fun checkProduct(product: Product) : Boolean {
         val query = "SELECT * FROM $tableProducts WHERE $keyProductId =?"
         val cursor = readableDatabase.rawQuery(query, arrayOf(product.uuid))
         val hasProduct = cursor.count > 0

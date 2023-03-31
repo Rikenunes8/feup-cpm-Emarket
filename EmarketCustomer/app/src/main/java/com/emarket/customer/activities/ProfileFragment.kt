@@ -19,9 +19,8 @@ class ProfileFragment() : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentProfileBinding.inflate(layoutInflater)
 
-        val user = UserViewModel(application = requireActivity().application).user!!
+        val user = UserViewModel(requireActivity().application).user!!
 
-        val vouchers = dbLayer.getVouchers()
         binding.rvVoucher.apply {
             layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
             adapter = VoucherListAdapter(vouchers)
