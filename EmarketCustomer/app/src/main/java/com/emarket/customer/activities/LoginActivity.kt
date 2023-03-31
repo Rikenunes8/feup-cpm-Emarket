@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     thread(start = true) {
                         val userId = UserViewModel(this.application).user?.userId!!
-                        // fetchTransactions(userId)
+                        fetchTransactions(URLEncoder.encode(userId))
                         fetchVouchers(URLEncoder.encode(userId))
                     }
                     // login successful
