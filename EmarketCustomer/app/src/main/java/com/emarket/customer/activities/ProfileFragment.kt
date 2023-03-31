@@ -7,13 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.emarket.customer.R
 import com.emarket.customer.controllers.VoucherListAdapter
 import com.emarket.customer.databinding.FragmentProfileBinding
 import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType
 import com.emarket.customer.models.UserViewModel
-import com.emarket.customer.models.Voucher
 
 class ProfileFragment() : Fragment() {
     private lateinit var binding: FragmentProfileBinding

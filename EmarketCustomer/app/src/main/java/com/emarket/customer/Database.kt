@@ -54,24 +54,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
                 "$colQuantity INTEGER, " +
                 "FOREIGN KEY ($keyTransaction) REFERENCES $tableTransactions($keyTransaction), " +
                 "FOREIGN KEY ($keyProductId) REFERENCES $tableProducts($keyProductId))"
-
         db.execSQL(sqlCreateVouchers)
         db.execSQL(sqlCreateProducts)
         db.execSQL(sqlCreateTransactions)
         db.execSQL(sqlCreateTransactionProducts)
-
-        if (!checkBasket()) {
-            val sqlInsertBasket = "INSERT INTO $tableTransactions VALUES (0, NULL, 0, NULL, 0)"
-            db.execSQL(sqlInsertBasket)
-        }
-    }
-
-    private fun checkBasket() : Boolean {
-        val query = "SELECT * FROM $tableTransactions WHERE $keyTransaction = 0"
-        val cursor = readableDatabase.rawQuery(query, arrayOf())
-        val hasProducts = cursor.count > 0
-        cursor.close()
-        return hasProducts
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -82,12 +68,15 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         onCreate(db)
     }
 
-    fun addVoucher(voucher : Voucher) : Long {
+    fun addVoucher(voucher : Voucher) {
         val values = ContentValues().also {
             it.put(keyVoucherId, voucher.id)
             it.put(colVoucherDiscount, voucher.discount)
         }
-        return writableDatabase.insert(tableVouchers, null, values)
+        writableDatabase.insert(tableVouchers, null, values)
+    }
+    fun cleanVouchers() {
+        writableDatabase.execSQL("DELETE FROM $tableVouchers")
     }
     fun getVouchers() : MutableList<Voucher> {
         val vouchers = mutableListOf<Voucher>()
@@ -104,48 +93,57 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         return vouchers
     }
 
-    fun addProduct(product : Product) : Long {
+    fun addProduct(product : Product) {
         val values = ContentValues().also {
             it.put(keyProductId, product.uuid)
             it.put(colProductName, product.name)
             it.put(colProductPrice, product.price)
         }
-        return writableDatabase.insert(tableProducts, null, values)
+        writableDatabase.insert(tableProducts, null, values)
     }
     fun checkProduct(product: Product) : Boolean {
         val query = "SELECT * FROM $tableProducts WHERE $keyProductId =?"
         val cursor = readableDatabase.rawQuery(query, arrayOf(product.uuid))
-        return cursor.count > 0
+        val hasProduct = cursor.count > 0
+        cursor.close()
+        return hasProduct
+    }
+    fun cleanProducts() {
+        cleanTable(tableProducts)
     }
 
-    fun addTransaction(transaction: Transaction) : Long {
-        for (x in transaction.products) {
-            addProduct(x)
-        }
-
+    fun addTransaction(transaction: Transaction) {
         val values = ContentValues().also {
             it.put(colTransactionDate, transaction.date)
             it.put(colTransactionTotal, transaction.total)
             it.put(colTransactionDiscount, transaction.discounted)
             it.put(keyVoucherId, transaction.voucher?.id)
         }
-        return writableDatabase.insert(tableTransactions, null, values)
-    }
+        val transactionId = writableDatabase.insert(tableTransactions, null, values)
 
-    fun addProductToBasket(product : Product) {
-        val values = ContentValues().also {
-            it.put(keyTransaction, 0)
-            it.put(keyProductId, product.uuid)
-            it.put(colQuantity, product.qnt)
+        transaction.products.forEach {
+            if (!checkProduct(it)) addProduct(it)
+            addTransProd(transactionId, it.uuid, it.qnt)
         }
-        if (product.qnt == 1)
-            writableDatabase.insert(tableTransactionProducts, null, values)
-        else
-            writableDatabase.update(tableTransactionProducts, values, "$keyTransaction =0 AND $keyProductId=?", arrayOf(product.uuid))
-
+    }
+    fun cleanTransactions() {
+        cleanTable(tableTransactions)
+        cleanTransProd()
     }
 
-    fun removeProductFromBasket(product: Product) {
-        writableDatabase.delete(tableTransactionProducts, "$keyTransaction =? AND $keyProductId =?", arrayOf("0", product.uuid))
+    fun addTransProd(transactionId: Long, productId: String, qnt: Int) {
+        val values = ContentValues().also {
+            it.put(keyProductId, productId)
+            it.put(keyTransaction, transactionId)
+            it.put(colQuantity, qnt)
+        }
+        writableDatabase.insert(tableTransactionProducts, null, values)
+    }
+    fun cleanTransProd() {
+        cleanTable(tableTransactionProducts)
+    }
+
+    private fun cleanTable(tableName: String) {
+        writableDatabase.execSQL("DELETE FROM $tableName")
     }
 }
