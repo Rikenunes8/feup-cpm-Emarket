@@ -16,7 +16,6 @@ import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import java.net.URLEncoder
-import java.util.*
 import kotlin.concurrent.thread
 
 data class TransactionsResponse(
@@ -44,12 +43,8 @@ class LoginActivity : AppCompatActivity() {
             // just a double check
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
-                    thread(start = true) {
-                        val userId = UserViewModel(this.application).user?.userId!!
-                        fetchTransactions(URLEncoder.encode(userId))
-                        fetchVouchers(URLEncoder.encode(userId))
-                    }
                     // login successful
+                    fetchData()
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
@@ -62,6 +57,14 @@ class LoginActivity : AppCompatActivity() {
                 // THIS SHOULD NEVER HAPPEN
                 showToast(this, "User not registered")
             }
+        }
+    }
+
+    private fun fetchData() {
+        thread(start = true) {
+            val userId = UserViewModel(this.application).user?.userId!!
+            fetchTransactions(URLEncoder.encode(userId))
+            fetchVouchers(URLEncoder.encode(userId))
         }
     }
 

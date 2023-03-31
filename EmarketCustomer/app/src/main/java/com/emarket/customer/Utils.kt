@@ -4,8 +4,6 @@ import android.content.Context
 import android.util.TypedValue
 import android.widget.Toast
 import com.emarket.customer.activities.Data
-import com.emarket.customer.activities.Payment
-import com.emarket.customer.models.Transaction
 import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
@@ -46,7 +44,6 @@ object Utils {
         val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
         val signatureEncoded = Base64.getEncoder().encodeToString(signature)
         val data = Gson().toJson(Data(signatureEncoded, jsonData))
-        println(data.toByteArray().decodeToString())
 
         return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
     }
