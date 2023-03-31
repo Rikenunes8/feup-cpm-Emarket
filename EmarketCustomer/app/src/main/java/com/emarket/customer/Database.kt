@@ -4,7 +4,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.core.database.getDoubleOrNull
+import androidx.core.database.getStringOrNull
 import com.emarket.customer.models.Product
+import com.emarket.customer.models.ProductDTO
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
 
@@ -14,7 +17,7 @@ const val DB_VERSION = 1
 class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) {
 
     private val tableTransactions = "Transactions"
-    private val keyTransaction = "TransactionId"
+    private val keyTransactionId = "TransactionId"
     private val colTransactionDate = "TransactionDate"
     private val colTransactionTotal = "TransactionTotal"
     private val colTransactionDiscount = "TransactionDiscount"
@@ -41,7 +44,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
                 "$colProductName VARCHAR(100), " +
                 "$colProductPrice FLOAT)"
         val sqlCreateTransactions = "CREATE TABLE $tableTransactions(" +
-                "$keyTransaction INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "$keyTransactionId INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$colTransactionDate VARCHAR(100), " +
                 "$colTransactionTotal FLOAT, " +
                 "$keyVoucherId VARCHAR(100), " +
@@ -49,10 +52,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
                 "FOREIGN KEY ($keyVoucherId) REFERENCES $tableVouchers($keyVoucherId))"
         val sqlCreateTransactionProducts = "CREATE TABLE $tableTransactionProducts(" +
                 "$keyTransactionProducts INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$keyTransaction INTEGER, " +
+                "$keyTransactionId INTEGER, " +
                 "$keyProductId VARCHAR(100), " +
                 "$colQuantity INTEGER, " +
-                "FOREIGN KEY ($keyTransaction) REFERENCES $tableTransactions($keyTransaction), " +
+                "FOREIGN KEY ($keyTransactionId) REFERENCES $tableTransactions($keyTransactionId), " +
                 "FOREIGN KEY ($keyProductId) REFERENCES $tableProducts($keyProductId))"
         db.execSQL(sqlCreateVouchers)
         db.execSQL(sqlCreateProducts)
@@ -92,9 +95,23 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         cursor.close()
         return vouchers
     }
+    private fun getVoucher(id: String?) : Voucher? {
+        if (id == null) return null
+        var voucher: Voucher? = null
+        val query = "SELECT * FROM $tableVouchers WHERE $keyVoucherId = ?"
+        val cursor = readableDatabase.rawQuery(query, arrayOf(id))
+        if (cursor.moveToFirst()) {
+            voucher = Voucher(
+                cursor.getString(cursor.getColumnIndexOrThrow(keyVoucherId)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount))
+            )
+        }
+        cursor.close()
+        return voucher
+    }
 
     fun addProduct(product : Product) {
-        if (checkProduct(product)) return
+        if (getProduct(product.uuid) != null) return
         val values = ContentValues().also {
             it.put(keyProductId, product.uuid)
             it.put(colProductName, product.name)
@@ -102,15 +119,20 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         }
         writableDatabase.insert(tableProducts, null, values)
     }
-    private fun checkProduct(product: Product) : Boolean {
-        val query = "SELECT * FROM $tableProducts WHERE $keyProductId =?"
-        val cursor = readableDatabase.rawQuery(query, arrayOf(product.uuid))
-        val hasProduct = cursor.count > 0
+    private fun getProduct(id: String?) : ProductDTO? {
+        if (id == null) return null
+        var product: ProductDTO? = null
+        val query = "SELECT * FROM $tableProducts WHERE $keyProductId = ?"
+        val cursor = readableDatabase.rawQuery(query, arrayOf(id))
+        if (cursor.count == 0) return null
+        if (cursor.moveToFirst()) {
+            product = ProductDTO(id,
+                cursor.getString(cursor.getColumnIndexOrThrow(colProductName)),
+                cursor.getDouble(cursor.getColumnIndexOrThrow(colProductPrice))
+            )
+        }
         cursor.close()
-        return hasProduct
-    }
-    fun cleanProducts() {
-        cleanTable(tableProducts)
+        return product
     }
 
     fun addTransaction(transaction: Transaction) {
@@ -123,7 +145,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         val transactionId = writableDatabase.insert(tableTransactions, null, values)
 
         transaction.products.forEach {
-            if (!checkProduct(it)) addProduct(it)
+            addProduct(it)
             addTransProd(transactionId, it.uuid, it.qnt)
         }
     }
@@ -131,17 +153,49 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         cleanTable(tableTransactions)
         cleanTransProd()
     }
+    fun getTransactions() : MutableList<Transaction> {
+        val transactions = mutableListOf<Transaction>()
+        val query = "SELECT * FROM $tableTransactions"
+        val cursor = readableDatabase.rawQuery(query, null)
+        if (cursor.count == 0) return transactions
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(keyTransactionId))
+            val date = cursor.getString(cursor.getColumnIndexOrThrow(colTransactionDate))
+            val total = cursor.getDouble(cursor.getColumnIndexOrThrow(colTransactionTotal))
+            val discounted = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(colTransactionDiscount))
+            val voucherId = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(keyVoucherId))
+            val voucher = getVoucher(voucherId)
+            val products = getTransactionProducts(id)
+            transactions.add(Transaction(products,discounted, voucher, total, date))
+        }
+        cursor.close()
+        return transactions
+    }
 
-    fun addTransProd(transactionId: Long, productId: String, qnt: Int) {
+    private fun addTransProd(transactionId: Long, productId: String, qnt: Int) {
         val values = ContentValues().also {
             it.put(keyProductId, productId)
-            it.put(keyTransaction, transactionId)
+            it.put(keyTransactionId, transactionId)
             it.put(colQuantity, qnt)
         }
         writableDatabase.insert(tableTransactionProducts, null, values)
     }
-    fun cleanTransProd() {
+    private fun cleanTransProd() {
         cleanTable(tableTransactionProducts)
+    }
+    private fun getTransactionProducts(id: Int) : MutableList<Product> {
+        val products = mutableListOf<Product>()
+        val query = "SELECT * FROM $tableTransactionProducts WHERE $keyTransactionId = ?"
+        val cursor = readableDatabase.rawQuery(query, arrayOf(id.toString()))
+        if (cursor.count == 0) return products
+        while (cursor.moveToNext()) {
+            val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(colQuantity))
+            val productId = cursor.getString(cursor.getColumnIndexOrThrow(keyProductId))
+            val product = getProduct(productId)!!
+            products.add(Product(null, product.uuid, product.name, product.price, quantity))
+        }
+        cursor.close()
+        return products
     }
 
     private fun cleanTable(tableName: String) {

@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun fetchDatabase() {
         vouchers = dbLayer.getVouchers()
-        // TODO transactions = dbLayer.getTransactions()
+        transactions = dbLayer.getTransactions()
     }
 
     private fun fetchData() {

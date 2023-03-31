@@ -21,7 +21,7 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         internal val delete: ImageButton = item.findViewById(R.id.delete_btn)
 
         fun bindData(product: Product) {
-            icon.setImageResource(product.imgRes)
+            icon.setImageResource(product.imgRes ?: R.drawable.icon)
             name.text = product.name
             qnt.text = item.context.getString(R.string.template_quantity_times, product.qnt)
             price.text = item.context.getString(R.string.template_price, product.price)
