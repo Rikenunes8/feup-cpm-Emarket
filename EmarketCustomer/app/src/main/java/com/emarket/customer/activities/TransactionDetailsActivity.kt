@@ -1,10 +1,13 @@
 package com.emarket.customer.activities
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Transaction
@@ -46,10 +49,11 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         val products = transaction.products
         val adapter = ProductsListAdapter(products)
-
+        val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation)
+            RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
         productRecyclerView.apply {
             this.adapter = adapter
-            this.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@TransactionDetailsActivity)
+            this.layoutManager = LinearLayoutManager(this@TransactionDetailsActivity, orientation, false)
         }
     }
 

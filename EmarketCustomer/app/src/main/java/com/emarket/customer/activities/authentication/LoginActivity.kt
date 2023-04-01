@@ -108,7 +108,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        // dbLayer.cleanVouchers()
+        dbLayer.cleanUnusedVouchers()
         data.vouchers?.forEach {
             dbLayer.addVoucher(it)
         }

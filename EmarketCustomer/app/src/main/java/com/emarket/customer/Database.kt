@@ -86,6 +86,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     fun cleanVouchers() {
         cleanTable(tableVouchers)
     }
+    fun cleanUnusedVouchers() {
+        val query = "DELETE FROM $tableVouchers WHERE $colVoucherUsed = 0"
+        writableDatabase.execSQL(query)
+    }
 
     /**
      * Get vouchers from the database
