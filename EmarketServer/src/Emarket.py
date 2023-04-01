@@ -95,7 +95,7 @@ class Emarket(metaclass=EmarketMeta):
     # Calculate discountable accumulated amount
     acc_discount = user.get('accDiscount') - discounted
     if voucher != None:
-      acc_discount += total_paid * voucher['percentage']/100
+      acc_discount += total_paid * voucher['discount']/100
       DB().removeUserVoucher(uid, voucher['id'])
 
     DB().updateUserValues(uid, {'accAmount': acc_amount, 'accDiscount': acc_discount})

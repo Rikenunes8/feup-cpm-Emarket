@@ -21,8 +21,7 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
         private val transactionItem: CardView = item.findViewById(R.id.transaction_item)
 
         fun bindData(transaction: Transaction) {
-            // TODO: Confirm this calculation
-            val totalPaid = transaction.total - transaction.discounted
+            val totalPaid = transaction.total - (transaction.discounted ?: 0.0)
 
             total.text = item.context.getString(R.string.template_price, transaction.total)
             paid.text = item.context.getString(R.string.template_price, totalPaid)

@@ -1,28 +1,19 @@
 package com.emarket.customer.activities
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
-import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Transaction
-import com.emarket.customer.models.User
 import com.emarket.customer.models.UserViewModel
-import com.emarket.customer.services.CryptoService.Companion.getPrivKey
-import com.emarket.customer.services.CryptoService.Companion.signContent
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
-import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -47,12 +38,6 @@ class PaymentActivity : AppCompatActivity() {
 
         val transactionJSON = intent.getStringExtra("Transaction")!!
         val transaction = Gson().fromJson(transactionJSON, Transaction::class.java)
-
-        // TODO remove this when the properties of transaction were not hardcoded ---
-        Log.d("Transaction", transaction.voucher.toString())
-        Log.d("Transaction", transaction.discounted.toString())
-        Log.d("Transaction", transaction.products.size.toString())
-        // TODO ---------------------------------------------------------------------
 
         val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId

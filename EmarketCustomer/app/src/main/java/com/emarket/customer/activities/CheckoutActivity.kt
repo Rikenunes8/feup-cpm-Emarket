@@ -23,12 +23,6 @@ import java.time.format.DateTimeFormatter
 
 class CheckoutActivity : AppCompatActivity() {
     private lateinit var transaction : Transaction
-    private var vouchers = mutableListOf(
-        Voucher("1", 15),
-        Voucher("2", 15),
-        Voucher("3", 15),
-        Voucher("4", 15),
-        Voucher("5", 15)) // TODO get this from other place
     private val accAmount = 13.04 // TODO get this from other place
 
     private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }

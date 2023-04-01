@@ -1,18 +1,32 @@
 package com.emarket.customer.activities
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.emarket.customer.Utils.showToast
 import com.emarket.customer.Constants
+import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.models.User
+import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
+import com.emarket.customer.models.Voucher
+import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
+import java.net.URLEncoder
+import kotlin.concurrent.thread
+
+data class TransactionsResponse(
+    val transactions : List<Transaction>,
+    val error: String?
+)
+data class VouchersResponse(
+    val vouchers : List<Voucher>?,
+    val error : String?
+)
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
+                    fetchData()
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
@@ -45,8 +60,48 @@ class LoginActivity : AppCompatActivity() {
                 // THIS SHOULD NEVER HAPPEN
                 showToast(this, "User not registered")
             }
-
         }
+    }
 
+    private fun fetchDatabase() {
+        vouchers = dbLayer.getVouchers()
+        transactions = dbLayer.getTransactions()
+    }
+
+    private fun fetchData() {
+        thread(start = true) {
+            val userId = UserViewModel(this.application).user?.userId!!
+            fetchTransactions(URLEncoder.encode(userId))
+            fetchVouchers(URLEncoder.encode(userId))
+            fetchDatabase()
+        }
+    }
+
+    private fun fetchTransactions(userId: String) {
+        val response = NetworkService.makeRequest(
+            RequestType.GET,
+            Constants.SERVER_URL + Constants.TRANSACTIONS_ENDPOINT + "?user=$userId"
+        )
+        val data = Gson().fromJson(response, TransactionsResponse::class.java)
+        if (data.error != null) {
+            runOnUiThread { showToast(this, getString(R.string.error_fetching_transactions)) }
+            return
+        }
+        dbLayer.cleanTransactions()
+        data.transactions.forEach { dbLayer.addTransaction(it) }
+    }
+
+    private fun fetchVouchers(userId: String) {
+        val response = NetworkService.makeRequest(
+            RequestType.GET,
+            Constants.SERVER_URL + Constants.VOUCHERS_ENDPOINT + "?user=$userId"
+        )
+        val data = Gson().fromJson(response, VouchersResponse::class.java)
+        if (data.error != null) {
+            runOnUiThread { showToast(this, getString(R.string.error_fetching_vouchers)) }
+            return
+        }
+        dbLayer.cleanVouchers()
+        data.vouchers?.forEach { dbLayer.addVoucher(it) }
     }
 }

@@ -7,7 +7,7 @@ data class ProductDTO (
 )
 
 data class Product (
-    var imgRes: Int,
+    var imgRes: Int?,
     var uuid: String,
     var name: String,
     var price: Double,
