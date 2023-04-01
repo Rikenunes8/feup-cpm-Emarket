@@ -40,7 +40,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
                 "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
                 "$colVoucherDiscount INTEGER, " +
-                "$colVoucherUsed BOOLEAN)"
+                "$colVoucherUsed INTEGER DEFAULT 0)"
         val sqlCreateProducts = "CREATE TABLE $tableProducts(" +
                 "$keyProductId VARCHAR(100) PRIMARY KEY, " +
                 "$colProductName VARCHAR(100), " +
@@ -94,13 +94,10 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
      */
     fun getVouchers(onlyUnUsed: Boolean = true) : MutableList<Voucher> {
         val vouchers = mutableListOf<Voucher>()
-        val query = "SELECT * FROM $tableVouchers"
+        val query = "SELECT * FROM $tableVouchers" + if (onlyUnUsed) " WHERE $colVoucherUsed = 0" else ""
         val cursor = readableDatabase.rawQuery(query, null)
         if (cursor.count == 0) return vouchers
         while (cursor.moveToNext()) {
-            // if we only want the vouchers that haven't been used, skip the ones that have
-            if (onlyUnUsed && cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherUsed)) == 1) continue
-
             vouchers.add(Voucher(
                 cursor.getString(cursor.getColumnIndexOrThrow(keyVoucherId)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount)),
