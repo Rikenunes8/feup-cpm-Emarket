@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Database
 import com.emarket.customer.R
+import com.emarket.customer.activities.authentication.LoginActivity
+import com.emarket.customer.activities.authentication.RegisterActivity
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher

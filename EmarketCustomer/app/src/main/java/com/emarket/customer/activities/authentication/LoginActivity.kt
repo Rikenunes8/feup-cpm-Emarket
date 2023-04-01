@@ -1,8 +1,7 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +9,10 @@ import com.emarket.customer.Constants
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.activities.dbLayer
+import com.emarket.customer.activities.transactions
+import com.emarket.customer.activities.vouchers
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher

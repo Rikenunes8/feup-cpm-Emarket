@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.emarket.customer.activities.ProfileFragment
+import com.emarket.customer.activities.profile.ProfileFragment
 import com.emarket.customer.R
-import com.emarket.customer.activities.TransactionsFragment
+import com.emarket.customer.activities.profile.TransactionsFragment
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to

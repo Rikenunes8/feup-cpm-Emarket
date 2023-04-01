@@ -1,5 +1,6 @@
 package com.emarket.customer.controllers
 
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,9 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
+import com.emarket.customer.activities.TransactionDetailsActivity
 import com.emarket.customer.models.Transaction
+import com.google.gson.Gson
 
 class TransactionsListAdapter(private val transactionItems: MutableList<Transaction>) :
     RecyclerView.Adapter<TransactionsListAdapter.TransactionItem>() {
@@ -28,8 +31,11 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
             date.text = transaction.date
 
             transactionItem.setOnClickListener {
-                // TODO: Navigate to transaction detail
                 Log.d("TransactionItem", "Clicked on transaction item")
+
+                val intent = Intent(item.context, TransactionDetailsActivity::class.java)
+                intent.putExtra("transaction", Gson().toJson(transaction))
+                item.context.startActivity(intent)
             }
         }
     }

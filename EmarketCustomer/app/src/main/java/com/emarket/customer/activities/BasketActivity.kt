@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO

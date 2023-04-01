@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/rv_transaction_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transaction Date"
+        android:layout_marginVertical="10dp"
+        android:textAlignment="center"
+        android:textColor="?attr/titleTextColor"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_voucher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="10dp"
+        app:cardCornerRadius="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:id="@+id/voucher_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginVertical="10dp"
+                android:background="@drawable/circle_with_border"
+                android:gravity="center"
+                android:text="15%"
+                android:textColor="?attr/titleTextColor"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/voucher_name"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/voucher"
+                android:textStyle="bold"
+                android:textColor="@color/dark_gray"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/voucher_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Discount"
+                android:textStyle="bold"
+                android:textColor="@color/dark_gray"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_transaction_products"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:paddingHorizontal="20dp" />
+
+
+
+
+
+</LinearLayout>
