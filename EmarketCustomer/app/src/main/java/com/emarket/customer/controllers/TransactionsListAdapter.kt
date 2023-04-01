@@ -31,8 +31,6 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
             date.text = transaction.date
 
             transactionItem.setOnClickListener {
-                Log.d("TransactionItem", "Clicked on transaction item")
-
                 val intent = Intent(item.context, TransactionDetailsActivity::class.java)
                 intent.putExtra("transaction", Gson().toJson(transaction))
                 item.context.startActivity(intent)

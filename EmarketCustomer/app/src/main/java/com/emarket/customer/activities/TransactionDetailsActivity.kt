@@ -15,7 +15,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private val transactionDateTv by lazy { findViewById<TextView>(R.id.rv_transaction_date) }
     private val voucherCv by lazy { findViewById<CardView>(R.id.cv_voucher) }
     private val productRecyclerView by lazy { findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_transaction_products) }
-    private val accumulatedLinearLayour by lazy { findViewById<LinearLayout>(R.id.accumulated_holder) }
+    private val accumulatedLinearLayout by lazy { findViewById<LinearLayout>(R.id.accumulated_holder) }
+    private val totalPriceTv by lazy { findViewById<TextView>(R.id.tv_total_price) }
+    private val discountedTv by lazy { findViewById<TextView>(R.id.tv_discounted) }
 
     private lateinit var transaction: Transaction;
 
@@ -23,27 +25,24 @@ class TransactionDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction_detail)
 
-
-        // Set the title of the transaction in the top bar
         title = getString(R.string.header_transaction_detail)
 
-        // Set the back button to go to the previous page
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        // Get the transaction information from the intent
         transaction = Gson().fromJson(intent.getStringExtra("transaction"), Transaction::class.java)
 
-        // Set the transaction information
         transactionDateTv.text = transaction.date
 
         if (transaction.voucher == null) {
             voucherCv.visibility = CardView.GONE
-            accumulatedLinearLayour.visibility = LinearLayout.GONE
+            accumulatedLinearLayout.visibility = LinearLayout.GONE
         } else {
             setVoucherInfo()
             setAccumulatedValue()
         }
+
+        totalPriceTv.text = getString(R.string.template_price, transaction.total)
+        discountedTv.text = getString(R.string.template_price, transaction.discounted)
 
         val products = transaction.products
         val adapter = ProductsListAdapter(products)
