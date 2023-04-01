@@ -23,6 +23,8 @@
     <string name="label_total">Total:</string>
     <string name="label_amount">Amount:</string>
     <string name="label_paid">Paid:</string>
+    <string name="label_discounted">Discounted:</string>
+    <string name="label_accumulated">Accumulated:</string>
 
     <string name="tab_profile">Profile</string>
     <string name="tab_transactions">Transactions</string>

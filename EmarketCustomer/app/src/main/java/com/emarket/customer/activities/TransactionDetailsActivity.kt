@@ -1,13 +1,13 @@
 package com.emarket.customer.activities
 
 import android.os.Bundle
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.emarket.customer.R
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Transaction
-import com.emarket.customer.models.Voucher
 import com.google.gson.Gson
 
 class TransactionDetailsActivity : AppCompatActivity() {
@@ -15,6 +15,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private val transactionDateTv by lazy { findViewById<TextView>(R.id.rv_transaction_date) }
     private val voucherCv by lazy { findViewById<CardView>(R.id.cv_voucher) }
     private val productRecyclerView by lazy { findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_transaction_products) }
+    private val accumulatedLinearLayour by lazy { findViewById<LinearLayout>(R.id.accumulated_holder) }
 
     private lateinit var transaction: Transaction;
 
@@ -38,14 +39,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         if (transaction.voucher == null) {
             voucherCv.visibility = CardView.GONE
+            accumulatedLinearLayour.visibility = LinearLayout.GONE
         } else {
-            setVoucherInfo(transaction.voucher!!)
-            voucherCv.visibility = CardView.VISIBLE
+            setVoucherInfo()
+            setAccumulatedValue()
         }
 
         val products = transaction.products
         val adapter = ProductsListAdapter(products)
-
 
         productRecyclerView.apply {
             this.adapter = adapter
@@ -60,9 +61,9 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     /**
      * Set UI voucher information
-     * @param voucher Voucher object
      */
-    private fun setVoucherInfo(voucher: Voucher) {
+    private fun setVoucherInfo() {
+        val voucher = transaction.voucher!!
         val voucherPercentage = getString(R.string.template_percentage, voucher.discount)
 
         val voucherIcon = findViewById<TextView>(R.id.voucher_icon)
@@ -70,5 +71,14 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         voucherIcon.text = voucherPercentage
         voucherDiscount.text = voucherPercentage
+    }
+
+    /**
+     * Set UI accumulated value from using the voucher
+     */
+    private fun setAccumulatedValue() {
+        val accumulatedTv = findViewById<TextView>(R.id.accumulated)
+        val accumulatedValue = transaction.total / transaction.voucher!!.discount
+        accumulatedTv.text = getString(R.string.template_price, accumulatedValue)
     }
 }
