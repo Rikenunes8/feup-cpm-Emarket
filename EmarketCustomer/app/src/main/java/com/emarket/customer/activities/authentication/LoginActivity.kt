@@ -67,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun fetchDatabase() {
-        vouchers = dbLayer.getVouchers()
+        vouchers = dbLayer.getVouchers(onlyUnUsed = true)
         transactions = dbLayer.getTransactions()
     }
 
@@ -90,6 +90,9 @@ class LoginActivity : AppCompatActivity() {
             runOnUiThread { showToast(this, getString(R.string.error_fetching_transactions)) }
             return
         }
+
+        // TODO: only add new transactions to the database (check date of last transaction or
+        //   iterate over the list and check if the transaction is already in the database to be safer)
         dbLayer.cleanTransactions()
         data.transactions.forEach { dbLayer.addTransaction(it) }
     }
@@ -104,7 +107,10 @@ class LoginActivity : AppCompatActivity() {
             runOnUiThread { showToast(this, getString(R.string.error_fetching_vouchers)) }
             return
         }
-        dbLayer.cleanVouchers()
-        data.vouchers?.forEach { dbLayer.addVoucher(it) }
+
+        // dbLayer.cleanVouchers()
+        data.vouchers?.forEach {
+            dbLayer.addVoucher(it)
+        }
     }
 }

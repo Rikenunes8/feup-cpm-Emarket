@@ -67,6 +67,12 @@ class CheckoutActivity : AppCompatActivity() {
             transaction.voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
             transaction.date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm - dd/MM/yyyy"))
 
+            // TODO: REMOVE THIS. We must update vouchers when we get confirmation from server.
+            if (transaction.voucher != null) {
+                transaction.voucher!!.used = true
+                dbLayer.updateVoucher(transaction.voucher!!)
+            }
+
             val qrcode = Intent(this, PaymentActivity::class.java).apply {
                 putExtra("Transaction", Gson().toJson(transaction))
             }
