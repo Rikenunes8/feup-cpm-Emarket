@@ -30,6 +30,8 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
         title = getString(R.string.header_transaction_detail)
 
+        productRecyclerView.isNestedScrollingEnabled = false
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         transaction = Gson().fromJson(intent.getStringExtra("transaction"), Transaction::class.java)

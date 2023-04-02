@@ -5,7 +5,7 @@
     <string name="header_basket">Basket</string>
     <string name="header_checkout">Checkout</string>
     <string name="header_payment">Payment</string>
-    <string name="header_transaction_detail">Transaction Detail</string>
+    <string name="header_transaction_detail">Transaction Details</string>
 
     <string name="title_registration">Registration</string>
     <string name="title_login">Login</string>
