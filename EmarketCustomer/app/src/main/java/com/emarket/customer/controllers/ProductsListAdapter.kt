@@ -30,7 +30,7 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, vType: Int): ProductItem {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.basket_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.product_card, parent, false)
         if (update == null) {
             view.findViewById<ImageButton>(R.id.delete_btn).visibility = View.INVISIBLE
         }
