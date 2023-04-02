@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
 
-class ProductsListAdapter(private val productItems: MutableList<Product>, private val updateTotal: (() -> Unit)? = null ) : RecyclerView.Adapter<ProductsListAdapter.ProductItem>() {
+class ProductsListAdapter(private val productItems: MutableList<Product>, private val update: (() -> Unit)? = null ) : RecyclerView.Adapter<ProductsListAdapter.ProductItem>() {
 
     class ProductItem(private val item: View) : RecyclerView.ViewHolder(item) {
         private val icon: ImageView = item.findViewById(R.id.item_icon)
@@ -31,7 +31,7 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
 
     override fun onCreateViewHolder(parent: ViewGroup, vType: Int): ProductItem {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.basket_item, parent, false)
-        if (updateTotal == null) {
+        if (update == null) {
             view.findViewById<ImageButton>(R.id.delete_btn).visibility = View.INVISIBLE
         }
         return ProductItem(view)
@@ -40,7 +40,7 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
     override fun onBindViewHolder(holder: ProductItem, pos: Int) {
         holder.bindData(productItems[pos])
 
-        if (updateTotal == null) return
+        if (update == null) return
         holder.delete.setOnClickListener {
             val itemPosition = holder.adapterPosition
             if (productItems[itemPosition].qnt <= 1) {
@@ -51,7 +51,7 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
                 productItems[itemPosition].qnt--
                 notifyItemChanged(itemPosition)
             }
-            updateTotal!!()
+            update!!()
         }
     }
 
