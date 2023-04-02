@@ -1,11 +1,9 @@
 package com.emarket.customer.controllers
 
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +37,7 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, vType: Int): TransactionItem {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.transaction_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.transaction_card, parent, false)
         return TransactionItem(view)
     }
 
