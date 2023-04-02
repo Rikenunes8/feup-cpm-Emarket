@@ -54,9 +54,9 @@ class CheckoutActivity : AppCompatActivity() {
         )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation)
-            basketView.isNestedScrollingEnabled = false
+        val isPortrait = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        val orientation = if (isPortrait) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
+        basketView.isNestedScrollingEnabled = !isPortrait
         basketView.layoutManager = LinearLayoutManager(this, orientation, false)
         voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(transaction.products)
