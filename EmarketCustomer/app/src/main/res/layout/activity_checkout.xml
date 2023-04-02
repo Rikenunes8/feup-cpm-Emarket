@@ -131,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="?attr/colorOnPrimary"
-                android:drawableLeft="@drawable/checkout_cart"
+                android:drawableLeft="@drawable/check"
                 android:drawableTint="?attr/colorOnContainer"
                 android:text="@string/confirm"
                 android:textAllCaps="false"
