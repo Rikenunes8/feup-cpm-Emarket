@@ -30,6 +30,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     private val tableVouchers = "Vouchers"
     private val keyVoucherId = "VoucherId"
     private val colVoucherDiscount = "VoucherDiscount"
+    private val colVoucherUsed = "VoucherUsed"
 
     private val tableTransactionProducts = "TransactionProducts"
     private val keyTransactionProducts = "TransProdId"
@@ -38,7 +39,8 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     override fun onCreate(db: SQLiteDatabase) {
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
                 "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
-                "$colVoucherDiscount INTEGER)"
+                "$colVoucherDiscount INTEGER, " +
+                "$colVoucherUsed INTEGER DEFAULT 0)"
         val sqlCreateProducts = "CREATE TABLE $tableProducts(" +
                 "$keyProductId VARCHAR(100) PRIMARY KEY, " +
                 "$colProductName VARCHAR(100), " +
@@ -72,6 +74,9 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     }
 
     fun addVoucher(voucher : Voucher) {
+        // check if voucher already exists
+        if (this.getVoucher(voucher.id) != null) return
+
         val values = ContentValues().also {
             it.put(keyVoucherId, voucher.id)
             it.put(colVoucherDiscount, voucher.discount)
@@ -81,15 +86,26 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     fun cleanVouchers() {
         cleanTable(tableVouchers)
     }
-    fun getVouchers() : MutableList<Voucher> {
+    fun cleanUnusedVouchers() {
+        val query = "DELETE FROM $tableVouchers WHERE $colVoucherUsed = 0"
+        writableDatabase.execSQL(query)
+    }
+
+    /**
+     * Get vouchers from the database
+     * @param onlyUnUsed if false, return all the vouchers, otherwise only the ones that haven't been used
+     * @return a list of vouchers
+     */
+    fun getVouchers(onlyUnUsed: Boolean = true) : MutableList<Voucher> {
         val vouchers = mutableListOf<Voucher>()
-        val query = "SELECT * FROM $tableVouchers"
+        val query = "SELECT * FROM $tableVouchers" + if (onlyUnUsed) " WHERE $colVoucherUsed = 0" else ""
         val cursor = readableDatabase.rawQuery(query, null)
         if (cursor.count == 0) return vouchers
         while (cursor.moveToNext()) {
             vouchers.add(Voucher(
                 cursor.getString(cursor.getColumnIndexOrThrow(keyVoucherId)),
-                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount))
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherUsed)) == 1
             ))
         }
         cursor.close()
@@ -103,11 +119,20 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         if (cursor.moveToFirst()) {
             voucher = Voucher(
                 cursor.getString(cursor.getColumnIndexOrThrow(keyVoucherId)),
-                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount))
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherDiscount)),
+                cursor.getInt(cursor.getColumnIndexOrThrow(colVoucherUsed)) == 1
             )
         }
         cursor.close()
         return voucher
+    }
+    fun updateVoucher(voucher: Voucher) {
+        val values = ContentValues().also {
+            it.put(keyVoucherId, voucher.id)
+            it.put(colVoucherDiscount, voucher.discount)
+            it.put(colVoucherUsed, voucher.used)
+        }
+        writableDatabase.update(tableVouchers, values, "$keyVoucherId = ?", arrayOf(voucher.id))
     }
 
     fun addProduct(product : Product) {

@@ -1,4 +1,4 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.profile
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.viewpager.widget.ViewPager
 import com.emarket.customer.R
+import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.SectionsPagerAdapter
 import com.emarket.customer.databinding.ActivityProfileBinding
 import com.google.android.material.tabs.TabLayout

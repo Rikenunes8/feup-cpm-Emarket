@@ -1,4 +1,4 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

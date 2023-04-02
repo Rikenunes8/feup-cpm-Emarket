@@ -1,8 +1,7 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +9,10 @@ import com.emarket.customer.Constants
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.activities.dbLayer
+import com.emarket.customer.activities.transactions
+import com.emarket.customer.activities.vouchers
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
@@ -64,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun fetchDatabase() {
-        vouchers = dbLayer.getVouchers()
+        vouchers = dbLayer.getVouchers(onlyUnUsed = true)
         transactions = dbLayer.getTransactions()
     }
 
@@ -87,6 +90,9 @@ class LoginActivity : AppCompatActivity() {
             runOnUiThread { showToast(this, getString(R.string.error_fetching_transactions)) }
             return
         }
+
+        // TODO: only add new transactions to the database (check date of last transaction or
+        //   iterate over the list and check if the transaction is already in the database to be safer)
         dbLayer.cleanTransactions()
         data.transactions.forEach { dbLayer.addTransaction(it) }
     }
@@ -101,7 +107,10 @@ class LoginActivity : AppCompatActivity() {
             runOnUiThread { showToast(this, getString(R.string.error_fetching_vouchers)) }
             return
         }
-        dbLayer.cleanVouchers()
-        data.vouchers?.forEach { dbLayer.addVoucher(it) }
+
+        dbLayer.cleanUnusedVouchers()
+        data.vouchers?.forEach {
+            dbLayer.addVoucher(it)
+        }
     }
 }

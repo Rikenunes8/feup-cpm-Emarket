@@ -29,9 +29,12 @@
             android:label="@string/header_checkout"
             android:parentActivityName=".activities.BasketActivity" />
         <activity
-            android:name=".activities.ProfileActivity"
+            android:name=".activities.profile.ProfileActivity"
             android:exported="false"
             android:label="@string/header_profile" />
+        <activity android:name=".activities.TransactionDetailsActivity"
+            android:exported="false"
+            android:label="@string/header_transaction_detail" />
         <activity
             android:name=".activities.InitialActivity"
             android:exported="true">
@@ -42,14 +45,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.authentication.LoginActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.RegisterActivity"
+            android:name=".activities.authentication.RegisterActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
