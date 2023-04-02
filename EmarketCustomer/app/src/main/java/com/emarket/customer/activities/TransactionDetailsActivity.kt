@@ -17,10 +17,13 @@ class TransactionDetailsActivity : AppCompatActivity() {
 
     private val transactionDateTv by lazy { findViewById<TextView>(R.id.rv_transaction_date) }
     private val voucherCv by lazy { findViewById<CardView>(R.id.cv_voucher) }
-    private val productRecyclerView by lazy { findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv_transaction_products) }
+    private val productRecyclerView by lazy { findViewById<RecyclerView>(R.id.rv_transaction_products) }
     private val accumulatedLinearLayout by lazy { findViewById<LinearLayout>(R.id.accumulated_holder) }
     private val totalPriceTv by lazy { findViewById<TextView>(R.id.tv_total_price) }
     private val discountedTv by lazy { findViewById<TextView>(R.id.tv_discounted) }
+    private val voucherIcon by lazy { findViewById<TextView>(R.id.voucher_icon) }
+    private val voucherDiscount by lazy { findViewById<TextView>(R.id.voucher_discount) }
+    private val accumulatedTv by lazy { findViewById<TextView>(R.id.accumulated) }
 
     private lateinit var transaction: Transaction;
 
@@ -58,7 +61,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        finish()
         return true
     }
 
@@ -69,9 +72,6 @@ class TransactionDetailsActivity : AppCompatActivity() {
         val voucher = transaction.voucher!!
         val voucherPercentage = getString(R.string.template_percentage, voucher.discount)
 
-        val voucherIcon = findViewById<TextView>(R.id.voucher_icon)
-        val voucherDiscount = findViewById<TextView>(R.id.voucher_discount)
-
         voucherIcon.text = voucherPercentage
         voucherDiscount.text = voucherPercentage
     }
@@ -80,8 +80,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
      * Set UI accumulated value from using the voucher
      */
     private fun setAccumulatedValue() {
-        val accumulatedTv = findViewById<TextView>(R.id.accumulated)
-        val accumulatedValue = transaction.total / transaction.voucher!!.discount
+        val accumulatedValue = transaction.total * transaction.voucher!!.discount / 100
         accumulatedTv.text = getString(R.string.template_price, accumulatedValue)
     }
 }
