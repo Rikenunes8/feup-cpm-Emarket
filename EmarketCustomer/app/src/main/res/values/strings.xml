@@ -58,5 +58,6 @@
     <string name="supermarket_name">ACME</string>
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
+    <string name="no_vouchers">No vouchers</string>
 
 </resources>
