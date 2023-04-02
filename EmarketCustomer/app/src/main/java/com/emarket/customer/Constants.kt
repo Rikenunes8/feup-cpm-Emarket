@@ -17,8 +17,9 @@ object Constants {
     const val BASKET_ITEMS = "BASKET_ITEMS"
 
     // Server connection
-    const val SERVER_URL = "http://192.168.1.64:5000/"
+    const val SERVER_URL = "http://192.168.1.6:5000/"
     const val REGISTER_ENDPOINT = "register"
+    const val USER_ENDPOINT = "user"
     const val TRANSACTIONS_ENDPOINT = "transactions"
     const val VOUCHERS_ENDPOINT = "vouchers"
 

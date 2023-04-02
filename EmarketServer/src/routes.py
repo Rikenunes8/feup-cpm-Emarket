@@ -27,14 +27,9 @@ def checkout():
   res = Emarket().checkout(request.json)
   return makeResponse(res)
 
-@routes.get('/transactions')
-def transactions():
-  res = Emarket().getTransactions(request.args.get('user'))
-  return makeResponse(res)
-
-@routes.get('/vouchers')
-def vouchers():
-  res = Emarket().getVouchers(request.args.get('user'))
+@routes.get('/user')
+def user():
+  res = Emarket().getUser(request.args.get('user'))
   return makeResponse(res)
   
 @routes.post('/products/add')

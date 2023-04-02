@@ -102,15 +102,22 @@ class Emarket(metaclass=EmarketMeta):
 
     return {'success': 'You are free to go!', 'total': total_paid}
 
-  def getTransactions(self, user_id : str):
+  def getUser(self, user_id : str):
     user = self._db.findUserById(user_id)
     if (user == None): return {'error': 'User not found!'}
-    return { 'transactions': user.get('transactions', []) }
+    
+    transactions = self.getTransactions(user)
+    vouchers = self.getVouchers(user)
+    accDiscount = self.getAccumulatedDiscount(user)
 
-  def getVouchers(self, user_id : str):
-    user = self._db.findUserById(user_id)
-    if (user == None): return {'error': 'User not found!'}
+    return {**transactions, **vouchers, **accDiscount}
+  def getTransactions(self, user : dict):
+    return { 'transactions': user.get('transactions', []) }
+  def getVouchers(self, user : dict):
     return { 'vouchers': user.get('vouchers', []) }
+  def getAccumulatedDiscount(self, user : dict):
+    return { 'accDiscount': user.get('accDiscount', 0) }
+      
 
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')
