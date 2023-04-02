@@ -2,6 +2,7 @@ package com.emarket.customer.activities
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
 import android.widget.*
@@ -49,7 +50,10 @@ class CheckoutActivity : AppCompatActivity() {
         )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
+        if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation)
+            basketView.isNestedScrollingEnabled = false
+        basketView.layoutManager = LinearLayoutManager(this, orientation, false)
         voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(transaction.products)
 
