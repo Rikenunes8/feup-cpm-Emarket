@@ -27,6 +27,11 @@ class ProfileFragment() : Fragment() {
             adapter = VoucherListAdapter(vouchers)
         }
 
+        if (vouchers.isEmpty()) {
+            binding.rvVoucher.visibility = View.GONE
+            binding.noVouchersView.visibility = View.VISIBLE
+        }
+
         binding.nameTv.text = user.name
         binding.nicknameTv.text = user.nickname
         binding.cardNoTv.text = user.cardNumber
