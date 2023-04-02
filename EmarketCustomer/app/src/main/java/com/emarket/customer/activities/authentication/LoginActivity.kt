@@ -22,13 +22,11 @@ import com.google.gson.Gson
 import java.net.URLEncoder
 import kotlin.concurrent.thread
 
-data class TransactionsResponse(
+data class UserResponse (
+    val accDiscount : Double,
+    val vouchers : List<Voucher>?,
     val transactions : List<Transaction>,
     val error: String?
-)
-data class VouchersResponse(
-    val vouchers : List<Voucher>?,
-    val error : String?
 )
 
 class LoginActivity : AppCompatActivity() {
@@ -50,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    fetchData()
+                    fetchUserData()
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
@@ -71,46 +69,31 @@ class LoginActivity : AppCompatActivity() {
         transactions = dbLayer.getTransactions()
     }
 
-    private fun fetchData() {
+    private fun fetchUserData() {
         thread(start = true) {
             val userId = UserViewModel(this.application).user?.userId!!
-            fetchTransactions(URLEncoder.encode(userId))
-            fetchVouchers(URLEncoder.encode(userId))
+            val response = NetworkService.makeRequest(
+                RequestType.GET,
+                Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
+            )
+            val data = Gson().fromJson(response, UserResponse::class.java)
+            if (data.error != null) {
+                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
+            }
+
+            // TODO: only add new transactions to the database (check date of last transaction or
+            //   iterate over the list and check if the transaction is already in the database to be safer)
+            dbLayer.cleanTransactions()
+            data.transactions.forEach { dbLayer.addTransaction(it) }
+
+            dbLayer.cleanUnusedVouchers()
+            data.vouchers?.forEach { dbLayer.addVoucher(it) }
+
+            val prevUser = UserViewModel(application).user
+            prevUser!!.accDiscount = data.accDiscount
+            UserViewModel(application).user = prevUser
+
             fetchDatabase()
-        }
-    }
-
-    private fun fetchTransactions(userId: String) {
-        val response = NetworkService.makeRequest(
-            RequestType.GET,
-            Constants.SERVER_URL + Constants.TRANSACTIONS_ENDPOINT + "?user=$userId"
-        )
-        val data = Gson().fromJson(response, TransactionsResponse::class.java)
-        if (data.error != null) {
-            runOnUiThread { showToast(this, getString(R.string.error_fetching_transactions)) }
-            return
-        }
-
-        // TODO: only add new transactions to the database (check date of last transaction or
-        //   iterate over the list and check if the transaction is already in the database to be safer)
-        dbLayer.cleanTransactions()
-        data.transactions.forEach { dbLayer.addTransaction(it) }
-    }
-
-    private fun fetchVouchers(userId: String) {
-        val response = NetworkService.makeRequest(
-            RequestType.GET,
-            Constants.SERVER_URL + Constants.VOUCHERS_ENDPOINT + "?user=$userId"
-        )
-        val data = Gson().fromJson(response, VouchersResponse::class.java)
-        if (data.error != null) {
-            runOnUiThread { showToast(this, getString(R.string.error_fetching_vouchers)) }
-            return
-        }
-
-        dbLayer.cleanUnusedVouchers()
-        data.vouchers?.forEach {
-            dbLayer.addVoucher(it)
         }
     }
 }
