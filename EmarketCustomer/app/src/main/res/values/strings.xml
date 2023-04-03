@@ -59,5 +59,6 @@
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
+    <string name="no_transactions">No past transactions</string>
 
 </resources>
