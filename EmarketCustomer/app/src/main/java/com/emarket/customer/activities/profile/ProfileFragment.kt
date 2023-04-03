@@ -103,12 +103,15 @@ class ProfileFragment() : Fragment() {
                 val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT
 
                 val userData = UpdateUserData(user.userId, cardNumber)
-                val signature = Utils.getSignature(Gson().toJson(userData, UpdateUserData::class.java))
+                val jsonUserData = Gson().toJson(userData)
+                val signature = Utils.getSignature(jsonUserData)
 
-                val requestData = Gson().toJson(UserUpdateRequest(userData, signature), UserUpdateRequest::class.java)
+                val requestData = Gson().toJson(UserUpdateRequest(userData, signature))
 
                 Log.e("ProfileFragment",
                     "Data: $requestData")
+                Log.e("ProfileFragment",
+                    "Signed content:: $jsonUserData")
 
                 val response = NetworkService.makeRequest(RequestType.POST, endpoint, requestData)
 
