@@ -2,13 +2,12 @@ package com.emarket.customer.activities
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
@@ -30,6 +29,8 @@ class CheckoutActivity : AppCompatActivity() {
     private val discountView by lazy { findViewById<TextView>(R.id.tv_discounted_price) }
     private val confirmButton by lazy { findViewById<Button>(R.id.confirm_btn) }
     private val noVouchersView by lazy { findViewById<TextView>(R.id.tv_no_vouchers) }
+    private val accumulatedAmountCardView by lazy { findViewById<CardView>(R.id.accumulated_amount_cv) }
+    private val accumulatedAmountSubtitle by lazy { findViewById<TextView>(R.id.accumulated_amount_subtitle) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,11 +43,10 @@ class CheckoutActivity : AppCompatActivity() {
 
         val total = products.fold(0.0) { sum, product -> sum + product.price * product.quantity }
 
-        voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        val isPortrait = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
-        val orientation = if (isPortrait) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        basketView.isNestedScrollingEnabled = !isPortrait
-        basketView.layoutManager = LinearLayoutManager(this, orientation, false)
+        if (amountToDiscount > 0.0) {
+            accumulatedAmountCardView.visibility = View.VISIBLE
+            accumulatedAmountSubtitle.visibility = View.VISIBLE
+        }
         voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(products)
 

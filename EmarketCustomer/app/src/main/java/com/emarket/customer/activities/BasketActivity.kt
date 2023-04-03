@@ -34,14 +34,14 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
-/*
+
 val product1 = Product(R.drawable.icon, "1", "Banana", 1.15)
 val product2 = Product(R.drawable.icon, "2", "Apple", 2.50)
 val product3 = Product(R.drawable.icon, "3", "Pear", 1.75)
 val product4 = Product(R.drawable.icon, "4", "Microwave", 49.99)
-private val productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)*/
+private var productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)
 
-private var productItems = mutableListOf<Product>()
+//private var productItems = mutableListOf<Product>()
 
 data class ProductSignature (
     val product : String,
@@ -70,14 +70,10 @@ class BasketActivity : AppCompatActivity() {
             productItems = Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
         }
         adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
+        rv.adapter = adapter
 
         enableAddProduct()
         enableCheckout()
-
-        val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        rv.layoutManager = LinearLayoutManager(this, orientation, false)
-        rv.adapter = adapter
-
         updateTotal()
 
         addBtn.setOnClickListener {
