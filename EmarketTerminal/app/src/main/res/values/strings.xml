@@ -2,7 +2,9 @@
     <string name="app_name">Emarket Terminal</string>
 
     <string name="mn_scanner">Scanner</string>
-    <string name="scan">Scann QRCode</string>
+    <string name="scan">Scan QRCode</string>
+    <string name="try_again">Try again</string>
+    <string name="finish">Finish</string>
 
     <string name="title_thank_you">Thank you for choosing ACME!</string>
     <string name="title_error">ACME says sorry</string>

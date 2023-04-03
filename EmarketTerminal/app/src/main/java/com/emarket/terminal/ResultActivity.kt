@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -16,6 +17,7 @@ class ResultActivity : AppCompatActivity() {
     private val errorDetailTv by lazy { findViewById<TextView>(R.id.error) }
     private val priceLabelTv by lazy { findViewById<TextView>(R.id.price_label) }
     private val priceTv by lazy { findViewById<TextView>(R.id.price) }
+    private val resultBtn by lazy { findViewById<Button>(R.id.result_btn) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,7 @@ class ResultActivity : AppCompatActivity() {
             bodyTv.text = getString(R.string.body_error)
             errorDetailTv.text = it
             errorDetailTv.visibility = View.VISIBLE
+            resultBtn.text = getString(R.string.try_again)
         }
 
         result.success?.let {
@@ -36,7 +39,9 @@ class ResultActivity : AppCompatActivity() {
             priceLabelTv.visibility = View.VISIBLE
             priceTv.text = getString(R.string.template_price, result.total)
             priceTv.visibility = View.VISIBLE
+            resultBtn.text = getString(R.string.finish)
         }
+        resultBtn.setOnClickListener { finish() }
     }
 }
 

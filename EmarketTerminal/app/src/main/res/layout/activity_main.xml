@@ -50,20 +50,11 @@
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/scan_btn"
                 style="@style/Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:backgroundTint="?attr/colorOnPrimary"
+                android:id="@+id/scan_btn"
                 android:drawableLeft="@drawable/qrcode_scanner"
                 android:drawableTint="?attr/colorOnContainer"
-                android:paddingHorizontal="30dp"
-                android:paddingVertical="10dp"
-                android:text="@string/scan"
-                android:textAllCaps="false"
-                android:textColor="?attr/colorOnContainer"
-                android:textSize="24sp" />
+                android:text="@string/scan" />
 
         </LinearLayout>
     </ScrollView>

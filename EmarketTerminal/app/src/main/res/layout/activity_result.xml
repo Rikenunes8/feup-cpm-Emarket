@@ -71,7 +71,11 @@
                         android:visibility="gone"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
+
+            <Button
+                style="@style/Button"
+                android:id="@+id/result_btn" />
+
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>
