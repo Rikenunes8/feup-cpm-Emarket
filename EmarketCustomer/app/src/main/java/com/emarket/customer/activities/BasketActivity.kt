@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
@@ -34,9 +32,11 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
-val product1 = Product(R.drawable.icon, "1", "Apple", 3.25)
-val product2 = Product(R.drawable.icon, "2", "Banana", 4.99)
-private val productItems : MutableList<Product> = mutableListOf(product1, product2)
+val product1 = Product(R.drawable.icon, "1", "Banana", 1.15)
+val product2 = Product(R.drawable.icon, "2", "Apple", 2.50)
+val product3 = Product(R.drawable.icon, "3", "Pear", 1.75)
+val product4 = Product(R.drawable.icon, "4", "Microwave", 49.99)
+private val productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)
 
 data class ProductSignature (
     val product : String,
@@ -76,7 +76,7 @@ class BasketActivity : AppCompatActivity() {
         addBtn.setOnLongClickListener {
             val newProduct = Product(R.drawable.icon, "0", "FAKE", 40.0)
             val oldProduct = productItems.find { it.uuid == newProduct.uuid }
-            if (oldProduct != null) { oldProduct.qnt++;updateProduct(oldProduct) }
+            if (oldProduct != null) { oldProduct.quantity++;updateProduct(oldProduct) }
             else { addProduct(newProduct) }
             enableCheckout()
             return@setOnLongClickListener true
@@ -110,7 +110,7 @@ class BasketActivity : AppCompatActivity() {
     }
 
     private fun updateTotal() {
-        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.qnt }
+        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
         totalView.text = getString(R.string.template_price, sum)
     }
 
@@ -167,7 +167,7 @@ class BasketActivity : AppCompatActivity() {
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
             val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
             if (oldProduct != null) {
-                oldProduct.qnt++
+                oldProduct.quantity++
                 updateProduct(oldProduct)
             } else {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)

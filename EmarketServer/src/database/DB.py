@@ -35,8 +35,8 @@ class DB(metaclass=DBMeta):
       'uuid': uuid,
       'pubKey': pubKey,
       'cardNo': cardNo,
-      'accAmount': 0,
-      'accDiscount': 0,
+      'totalSpent': 0,
+      'amountToDiscount': 0,
       'transactions': [],
       'vouchers': []
     }
