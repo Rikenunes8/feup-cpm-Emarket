@@ -33,8 +33,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        scanBtn.setOnClickListener { if (!requestCameraPermission())
-            read.launch(IntentIntegrator(this).createScanIntent()) }
+        scanBtn.setOnClickListener {
+            if (!requestCameraPermission())
+            read.launch(IntentIntegrator(this).createScanIntent())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -80,9 +82,11 @@ class MainActivity : AppCompatActivity() {
                 RequestType.POST,
                 Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
                 data)
-            runOnUiThread { intent = Intent(this, ResultActivity::class.java)
+            runOnUiThread {
+                intent = Intent(this, ResultActivity::class.java)
                 intent.putExtra("RESULT", res)
-                startActivity(intent) }
+                startActivity(intent)
+            }
         }
     }
 }

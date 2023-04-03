@@ -38,7 +38,6 @@
                         android:text="@string/title_thank_you" />
 
                     <TextView
-                        android:id="@+id/textView2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="20dp"
@@ -47,7 +46,6 @@
                         android:textSize="26sp" />
 
                     <TextView
-                        android:id="@+id/textView3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="TextView"
