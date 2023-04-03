@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
@@ -46,7 +48,7 @@ class BasketActivity : AppCompatActivity() {
         const val REQUEST_CAMERA_PERMISSION = 1
     }
 
-    private var adapter = ProductsListAdapter(productItems) { updateTotal() }
+    private var adapter = ProductsListAdapter(productItems) { enableCheckout(); updateTotal() }
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -56,6 +58,8 @@ class BasketActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_basket)
 
+        enableCheckout()
+
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
         rv.layoutManager = LinearLayoutManager(this, orientation, false)
         rv.adapter = adapter
@@ -63,8 +67,10 @@ class BasketActivity : AppCompatActivity() {
         updateTotal()
 
         addBtn.setOnClickListener {
-            if (!requestCameraPermission())
+            if (!requestCameraPermission()) {
                 readQRCode.launch(IntentIntegrator(this).createScanIntent())
+            }
+
         }
         // TODO: Remove bypass to add a fake product
         addBtn.setOnLongClickListener {
@@ -72,6 +78,7 @@ class BasketActivity : AppCompatActivity() {
             val oldProduct = productItems.find { it.uuid == newProduct.uuid }
             if (oldProduct != null) { oldProduct.qnt++;updateProduct(oldProduct) }
             else { addProduct(newProduct) }
+            enableCheckout()
             return@setOnLongClickListener true
         }
 
@@ -83,6 +90,11 @@ class BasketActivity : AppCompatActivity() {
             }
             startActivity(Intent(this, CheckoutActivity::class.java))
         }
+    }
+
+    private fun enableCheckout() {
+        checkoutBtn.isEnabled = productItems.isNotEmpty()
+        checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
     }
 
     private fun addProduct(product: Product) {
@@ -161,6 +173,7 @@ class BasketActivity : AppCompatActivity() {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
                 addProduct(newProduct)
                 thread(start=true) { dbLayer.addProduct(newProduct) }
+                enableCheckout()
             }
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())

@@ -2,8 +2,11 @@ package com.emarket.customer.activities
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Paint
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +35,7 @@ class CheckoutActivity : AppCompatActivity() {
     private val discountCheck by lazy { findViewById<CheckBox>(R.id.discount) }
     private val discountView by lazy { findViewById<TextView>(R.id.discount_price) }
     private val confirmButton by lazy { findViewById<Button>(R.id.confirm_btn) }
+    private val noVouchersView by lazy { findViewById<TextView>(R.id.tv_no_vouchers) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +54,17 @@ class CheckoutActivity : AppCompatActivity() {
         )
 
         voucherView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        basketView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        val isPortrait = resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+        val orientation = if (isPortrait) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
+        basketView.isNestedScrollingEnabled = !isPortrait
+        basketView.layoutManager = LinearLayoutManager(this, orientation, false)
         voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(transaction.products)
 
+        if (vouchers.isEmpty()) {
+            voucherView.visibility = View.GONE
+            noVouchersView.visibility = View.VISIBLE
+        }
         accAmountView.text = getString(R.string.template_price, accDiscount)
         totalView.text = getString(R.string.template_price, transaction.total)
 

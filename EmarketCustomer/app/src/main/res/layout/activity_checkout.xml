@@ -7,85 +7,99 @@
     android:orientation="vertical"
     tools:context=".activities.CheckoutActivity">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="?attr/actionBarSize"
-        android:orientation="vertical"
-        android:paddingHorizontal="20dp">
+        android:layout_marginBottom="?attr/actionBarSize">
 
-        <TextView
-            style="@style/Subtitle2"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:text="@string/subtitle_pick_voucher" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:paddingHorizontal="20dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_voucher"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp" />
-
-        <TextView
-            style="@style/Subtitle2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:text="@string/subtitle_accumulated_amount" />
-
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp">
-
-
-            <LinearLayout
+            <TextView
+                style="@style/Subtitle2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:text="@string/subtitle_pick_voucher" />
 
-                <TextView
-                    style="@style/FormLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/label_amount" />
+            <TextView
+                android:id="@+id/tv_no_vouchers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/no_vouchers"
+                android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/acc_amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="TextView" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_voucher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp" />
 
-                <CheckBox
-                    android:id="@+id/discount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/discount"
-                    app:buttonTint="?attr/colorOnSecondary" />
+            <TextView
+                style="@style/Subtitle2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:text="@string/subtitle_accumulated_amount" />
 
 
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                app:cardCornerRadius="20dp">
 
-        <TextView
-            style="@style/Subtitle2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="10dp"
-            android:text="@string/header_basket" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_basket"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-    </LinearLayout>
+                    <TextView
+                        style="@style/FormLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/label_amount" />
+
+                    <TextView
+                        android:id="@+id/acc_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView" />
+
+                    <CheckBox
+                        android:id="@+id/discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/discount"
+                        app:buttonTint="?attr/colorOnSecondary" />
+
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                style="@style/Subtitle2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:text="@string/header_basket" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_basket"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -131,7 +145,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="?attr/colorOnPrimary"
-                android:drawableLeft="@drawable/checkout_cart"
+                android:drawableLeft="@drawable/check"
                 android:drawableTint="?attr/colorOnContainer"
                 android:text="@string/confirm"
                 android:textAllCaps="false"

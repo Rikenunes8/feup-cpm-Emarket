@@ -5,7 +5,7 @@
     <string name="header_basket">Basket</string>
     <string name="header_checkout">Checkout</string>
     <string name="header_payment">Payment</string>
-    <string name="header_transaction_detail">Transaction Detail</string>
+    <string name="header_transaction_detail">Transaction Details</string>
 
     <string name="title_registration">Registration</string>
     <string name="title_login">Login</string>
@@ -57,5 +57,6 @@
     <string name="supermarket_name">ACME</string>
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
+    <string name="no_vouchers">No vouchers</string>
 
 </resources>
