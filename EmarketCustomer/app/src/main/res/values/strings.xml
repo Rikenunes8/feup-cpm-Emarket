@@ -19,6 +19,8 @@
     <string name="label_name">Name:</string>
     <string name="label_nickname">Nickname:</string>
     <string name="label_password">Password:</string>
+    <string name="label_total_spent">Total spent:</string>
+    <string name="label_amount_to_discount">To discount:</string>
     <string name="label_card_no">Card no.:</string>
     <string name="label_total">Total:</string>
     <string name="label_amount">Amount:</string>

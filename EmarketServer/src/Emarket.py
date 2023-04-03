@@ -145,14 +145,17 @@ class Emarket:
     transactions = self.getTransactions(user)
     vouchers = self.getVouchers(user)
     amount_to_discount = self.getAmountToDiscount(user)
+    total_spent = self.getTotalSpent(user)
 
-    return {**transactions, **vouchers, **amount_to_discount}
+    return {**transactions, **vouchers, **amount_to_discount, **total_spent}
   def getTransactions(self, user : dict):
     return { 'transactions': user.get('transactions', []) }
   def getVouchers(self, user : dict):
     return { 'vouchers': user.get('vouchers', []) }
   def getAmountToDiscount(self, user : dict):
     return { 'amountToDiscount': user.get('amountToDiscount', 0) }
+  def getTotalSpent(self, user : dict):
+    return { 'totalSpent': user.get('totalSpent', 0) }
       
   def updateUser(self, data : dict) -> dict:
     if data.get('data') == None: return {'error': 'Missing data property!'}

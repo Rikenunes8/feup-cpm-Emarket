@@ -24,6 +24,7 @@ import java.net.URLEncoder
 import kotlin.concurrent.thread
 
 data class UserResponse (
+    val totalSpent : Double,
     val amountToDiscount : Double,
     val vouchers : List<Voucher>,
     val transactions : List<Transaction>,
@@ -74,25 +75,23 @@ class LoginActivity : AppCompatActivity() {
         thread(start = true) {
             try {
                 val userId = UserViewModel(this.application).user?.userId!!
-                val response = NetworkService.makeRequest(
-                    RequestType.GET,
-                    Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
-                )
+                val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
+                val response = NetworkService.makeRequest(RequestType.GET, endpoint)
+
                 val data = Gson().fromJson(response, UserResponse::class.java)
-                if (data.error != null) {
-                    runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
-                }
+                if (data.error != null) throw Exception()
                 
                 dbLayer.cleanUnusedVouchers()
-                data.vouchers?.forEach { dbLayer.addVoucher(it) }
+                data.vouchers.forEach { dbLayer.addVoucher(it) }
 
                 // TODO: only add new transactions to the database (check date of last transaction or
                 //   iterate over the list and check if the transaction is already in the database to be safer)
                 dbLayer.cleanTransactions()
                 data.transactions.forEach { dbLayer.addTransaction(it) }
 
-                val prevUser = UserViewModel(application).user
-                prevUser!!.amountToDiscount = data.amountToDiscount
+                val prevUser = UserViewModel(application).user!!
+                prevUser.amountToDiscount = data.amountToDiscount
+                prevUser.totalSpent = data.totalSpent
                 UserViewModel(application).user = prevUser
             } catch (e: Exception) {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }

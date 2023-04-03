@@ -12,7 +12,8 @@ data class User(
     val nickname: String,
     val password: String,
     var cardNumber: String,
-    var amountToDiscount: Double = 0.0
+    var amountToDiscount: Double = 0.0,
+    var totalSpent : Double = 0.0
 )
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
