@@ -23,9 +23,9 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         fun bindData(product: Product) {
             icon.setImageResource(product.imgRes ?: R.drawable.icon)
             name.text = product.name
-            qnt.text = item.context.getString(R.string.template_quantity_times, product.qnt)
+            qnt.text = item.context.getString(R.string.template_quantity_times, product.quantity)
             price.text = item.context.getString(R.string.template_price, product.price)
-            total.text = item.context.getString(R.string.template_price, product.price*product.qnt)
+            total.text = item.context.getString(R.string.template_price, product.price*product.quantity)
         }
     }
 
@@ -43,12 +43,12 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         if (update == null) return
         holder.delete.setOnClickListener {
             val itemPosition = holder.adapterPosition
-            if (productItems[itemPosition].qnt <= 1) {
+            if (productItems[itemPosition].quantity <= 1) {
                 // remove your item from data base
                 productItems.removeAt(itemPosition)
                 notifyItemRemoved(itemPosition)
             } else {
-                productItems[itemPosition].qnt--
+                productItems[itemPosition].quantity--
                 notifyItemChanged(itemPosition)
             }
             update!!()
