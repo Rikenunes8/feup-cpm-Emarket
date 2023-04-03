@@ -100,9 +100,9 @@ class Emarket:
     return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
   
   def checkout(self, data : dict) -> dict:
-    error = self._validateCheckout(data)
-    if (type(error) == str): return {'error': error}
-    else: (user, products, voucher, to_discount) = error
+    validation = self._validateCheckout(data)
+    if (type(validation) == str): return {'error': validation}
+    else: (user, products, voucher, to_discount) = validation
 
     # Calculate total price
     total = sum(map(lambda p: p['price'] * p['quantity'], products))
