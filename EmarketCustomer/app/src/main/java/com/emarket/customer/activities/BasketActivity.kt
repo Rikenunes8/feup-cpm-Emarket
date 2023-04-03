@@ -46,9 +46,10 @@ data class ProductSignature (
 class BasketActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CAMERA_PERMISSION = 1
+        const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
 
-    private var adapter = ProductsListAdapter(productItems) { enableCheckout(); updateTotal() }
+    private var adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -58,6 +59,7 @@ class BasketActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_basket)
 
+        enableAddProduct()
         enableCheckout()
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
@@ -78,6 +80,7 @@ class BasketActivity : AppCompatActivity() {
             val oldProduct = productItems.find { it.uuid == newProduct.uuid }
             if (oldProduct != null) { oldProduct.quantity++;updateProduct(oldProduct) }
             else { addProduct(newProduct) }
+            enableAddProduct()
             enableCheckout()
             return@setOnLongClickListener true
         }
@@ -95,6 +98,11 @@ class BasketActivity : AppCompatActivity() {
     private fun enableCheckout() {
         checkoutBtn.isEnabled = productItems.isNotEmpty()
         checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
+    }
+    private fun enableAddProduct() {
+        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
+        addBtn.isEnabled = numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
+        addBtn.alpha = if (addBtn.isEnabled) 1f else .5f
     }
 
     private fun addProduct(product: Product) {
@@ -173,6 +181,7 @@ class BasketActivity : AppCompatActivity() {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
                 addProduct(newProduct)
                 thread(start=true) { dbLayer.addProduct(newProduct) }
+                enableAddProduct()
                 enableCheckout()
             }
         } catch (e: java.lang.Exception) {
