@@ -2,6 +2,7 @@ package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -24,7 +25,7 @@ import kotlin.concurrent.thread
 
 data class UserResponse (
     val accDiscount : Double,
-    val vouchers : List<Voucher>?,
+    val vouchers : List<Voucher>,
     val transactions : List<Transaction>,
     val error: String?
 )
@@ -71,27 +72,31 @@ class LoginActivity : AppCompatActivity() {
 
     private fun fetchUserData() {
         thread(start = true) {
-            val userId = UserViewModel(this.application).user?.userId!!
-            val response = NetworkService.makeRequest(
-                RequestType.GET,
-                Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
-            )
-            val data = Gson().fromJson(response, UserResponse::class.java)
-            if (data.error != null) {
+            try {
+                val userId = UserViewModel(this.application).user?.userId!!
+                val response = NetworkService.makeRequest(
+                    RequestType.GET,
+                    Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
+                )
+                val data = Gson().fromJson(response, UserResponse::class.java)
+                if (data.error != null) {
+                    runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
+                }
+
+                // TODO: only add new transactions to the database (check date of last transaction or
+                //   iterate over the list and check if the transaction is already in the database to be safer)
+                dbLayer.cleanTransactions()
+                data.transactions.forEach { dbLayer.addTransaction(it) }
+
+                dbLayer.cleanUnusedVouchers()
+                data.vouchers.forEach { dbLayer.addVoucher(it) }
+
+                val prevUser = UserViewModel(application).user
+                prevUser!!.accDiscount = data.accDiscount
+                UserViewModel(application).user = prevUser
+            } catch (e: Exception) {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             }
-
-            // TODO: only add new transactions to the database (check date of last transaction or
-            //   iterate over the list and check if the transaction is already in the database to be safer)
-            dbLayer.cleanTransactions()
-            data.transactions.forEach { dbLayer.addTransaction(it) }
-
-            dbLayer.cleanUnusedVouchers()
-            data.vouchers?.forEach { dbLayer.addVoucher(it) }
-
-            val prevUser = UserViewModel(application).user
-            prevUser!!.accDiscount = data.accDiscount
-            UserViewModel(application).user = prevUser
 
             fetchDatabase()
         }

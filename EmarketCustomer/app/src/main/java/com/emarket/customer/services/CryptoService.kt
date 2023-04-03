@@ -175,5 +175,6 @@ class CryptoService {
             val keyFactory = KeyFactory.getInstance("RSA")
             return keyFactory.generatePublic(keySpec) as RSAPublicKey
         }
+
     }
 }

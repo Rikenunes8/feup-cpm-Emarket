@@ -70,7 +70,8 @@ class DB(metaclass=DBMeta):
       {'uuid': uuid},
       {'$set': values}
     )
-    print(f"Updated user with id {uuid}")
+    print(f"Updated user with id {uuid} with values {values}")
+  
 
   def findUserByKey(self, key) -> dict:
     return self._users.find_one({'pubKey': key})
