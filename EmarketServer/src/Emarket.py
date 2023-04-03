@@ -118,6 +118,23 @@ class Emarket(metaclass=EmarketMeta):
   def getAccumulatedDiscount(self, user : dict):
     return { 'accDiscount': user.get('accDiscount', 0) }
       
+  def updateUser(self, data : dict) -> dict:
+    if data.get('user') == None: return {'error': 'Missing data property!'}
+    if data.get('signature' == None): return {'error': 'Missing signature property!'}
+    
+    user = data['user']
+    uid = user.get('id')
+    cardNumber = user.get('cardNumber')
+    if uid == None: return {'error': 'Missing id property!'}
+    if cardNumber == None: return {'error': 'Missing cardNumber property!'}
+
+    signatureDecoded = base64.b64decode(data['signature'].encode())
+    key = self._getUserPublicKey(uid)
+    try: rsa.verify(user.encode(), signatureDecoded, key)
+    except: return {'error': 'Signature verification failed!'}
+
+    self._db.updateUserCardNo(uid, cardNumber)
+    return {'success': 'User updated!', 'user': user}
 
   def addProduct(self, data: dict) -> dict:
     uuid = data.get('uuid')

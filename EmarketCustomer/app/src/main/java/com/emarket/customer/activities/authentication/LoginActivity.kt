@@ -2,6 +2,7 @@ package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -77,12 +78,14 @@ class LoginActivity : AppCompatActivity() {
                     RequestType.GET,
                     Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${
                         URLEncoder.encode(
-                            userId
+                            userId,
+                            "UTF-8"
                         )
                     }"
                 )
                 val data = Gson().fromJson(response, UserResponse::class.java)
                 if (data.error != null) {
+                    Log.e("LoginActivity", getString(R.string.error_fetching_user_information) + "\n 1:${data.error}")
                     runOnUiThread {
                         showToast(
                             this,
@@ -103,6 +106,7 @@ class LoginActivity : AppCompatActivity() {
                 prevUser!!.accDiscount = data.accDiscount
                 UserViewModel(application).user = prevUser
             } catch (e: Exception) {
+                Log.e("LoginActivity", getString(R.string.error_fetching_user_information) + "\n 2:${e.message}")
                 runOnUiThread {
                     showToast(
                         this,

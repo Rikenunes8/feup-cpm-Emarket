@@ -71,6 +71,13 @@ class DB(metaclass=DBMeta):
       {'$set': values}
     )
     print(f"Updated user with id {uuid}")
+  
+  def updateUserCardNo(self, uuid, cardNo):
+    res = self._users.update_one(
+      {'uuid': uuid},
+      {'$set': {'cardNo': cardNo}}
+    )
+    print(f"Updated user card no with id {uuid} to {cardNo}")
 
   def findUserByKey(self, key) -> dict:
     return self._users.find_one({'pubKey': key})

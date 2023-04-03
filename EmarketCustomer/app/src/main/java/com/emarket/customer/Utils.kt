@@ -40,11 +40,18 @@ object Utils {
      * @param jsonData the data to sign and put in qrcode
      */
     fun genQRCode(jsonData: String) : String {
-        val dataByteArray = jsonData.toByteArray()
-        val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
-        val signatureEncoded = Base64.getEncoder().encodeToString(signature)
+        val signatureEncoded = signContent(jsonData)
         val data = Gson().toJson(Data(signatureEncoded, jsonData))
 
         return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
+    }
+
+    /**
+     * Signs content with the user's private key
+     */
+    fun signContent(content: String) : String {
+        val dataByteArray = content.toByteArray()
+        val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
+        return Base64.getEncoder().encodeToString(signature)
     }
 }
