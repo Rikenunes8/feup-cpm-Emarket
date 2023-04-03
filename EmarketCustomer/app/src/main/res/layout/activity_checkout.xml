@@ -131,8 +131,8 @@
                 android:textColor="?attr/colorOnPrimary" />
 
             <TextView
-                android:id="@+id/discount_price"
-                android:layout_width="wrap_content"
+                android:id="@+id/tv_discounted_price"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="1"
