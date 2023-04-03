@@ -21,7 +21,8 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
 
-        var result = Gson().fromJson(intent.getStringExtra("RESULT"), Message::class.java)
+        val message = intent.getStringExtra("RESULT")
+        val result = Gson().fromJson(message, Message::class.java)
         result.error?.let {
             titleTv.text = getString(R.string.title_error)
             bodyTv.text = getString(R.string.body_error)
@@ -36,10 +37,7 @@ class ResultActivity : AppCompatActivity() {
             priceTv.text = getString(R.string.template_price, result.total)
             priceTv.visibility = View.VISIBLE
         }
-
-
     }
-
 }
 
 data class Message (

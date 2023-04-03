@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         scanBtn.setOnClickListener {
             if (!requestCameraPermission())
-            read.launch(IntentIntegrator(this).createScanIntent())
+                read.launch(IntentIntegrator(this).createScanIntent())
         }
     }
 

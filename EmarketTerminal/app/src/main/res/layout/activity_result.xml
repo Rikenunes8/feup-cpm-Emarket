@@ -38,12 +38,8 @@
                         android:gravity="center" />
 
                     <TextView
-                        android:id="@+id/body"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="20dp"
-                        android:gravity="center"
-                        android:textSize="26sp" />
+                        style="@style/Body"
+                        android:id="@+id/body" />
 
                     <TextView
                         android:id="@+id/price_label"

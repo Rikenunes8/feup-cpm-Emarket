@@ -38,12 +38,8 @@
                         android:text="@string/title_thank_you" />
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="20dp"
-                        android:gravity="center"
-                        android:text="@string/body_scan"
-                        android:textSize="26sp" />
+                        style="@style/Body"
+                        android:text="@string/body_scan" />
 
                     <TextView
                         android:layout_width="match_parent"
