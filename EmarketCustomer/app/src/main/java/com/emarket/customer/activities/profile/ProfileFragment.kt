@@ -1,7 +1,6 @@
 package com.emarket.customer.activities.profile
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,11 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
+import com.emarket.customer.DataSigned
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
-import com.emarket.customer.activities.Data
-import com.emarket.customer.activities.Payment
 import com.emarket.customer.activities.vouchers
 import com.emarket.customer.controllers.VoucherListAdapter
 import com.emarket.customer.databinding.FragmentProfileBinding
@@ -21,27 +19,18 @@ import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType
 import com.emarket.customer.models.User
 import com.emarket.customer.models.UserViewModel
-import com.emarket.customer.services.CryptoService
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
-import java.net.URLEncoder
-import java.util.*
 import kotlin.concurrent.thread
 
-data class UpdateUserData (
+data class UserCard (
     val id: String,
     val cardNumber: String,
-)
-data class UserUpdateRequest (
-    val user: UpdateUserData,
-    val signature : String
 )
 
 data class UserResponse (
     val error: String?,
-    val success: String?,
-    val user: User,
 )
 
 class ProfileFragment() : Fragment() {
@@ -79,10 +68,9 @@ class ProfileFragment() : Fragment() {
         }
 
         binding.editPaymentBtn.setOnClickListener {
-            val fragment = EditDialogFragment.newInstance(user.cardNumber,
-                { cardNumber ->
-                    updateUserCard(user, cardNumber)
-                },
+            val fragment = EditDialogFragment.newInstance(
+                user.cardNumber,
+                { cardNumber -> updateUserCard(user, cardNumber) },
                 EditDialogType.PAYMENT
             )
 
@@ -102,27 +90,13 @@ class ProfileFragment() : Fragment() {
             try {
                 val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT
 
-                val userData = UpdateUserData(user.userId, cardNumber)
-                val jsonUserData = Gson().toJson(userData)
-                val signature = Utils.getSignature(jsonUserData)
-
-                val requestData = Gson().toJson(UserUpdateRequest(userData, signature))
-
-                Log.e("ProfileFragment",
-                    "Data: $requestData")
-                Log.e("ProfileFragment",
-                    "Signed content:: $jsonUserData")
-
+                val userCardJSON = Gson().toJson(UserCard(user.userId, cardNumber))
+                val signature = Utils.getSignature(userCardJSON)
+                val requestData = Gson().toJson(DataSigned(signature, userCardJSON))
                 val response = NetworkService.makeRequest(RequestType.POST, endpoint, requestData)
 
                 val userResponse = Gson().fromJson(response, UserResponse::class.java)
-                if (userResponse.error != null) {
-                    Log.e("ProfileFragment", getString(R.string.error_updating_user_cardNo) +
-                            "\nError: " + userResponse.error)
-
-                    activity?.runOnUiThread { showToast(requireActivity(), getString(R.string.error_updating_user_cardNo)) }
-                    return@thread
-                }
+                if (userResponse.error != null) throw Exception()
 
                 user.cardNumber = cardNumber
                 UserViewModel(requireActivity().application).user = user
@@ -131,11 +105,7 @@ class ProfileFragment() : Fragment() {
                     showToast(requireActivity(), getString(R.string.success_edit_payment))
                     binding.cardNoTv.text = user.cardNumber
                 }
-
-
             } catch (e: Exception) {
-                Log.e("ProfileFragment", getString(R.string.error_updating_user_cardNo) +
-                        "\nError: " + e.message)
                 activity?.runOnUiThread { showToast(requireActivity(),getString(R.string.error_updating_user_cardNo)) }
             }
 

@@ -76,22 +76,11 @@ class LoginActivity : AppCompatActivity() {
                 val userId = UserViewModel(this.application).user?.userId!!
                 val response = NetworkService.makeRequest(
                     RequestType.GET,
-                    Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${
-                        URLEncoder.encode(
-                            userId,
-                            "UTF-8"
-                        )
-                    }"
+                    Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
                 )
                 val data = Gson().fromJson(response, UserResponse::class.java)
                 if (data.error != null) {
-                    Log.e("LoginActivity", getString(R.string.error_fetching_user_information) + "\n 1:${data.error}")
-                    runOnUiThread {
-                        showToast(
-                            this,
-                            getString(R.string.error_fetching_user_information)
-                        )
-                    }
+                    runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
                 }
 
                 // TODO: only add new transactions to the database (check date of last transaction or
@@ -106,13 +95,7 @@ class LoginActivity : AppCompatActivity() {
                 prevUser!!.accDiscount = data.accDiscount
                 UserViewModel(application).user = prevUser
             } catch (e: Exception) {
-                Log.e("LoginActivity", getString(R.string.error_fetching_user_information) + "\n 2:${e.message}")
-                runOnUiThread {
-                    showToast(
-                        this,
-                        getString(R.string.error_fetching_user_information)
-                    )
-                }
+                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             }
 
             fetchDatabase()

@@ -3,13 +3,16 @@ package com.emarket.customer
 import android.content.Context
 import android.util.TypedValue
 import android.widget.Toast
-import com.emarket.customer.activities.Data
 import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
 
+data class DataSigned(
+    val signature: String,
+    val data: String
+)
 
 object Utils {
 
@@ -41,7 +44,7 @@ object Utils {
      */
     fun genQRCode(jsonData: String) : String {
         val signatureEncoded = getSignature(jsonData)
-        val data = Gson().toJson(Data(signatureEncoded, jsonData))
+        val data = Gson().toJson(DataSigned(signatureEncoded, jsonData))
 
         return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
     }

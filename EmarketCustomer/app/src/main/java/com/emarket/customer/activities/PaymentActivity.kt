@@ -22,11 +22,6 @@ data class Payment(
     val transaction: Transaction
 )
 
-data class Data(
-    val signature: String,
-    val data: String
-)
-
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
     private val foregroundColor by lazy { getColor(getAttributeColor(this, com.google.android.material.R.attr.colorOnSecondary)) }

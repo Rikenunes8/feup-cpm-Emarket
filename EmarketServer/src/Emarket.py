@@ -119,10 +119,11 @@ class Emarket(metaclass=EmarketMeta):
     return { 'accDiscount': user.get('accDiscount', 0) }
       
   def updateUser(self, data : dict) -> dict:
-    if data.get('user') == None: return {'error': 'Missing data property!'}
+    if data.get('data') == None: return {'error': 'Missing data property!'}
     if data.get('signature' == None): return {'error': 'Missing signature property!'}
     
-    user = data['user']
+    userStr = data['data']
+    user = json.loads(userStr)
     uid = user.get('id')
     cardNumber = user.get('cardNumber')
     if uid == None: return {'error': 'Missing id property!'}
@@ -130,10 +131,10 @@ class Emarket(metaclass=EmarketMeta):
 
     signatureDecoded = base64.b64decode(data['signature'].encode())
     key = self._getUserPublicKey(uid)
-    try: rsa.verify(user.encode(), signatureDecoded, key)
+    try: rsa.verify(userStr.encode(), signatureDecoded, key)
     except: return {'error': 'Signature verification failed!'}
 
-    self._db.updateUserCardNo(uid, cardNumber)
+    self._db.updateUserValues(uid, {'cardNo': cardNumber})
     return {'success': 'User updated!', 'user': user}
 
   def addProduct(self, data: dict) -> dict:
