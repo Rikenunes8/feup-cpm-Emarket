@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="40dp"
-    android:paddingVertical="20dp"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -17,10 +16,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="20dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -30,47 +30,52 @@
                     android:padding="24dp">
 
                     <TextView
+                        android:id="@+id/title"
                         style="@style/Title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="20dp"
-                        android:gravity="center"
-                        android:text="@string/title_thank_you" />
+                        android:gravity="center" />
 
                     <TextView
-                        android:id="@+id/textView2"
+                        android:id="@+id/body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="20dp"
                         android:gravity="center"
-                        android:text="@string/body_scan"
                         android:textSize="26sp" />
 
                     <TextView
-                        android:id="@+id/textView3"
+                        android:id="@+id/price_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="TextView"
-                        android:visibility="gone" />
+                        android:layout_marginTop="20dp"
+                        android:gravity="center"
+                        android:text="@string/label_price"
+                        android:visibility="gone"
+                        android:textSize="26sp" />
+
+                    <TextView
+                        android:id="@+id/price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="26sp"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/error"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:layout_marginVertical="20dp"
+                        android:textSize="26sp"
+                        android:visibility="gone"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
-            <Button
-                android:id="@+id/scan_btn"
-                style="@style/Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="20dp"
-                android:backgroundTint="?attr/colorOnPrimary"
-                android:drawableLeft="@drawable/qrcode_scanner"
-                android:drawableTint="?attr/colorOnContainer"
-                android:paddingHorizontal="30dp"
-                android:paddingVertical="10dp"
-                android:text="@string/scan"
-                android:textAllCaps="false"
-                android:textColor="?attr/colorOnContainer"
-                android:textSize="24sp" />
-
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>
