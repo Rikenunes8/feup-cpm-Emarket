@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
@@ -27,16 +28,20 @@ import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
+/*
 val product1 = Product(R.drawable.icon, "1", "Banana", 1.15)
 val product2 = Product(R.drawable.icon, "2", "Apple", 2.50)
 val product3 = Product(R.drawable.icon, "3", "Pear", 1.75)
 val product4 = Product(R.drawable.icon, "4", "Microwave", 49.99)
-private val productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)
+private val productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)*/
+
+private var productItems = mutableListOf<Product>()
 
 data class ProductSignature (
     val product : String,
@@ -49,7 +54,7 @@ class BasketActivity : AppCompatActivity() {
         const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
 
-    private var adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
+    private lateinit var adapter : ProductsListAdapter
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -57,7 +62,14 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("Creating")
         setContentView(R.layout.activity_basket)
+        if (savedInstanceState != null) {
+            println("Restoring on create")
+            val productItemsJson = savedInstanceState.getString(Constants.BASKET_ITEMS)
+            productItems = Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
+        }
+        adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
 
         enableAddProduct()
         enableCheckout()
@@ -95,33 +107,6 @@ class BasketActivity : AppCompatActivity() {
         }
     }
 
-    private fun enableCheckout() {
-        checkoutBtn.isEnabled = productItems.isNotEmpty()
-        checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
-    }
-    private fun enableAddProduct() {
-        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
-        addBtn.isEnabled = numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
-        addBtn.alpha = if (addBtn.isEnabled) 1f else .5f
-    }
-
-    private fun addProduct(product: Product) {
-        productItems.add(0, product)
-        adapter.notifyItemInserted(0)
-        rv.scrollToPosition(0)
-        updateTotal()
-    }
-
-    private fun updateProduct(newProduct : Product) {
-        productItems.forEachIndexed { index, product -> if (product.uuid == newProduct.uuid) adapter.notifyItemChanged(index)}
-        updateTotal()
-    }
-
-    private fun updateTotal() {
-        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
-        totalView.text = getString(R.string.template_price, sum)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -135,6 +120,13 @@ class BasketActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        println("Saving")
+        outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
+        super.onSaveInstanceState(outState)
     }
 
     private fun requestCameraPermission(): Boolean {
@@ -188,5 +180,32 @@ class BasketActivity : AppCompatActivity() {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
         }
+    }
+
+    private fun enableCheckout() {
+        checkoutBtn.isEnabled = productItems.isNotEmpty()
+        checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
+    }
+    private fun enableAddProduct() {
+        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
+        addBtn.isEnabled = numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
+        addBtn.alpha = if (addBtn.isEnabled) 1f else .5f
+    }
+
+    private fun addProduct(product: Product) {
+        productItems.add(0, product)
+        adapter.notifyItemInserted(0)
+        rv.scrollToPosition(0)
+        updateTotal()
+    }
+
+    private fun updateProduct(newProduct : Product) {
+        productItems.forEachIndexed { index, product -> if (product.uuid == newProduct.uuid) adapter.notifyItemChanged(index)}
+        updateTotal()
+    }
+
+    private fun updateTotal() {
+        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
+        totalView.text = getString(R.string.template_price, sum)
     }
 }
