@@ -4,6 +4,7 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
@@ -16,16 +17,20 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
     RecyclerView.Adapter<TransactionsListAdapter.TransactionItem>() {
 
     class TransactionItem(private val item: View) : RecyclerView.ViewHolder(item) {
+        private val subtotalHolder: LinearLayout = item.findViewById(R.id.subtotal_ll)
+        private val subtotal: TextView = item.findViewById(R.id.tv_subtotal)
         private val total: TextView = item.findViewById(R.id.tv_total)
-        private val paid: TextView = item.findViewById(R.id.tv_paid)
         private val date: TextView = item.findViewById(R.id.tv_date)
         private val transactionItem: CardView = item.findViewById(R.id.transaction_item)
 
         fun bindData(transaction: Transaction) {
-            val totalPaid = transaction.total - (transaction.discounted ?: 0.0)
+            transaction.discounted?.let {
+                subtotal.text = item.context.getString(R.string.template_price, transaction.total)
+                subtotalHolder.visibility = View.VISIBLE
+            }
 
-            total.text = item.context.getString(R.string.template_price, transaction.total)
-            paid.text = item.context.getString(R.string.template_price, totalPaid)
+            val totalPaid = transaction.total - (transaction.discounted ?: 0.0)
+            total.text = item.context.getString(R.string.template_price, totalPaid)
             date.text = transaction.date
 
             transactionItem.setOnClickListener {
