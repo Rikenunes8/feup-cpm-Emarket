@@ -177,7 +177,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     }
     fun getTransactions() : MutableList<Transaction> {
         val transactions = mutableListOf<Transaction>()
-        val query = "SELECT * FROM $tableTransactions"
+        val query = "SELECT * FROM $tableTransactions ORDER BY $colTransactionDate DESC"
         val cursor = readableDatabase.rawQuery(query, null)
         if (cursor.count == 0) return transactions
         while (cursor.moveToNext()) {
