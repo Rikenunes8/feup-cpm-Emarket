@@ -1,7 +1,9 @@
 package com.emarket.customer.activities
 
 import android.content.res.Configuration
+import android.graphics.Paint
 import android.os.Bundle
+import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +22,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
     private val productRecyclerView by lazy { findViewById<RecyclerView>(R.id.rv_transaction_products) }
     private val accumulatedLinearLayout by lazy { findViewById<LinearLayout>(R.id.accumulated_holder) }
     private val totalPriceTv by lazy { findViewById<TextView>(R.id.tv_total_price) }
-    private val discountedTv by lazy { findViewById<TextView>(R.id.tv_discounted) }
+    private val discountedPriceTv by lazy { findViewById<TextView>(R.id.tv_discounted_price) }
     private val voucherIcon by lazy { findViewById<TextView>(R.id.voucher_icon) }
     private val voucherDiscount by lazy { findViewById<TextView>(R.id.voucher_discount) }
     private val accumulatedTv by lazy { findViewById<TextView>(R.id.accumulated) }
@@ -30,27 +32,29 @@ class TransactionDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_transaction_detail)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         title = getString(R.string.header_transaction_detail)
 
         productRecyclerView.isNestedScrollingEnabled = false
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         transaction = Gson().fromJson(intent.getStringExtra("transaction"), Transaction::class.java)
-
         transactionDateTv.text = transaction.date
 
+        totalPriceTv.text = getString(R.string.template_price, transaction.total)
+
+        if (transaction.discounted != null) {
+            totalPriceTv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            discountedPriceTv.text = getString(R.string.template_price, (transaction.total - transaction.discounted!!))
+        }
+
         if (transaction.voucher == null) {
-            voucherCv.visibility = CardView.GONE
-            accumulatedLinearLayout.visibility = LinearLayout.GONE
+            voucherCv.visibility = View.GONE
+            accumulatedLinearLayout.visibility = View.GONE
         } else {
             setVoucherInfo()
             setAccumulatedValue()
         }
-
-        totalPriceTv.text = getString(R.string.template_price, transaction.total)
-        discountedTv.text = getString(R.string.template_price, transaction.discounted)
 
         val products = transaction.products
         val adapter = ProductsListAdapter(products)

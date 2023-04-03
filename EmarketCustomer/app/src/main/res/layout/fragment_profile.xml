@@ -84,6 +84,42 @@
                             android:layout_weight="1" />
                     </TableRow>
 
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingVertical="10dp">
+
+                        <TextView
+                            style="@style/FormLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_total_spent" />
+
+                        <TextView
+                            android:id="@+id/total_spent_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingVertical="10dp">
+
+                        <TextView
+                            style="@style/FormLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_amount_to_discount" />
+
+                        <TextView
+                            android:id="@+id/to_discount_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+                    </TableRow>
+
                 </TableLayout>
             </androidx.cardview.widget.CardView>
 

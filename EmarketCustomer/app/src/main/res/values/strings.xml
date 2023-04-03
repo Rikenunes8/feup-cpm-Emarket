@@ -19,10 +19,12 @@
     <string name="label_name">Name:</string>
     <string name="label_nickname">Nickname:</string>
     <string name="label_password">Password:</string>
+    <string name="label_total_spent">Total spent:</string>
+    <string name="label_amount_to_discount">To discount:</string>
     <string name="label_card_no">Card no.:</string>
     <string name="label_total">Total:</string>
     <string name="label_amount">Amount:</string>
-    <string name="label_paid">Paid:</string>
+    <string name="label_subtotal">Subtotal:</string>
     <string name="label_discounted">Discounted:</string>
     <string name="label_accumulated">Accumulated:</string>
 
@@ -59,5 +61,6 @@
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
+    <string name="no_transactions">No past transactions</string>
 
 </resources>

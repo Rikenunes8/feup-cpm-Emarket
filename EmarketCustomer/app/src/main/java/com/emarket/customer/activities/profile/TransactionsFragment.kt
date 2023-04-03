@@ -28,6 +28,9 @@ class TransactionsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
             adapter = TransactionsListAdapter(transactions)
         }
+        if (transactions.isEmpty()) {
+            binding.tvNoTransactions.visibility = View.VISIBLE
+        }
 
         return binding.root
     }

@@ -52,6 +52,8 @@ class ProfileFragment() : Fragment() {
         val user = UserViewModel(requireActivity().application).user!!
         binding.nameTv.text = user.name
         binding.nicknameTv.text = user.nickname
+        binding.totalSpentTv.text = getString(R.string.template_price, user.totalSpent)
+        binding.toDiscountTv.text = getString(R.string.template_price, user.amountToDiscount)
         binding.cardNoTv.text = user.cardNumber
 
         binding.editPersonalBtn.setOnClickListener {

@@ -27,7 +27,7 @@ class CheckoutActivity : AppCompatActivity() {
     private val amountToDiscountView by lazy { findViewById<TextView>(R.id.acc_amount) }
     private val totalView by lazy { findViewById<TextView>(R.id.total_price) }
     private val discountCheck by lazy { findViewById<CheckBox>(R.id.discount) }
-    private val discountView by lazy { findViewById<TextView>(R.id.discount_price) }
+    private val discountView by lazy { findViewById<TextView>(R.id.tv_discounted_price) }
     private val confirmButton by lazy { findViewById<Button>(R.id.confirm_btn) }
     private val noVouchersView by lazy { findViewById<TextView>(R.id.tv_no_vouchers) }
 

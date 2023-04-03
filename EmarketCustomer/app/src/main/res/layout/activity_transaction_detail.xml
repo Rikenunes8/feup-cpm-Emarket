@@ -113,6 +113,14 @@
 
             <TextView
                 android:id="@+id/tv_total_price"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:textColor="?attr/colorOnPrimary" />
+
+            <TextView
+                android:id="@+id/tv_discounted_price"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
@@ -121,62 +129,29 @@
                 android:textColor="?attr/colorOnPrimary" />
 
             <LinearLayout
+                android:id="@+id/accumulated_holder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/discounted_holder"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/label_discounted"
-                        android:textColor="?attr/colorOnPrimary"
-                        android:textStyle="bold" />
+                    android:gravity="center"
+                    android:text="@string/label_accumulated"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/tv_discounted"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:gravity="center_vertical|start"
-                        android:textColor="?attr/colorOnPrimary" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/accumulated_holder"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/label_accumulated"
-                        android:textColor="?attr/colorOnPrimary"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/accumulated"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical|start"
-                        android:textColor="?attr/colorOnPrimary" />
-                </LinearLayout>
-
+                <TextView
+                    android:id="@+id/accumulated"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|start"
+                    android:textColor="?attr/colorOnPrimary" />
             </LinearLayout>
 
         </LinearLayout>
-
     </com.google.android.material.bottomappbar.BottomAppBar>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
