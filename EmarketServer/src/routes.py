@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, make_response
 from src.Emarket import Emarket
 
 routes = Blueprint('routes', __name__)
+emarket = Emarket()
 
 def notJson():
   return make_response(jsonify({'error': 'Content-Type not supported!'}), 400)
@@ -18,24 +19,30 @@ def heartbeat():
 @routes.post('/register')
 def register():
   if (not isContentJson(request)): return notJson()
-  res = Emarket().register(request.json)
+  res = emarket.register(request.json)
   return makeResponse(res)
 
 @routes.post('/checkout')
 def checkout():
   if (not isContentJson(request)): return notJson()
-  res = Emarket().checkout(request.json)
+  res = emarket.checkout(request.json)
   return makeResponse(res)
 
 @routes.get('/user')
 def user():
-  res = Emarket().getUser(request.args.get('user'))
+  res = emarket.getUser(request.args.get('user'))
+  return makeResponse(res)
+
+@routes.post('/user')
+def userUpdate():
+  if (not isContentJson(request)): return notJson()
+  res = Emarket().updateUser(request.json)
   return makeResponse(res)
   
 @routes.post('/products/add')
 def addProduct():
   if (not isContentJson(request)): return notJson()
-  res = Emarket().addProduct(request.json)
+  res = emarket.addProduct(request.json)
   return makeResponse(res)
   
 

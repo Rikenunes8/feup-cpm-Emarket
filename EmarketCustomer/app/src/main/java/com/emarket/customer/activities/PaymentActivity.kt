@@ -8,7 +8,7 @@ import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
-import com.emarket.customer.models.Transaction
+import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
@@ -19,12 +19,7 @@ import kotlin.concurrent.thread
 
 data class Payment(
     val userUUID: String,
-    val transaction: Transaction
-)
-
-data class Data(
-    val signature: String,
-    val data: String
+    val basket: Basket
 )
 
 class PaymentActivity : AppCompatActivity() {
@@ -36,12 +31,12 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
-        val transactionJSON = intent.getStringExtra("Transaction")!!
-        val transaction = Gson().fromJson(transactionJSON, Transaction::class.java)
+        val basketJSON = intent.getStringExtra("Basket")!!
+        val basket = Gson().fromJson(basketJSON, Basket::class.java)
 
         val storedUser = UserViewModel(this.application).user
         val userUUID = storedUser!!.userId
-        val paymentJson = Gson().toJson(Payment(userUUID, transaction))
+        val paymentJson = Gson().toJson(Payment(userUUID, basket))
         val qrContent = Utils.genQRCode(paymentJson)
 
         thread(start = true) {
@@ -54,6 +49,7 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
         val DIMENSION = 1000
 

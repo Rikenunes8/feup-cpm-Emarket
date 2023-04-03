@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
@@ -34,9 +32,11 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
-val product1 = Product(R.drawable.icon, "1", "Apple", 3.25)
-val product2 = Product(R.drawable.icon, "2", "Banana", 4.99)
-private val productItems : MutableList<Product> = mutableListOf(product1, product2)
+val product1 = Product(R.drawable.icon, "1", "Banana", 1.15)
+val product2 = Product(R.drawable.icon, "2", "Apple", 2.50)
+val product3 = Product(R.drawable.icon, "3", "Pear", 1.75)
+val product4 = Product(R.drawable.icon, "4", "Microwave", 49.99)
+private val productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)
 
 data class ProductSignature (
     val product : String,
@@ -46,9 +46,10 @@ data class ProductSignature (
 class BasketActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CAMERA_PERMISSION = 1
+        const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
 
-    private var adapter = ProductsListAdapter(productItems) { enableCheckout(); updateTotal() }
+    private var adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
@@ -58,6 +59,7 @@ class BasketActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_basket)
 
+        enableAddProduct()
         enableCheckout()
 
         val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
@@ -76,8 +78,9 @@ class BasketActivity : AppCompatActivity() {
         addBtn.setOnLongClickListener {
             val newProduct = Product(R.drawable.icon, "0", "FAKE", 40.0)
             val oldProduct = productItems.find { it.uuid == newProduct.uuid }
-            if (oldProduct != null) { oldProduct.qnt++;updateProduct(oldProduct) }
+            if (oldProduct != null) { oldProduct.quantity++;updateProduct(oldProduct) }
             else { addProduct(newProduct) }
+            enableAddProduct()
             enableCheckout()
             return@setOnLongClickListener true
         }
@@ -96,6 +99,11 @@ class BasketActivity : AppCompatActivity() {
         checkoutBtn.isEnabled = productItems.isNotEmpty()
         checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
     }
+    private fun enableAddProduct() {
+        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
+        addBtn.isEnabled = numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
+        addBtn.alpha = if (addBtn.isEnabled) 1f else .5f
+    }
 
     private fun addProduct(product: Product) {
         productItems.add(0, product)
@@ -110,7 +118,7 @@ class BasketActivity : AppCompatActivity() {
     }
 
     private fun updateTotal() {
-        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.qnt }
+        val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
         totalView.text = getString(R.string.template_price, sum)
     }
 
@@ -167,12 +175,13 @@ class BasketActivity : AppCompatActivity() {
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
             val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
             if (oldProduct != null) {
-                oldProduct.qnt++
+                oldProduct.quantity++
                 updateProduct(oldProduct)
             } else {
                 val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
                 addProduct(newProduct)
                 thread(start=true) { dbLayer.addProduct(newProduct) }
+                enableAddProduct()
                 enableCheckout()
             }
         } catch (e: java.lang.Exception) {

@@ -29,18 +29,15 @@ class EditDialog(ctx: Context,
 
         var titleId = 0
         var fieldName = ""
-        var confirmationMsg = ""
 
         when (editDialogType) {
             EditDialogType.PAYMENT -> {
                 titleId = R.string.dialog_title_edit_payment
                 fieldName = context.getString(R.string.card_number)
-                confirmationMsg = context.getString(R.string.success_edit_payment)
             }
             EditDialogType.PERSONAL -> {
                 titleId = R.string.dialog_title_edit_personal
                 fieldName = context.getString(R.string.name)
-                confirmationMsg = context.getString(R.string.success_edit_personal)
             }
         }
 
@@ -63,8 +60,6 @@ class EditDialog(ctx: Context,
 
             listener(edtField.text.toString())
             dismiss()
-
-            Utils.showToast(context, confirmationMsg)
         }
 
         cancelBtn.setOnClickListener {
