@@ -5,6 +5,7 @@
     <item
         android:id="@+id/mn_scanner"
         android:icon="@drawable/qrcode_scanner"
+        app:iconTint="?attr/colorOnPrimary"
         android:title="@string/mn_scanner"
         app:showAsAction="ifRoom" />
 </menu>
