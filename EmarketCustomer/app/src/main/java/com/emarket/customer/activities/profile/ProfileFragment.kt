@@ -12,6 +12,7 @@ import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.activities.Data
 import com.emarket.customer.activities.Payment
 import com.emarket.customer.activities.vouchers
 import com.emarket.customer.controllers.VoucherListAdapter
@@ -20,10 +21,12 @@ import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType
 import com.emarket.customer.models.User
 import com.emarket.customer.models.UserViewModel
+import com.emarket.customer.services.CryptoService
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import java.net.URLEncoder
+import java.util.*
 import kotlin.concurrent.thread
 
 data class UpdateUserData (
@@ -99,18 +102,15 @@ class ProfileFragment() : Fragment() {
             try {
                 val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT
 
-                val requestData = UpdateUserData(user.userId, cardNumber)
-                val signature = Utils.signContent(Gson().toJson(requestData))
+                val userData = UpdateUserData(user.userId, cardNumber)
+                val signature = Utils.getSignature(Gson().toJson(userData, UpdateUserData::class.java))
+
+                val requestData = Gson().toJson(UserUpdateRequest(userData, signature), UserUpdateRequest::class.java)
 
                 Log.e("ProfileFragment",
-                    "Data: ${Gson().toJson(UserUpdateRequest(requestData, Utils.signContent(Gson().toJson(user))), 
-                        UserUpdateRequest::class.java)}")
+                    "Data: $requestData")
 
-                val response = NetworkService.makeRequest(
-                    RequestType.POST,
-                    endpoint,
-                    Gson().toJson(UserUpdateRequest(requestData, signature), UserUpdateRequest::class.java),
-                )
+                val response = NetworkService.makeRequest(RequestType.POST, endpoint, requestData)
 
                 val userResponse = Gson().fromJson(response, UserResponse::class.java)
                 if (userResponse.error != null) {
@@ -131,6 +131,8 @@ class ProfileFragment() : Fragment() {
 
 
             } catch (e: Exception) {
+                Log.e("ProfileFragment", getString(R.string.error_updating_user_cardNo) +
+                        "\nError: " + e.message)
                 activity?.runOnUiThread { showToast(requireActivity(),getString(R.string.error_updating_user_cardNo)) }
             }
 
