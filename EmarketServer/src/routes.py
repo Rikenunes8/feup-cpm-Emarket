@@ -32,6 +32,12 @@ def checkout():
 def user():
   res = emarket.getUser(request.args.get('user'))
   return makeResponse(res)
+
+@routes.post('/user')
+def userUpdate():
+  if (not isContentJson(request)): return notJson()
+  res = Emarket().updateUser(request.json)
+  return makeResponse(res)
   
 @routes.post('/products/add')
 def addProduct():

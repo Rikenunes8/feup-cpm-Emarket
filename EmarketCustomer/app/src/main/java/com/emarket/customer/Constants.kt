@@ -20,7 +20,4 @@ object Constants {
     const val SERVER_URL = "http://192.168.1.9:5000/"
     const val REGISTER_ENDPOINT = "register"
     const val USER_ENDPOINT = "user"
-    const val TRANSACTIONS_ENDPOINT = "transactions"
-    const val VOUCHERS_ENDPOINT = "vouchers"
-
 }
