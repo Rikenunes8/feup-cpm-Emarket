@@ -84,7 +84,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingBottom="10dp"
-                android:divider="@android:color/transparent" />
+                android:divider="@android:color/transparent"
+                android:orientation="vertical"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

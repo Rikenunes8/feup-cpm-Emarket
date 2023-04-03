@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.DataSigned
 import com.emarket.customer.R
@@ -38,11 +36,7 @@ class ProfileFragment() : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentProfileBinding.inflate(layoutInflater)
-
-        binding.rvVoucher.apply {
-            layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
-            adapter = VoucherListAdapter(vouchers)
-        }
+        binding.rvVoucher.adapter = VoucherListAdapter(vouchers)
 
         if (vouchers.isEmpty()) {
             binding.rvVoucher.visibility = View.GONE

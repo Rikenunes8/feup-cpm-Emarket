@@ -34,16 +34,11 @@ class TransactionDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_transaction_detail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        title = getString(R.string.header_transaction_detail)
-
-        productRecyclerView.isNestedScrollingEnabled = false
-
         transaction = Gson().fromJson(intent.getStringExtra("transaction"), Transaction::class.java)
         transactionDateTv.text = transaction.date
-
         totalPriceTv.text = getString(R.string.template_price, transaction.total)
 
-        if (transaction.discounted != null) {
+        transaction.discounted?.let {
             totalPriceTv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             discountedPriceTv.text = getString(R.string.template_price, (transaction.total - transaction.discounted!!))
         }
@@ -56,14 +51,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
             setAccumulatedValue()
         }
 
-        val products = transaction.products
-        val adapter = ProductsListAdapter(products)
-        val orientation = if (Configuration.ORIENTATION_PORTRAIT == resources.configuration.orientation)
-            RecyclerView.VERTICAL else RecyclerView.HORIZONTAL
-        productRecyclerView.apply {
-            this.adapter = adapter
-            this.layoutManager = LinearLayoutManager(this@TransactionDetailsActivity, orientation, false)
-        }
+        productRecyclerView.adapter = ProductsListAdapter(transaction.products)
     }
 
     override fun onSupportNavigateUp(): Boolean {

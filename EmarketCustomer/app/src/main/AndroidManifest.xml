@@ -32,7 +32,8 @@
             android:name=".activities.profile.ProfileActivity"
             android:exported="false"
             android:label="@string/header_profile" />
-        <activity android:name=".activities.TransactionDetailsActivity"
+        <activity
+            android:name=".activities.TransactionDetailsActivity"
             android:exported="false"
             android:label="@string/header_transaction_detail" />
         <activity

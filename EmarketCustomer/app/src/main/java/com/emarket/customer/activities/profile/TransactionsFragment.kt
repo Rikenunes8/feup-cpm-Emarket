@@ -5,8 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.activities.transactions
 import com.emarket.customer.controllers.TransactionsListAdapter
 import com.emarket.customer.databinding.FragmentTransactionsBinding
@@ -18,19 +16,11 @@ import com.emarket.customer.databinding.FragmentTransactionsBinding
 class TransactionsFragment : Fragment() {
     private lateinit var binding: FragmentTransactionsBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTransactionsBinding.inflate(layoutInflater)
+        binding.rvTransactions.adapter = TransactionsListAdapter(transactions)
 
-        binding.rvTransactions.apply {
-            layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
-            adapter = TransactionsListAdapter(transactions)
-        }
-        if (transactions.isEmpty()) {
-            binding.tvNoTransactions.visibility = View.VISIBLE
-        }
+        if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
 
         return binding.root
     }

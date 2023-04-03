@@ -95,7 +95,10 @@
                         android:id="@+id/rv_transaction_products"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:divider="@android:color/transparent" />
+                        android:divider="@android:color/transparent"
+                        android:orientation="horizontal"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
                 </LinearLayout>
             </HorizontalScrollView>
