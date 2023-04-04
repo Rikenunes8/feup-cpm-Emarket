@@ -185,16 +185,23 @@ class Emarket:
     price = data.get('price')
     if (price is None or not isinstance(price, float)): 
       return {'error': 'Missing price property or invalid type!'}
-    content = {'uuid': uuid, 'name': name, 'price': price}
+    content = {'uuid': uuid, 'name': name, 'price': price, 'url': data.get('url')}
 
-    if (self._db.findProductById(uuid) != None):
-      return {'error': 'A product with this uuid already exists!'}
-    self._db.addProduct(content)
-    
+    return self.generate_qr_code(uuid, content)
+  
+  def generate_qr_code(self, uid: str, content: dict = None) -> dict:
+    product = self._db.findProductById(uid)
+    if content == None: 
+      if product == None: return {'error': 'Product not found!'}
+      else: content = {'uuid': product['uuid'], 'name': product['name'], 'price': product['price'], 'url': product.get('url')}
+    else:
+      if product != None: return {'error': 'A product with this uuid already exists!'}
+      else: self._db.addProduct(content)
+
     signature = rsa.sign(str(content).encode(), self._privkey, 'SHA-256')
     signatureEncoded = base64.b64encode(signature).decode('utf-8')
 
     img = qrcode.make(str({'product': str(content), 'signature': signatureEncoded}))
-    img.save(f'qrcodes/{uuid}.png')
+    img.save(f'qrcodes/{uid}.png')
     return content
     
