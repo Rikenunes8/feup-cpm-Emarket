@@ -36,6 +36,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
+                        android:textColor="?attr/colorOnSecondary"
                         android:text="@string/label_subtotal"
                         android:textStyle="bold" />
 
@@ -56,6 +57,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
                         android:text="@string/label_total"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textStyle="bold" />
 
                     <TextView
