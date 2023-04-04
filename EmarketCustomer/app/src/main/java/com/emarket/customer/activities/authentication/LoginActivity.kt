@@ -2,7 +2,6 @@ package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +16,7 @@ import com.emarket.customer.activities.vouchers
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
+import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
@@ -81,18 +81,7 @@ class LoginActivity : AppCompatActivity() {
                 val data = Gson().fromJson(response, UserResponse::class.java)
                 if (data.error != null) throw Exception()
                 
-                dbLayer.cleanUnusedVouchers()
-                data.vouchers.forEach { dbLayer.addVoucher(it) }
-
-                // TODO: only add new transactions to the database (check date of last transaction or
-                //   iterate over the list and check if the transaction is already in the database to be safer)
-                dbLayer.cleanTransactions()
-                data.transactions.forEach { dbLayer.addTransaction(it) }
-
-                val prevUser = UserViewModel(application).user!!
-                prevUser.amountToDiscount = data.amountToDiscount
-                prevUser.totalSpent = data.totalSpent
-                UserViewModel(application).user = prevUser
+                updateUserData(data)
             } catch (e: Exception) {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             }

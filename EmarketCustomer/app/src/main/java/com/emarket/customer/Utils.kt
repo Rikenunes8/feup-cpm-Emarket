@@ -7,6 +7,7 @@ import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.util.*
 
 data class DataSigned(
@@ -58,6 +59,15 @@ object Utils {
         val dataByteArray = jsonData.toByteArray()
         val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
         return Base64.getEncoder().encodeToString(signature)
+    }
+
+    /**
+     * Get the current date in the format dd/mm/yyyy - hh:mm:ss
+     */
+    fun getCurrentDate() : String {
+        val calendar = Calendar.getInstance().time
+        val formatter = SimpleDateFormat("yyyy/M/dd - HH:mm:ss", Locale.getDefault())
+        return formatter.format(calendar)
     }
 
 }

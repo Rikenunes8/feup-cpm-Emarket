@@ -16,18 +16,25 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
+import com.emarket.customer.models.UserViewModel
+import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
+import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.RequestType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import java.net.URLEncoder
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -113,6 +120,10 @@ class BasketActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchUserData()
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
@@ -198,5 +209,27 @@ class BasketActivity : AppCompatActivity() {
     private fun updateTotal() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
         totalView.text = getString(R.string.template_price, sum)
+    }
+
+    /**
+     * Updates the user data in the database and the shared preferences
+     */
+    private fun fetchUserData() {
+        thread(start = true) {
+            val user = UserViewModel(this.application).user!!
+            val date = Utils.getCurrentDate()
+            Log.d("BasketActivity", "Updating user data for ${user.userId} on $date")
+
+            val url = Constants.SERVER_URL + Constants.USER_ENDPOINT +
+                    "?user=${URLEncoder.encode(user.userId)}" + "&date=${URLEncoder.encode(date)}"
+            val response = NetworkService.makeRequest(RequestType.GET, url, null)
+            val userData = Gson().fromJson(response, UserResponse::class.java)
+            if (userData.error != null) {
+                Log.e("LoginActivity", "Error:  ${userData.error}")
+                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
+            } else {
+                updateUserData(userData)
+            }
+        }
     }
 }

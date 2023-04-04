@@ -155,8 +155,8 @@ class Emarket:
       try: date = datetime.strptime(date, DATE_FORMAT)
       except: return {'error': 'Invalid date format!'}
 
-      if date > datetime.now():
-        return {'error': 'Invalid date. Provide a date representing the past!'}
+      #if date > datetime.now():
+      #  return {'error': 'Invalid date. Provide a date representing the past!'}
       transactions['transactions'] = list(filter(lambda t: datetime.strptime(t['date'], DATE_FORMAT) > date, transactions['transactions']))
 
     vouchers = self.getVouchers(user)
