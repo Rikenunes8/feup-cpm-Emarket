@@ -37,7 +37,7 @@
                     android:id="@+id/item_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:layout_weight="0"
-                        android:text="TextView" />
+                        android:textColor="?attr/colorOnSecondary" />
 
                     <TextView
                         android:id="@+id/item_price"
@@ -89,7 +89,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="TextView"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>

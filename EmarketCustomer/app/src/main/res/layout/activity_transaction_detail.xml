@@ -52,6 +52,7 @@
                         android:gravity="center"
                         android:text="15%"
                         android:textColor="?attr/titleTextColor"
+                        app:backgroundTint="?attr/titleTextColor"
                         android:textSize="20sp" />
 
                     <TextView
@@ -62,7 +63,7 @@
                         android:layout_marginHorizontal="10dp"
                         android:text="@string/voucher"
                         android:textStyle="bold"
-                        android:textColor="@color/dark_gray"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="20sp" />
 
                     <TextView
@@ -70,9 +71,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
-                        android:text="Discount"
                         android:textStyle="bold"
-                        android:textColor="@color/dark_gray"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="20sp" />
 
                 </LinearLayout>

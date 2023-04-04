@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingHorizontal="20dp">
@@ -31,7 +30,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="right|center_vertical"
-                    android:text="TextView"
+                    android:textColor="?attr/colorOnSecondary"
                     android:textStyle="bold" />
 
                 <ImageButton
@@ -60,13 +59,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:text="Text" />
+                    android:textColor="?attr/colorOnSecondary" />
 
                 <TextView
                     android:id="@+id/item_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TextView"
                     android:textColor="@color/gray" />
 
             </LinearLayout>
@@ -77,7 +75,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="TextView"
+                android:textColor="?attr/colorOnSecondary"
                 android:textStyle="bold" />
 
         </LinearLayout>
