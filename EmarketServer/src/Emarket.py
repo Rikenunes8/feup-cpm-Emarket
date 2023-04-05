@@ -7,9 +7,11 @@ from datetime import datetime
 
 from src.database.DB import DB
 
-DATE_FORMAT = "%Y/%m/%d - %H:%M:%S"
-
 class Emarket:
+
+  DATE_FORMAT = "%Y/%m/%d - %H:%M:%S"
+
+
   def __init__(self) -> None:
     self._db = DB()
     # TODO: should we handle the error of not finding the keys?
@@ -115,7 +117,7 @@ class Emarket:
       'voucher': voucher,
       'discounted': discounted,
       'total': total,
-      'date': datetime.now().strftime(DATE_FORMAT)
+      'date': datetime.now().strftime(self.DATE_FORMAT)
     }
 
     DB().addUserTransaction(user['uuid'], transaction)
@@ -152,12 +154,12 @@ class Emarket:
     transactions = self.getTransactions(user)
     if (date != None):
       # check date format
-      try: date = datetime.strptime(date, DATE_FORMAT)
+      try: date = datetime.strptime(date, self.DATE_FORMAT)
       except: return {'error': 'Invalid date format!'}
 
-      #if date > datetime.now():
-      #  return {'error': 'Invalid date. Provide a date representing the past!'}
-      transactions['transactions'] = list(filter(lambda t: datetime.strptime(t['date'], DATE_FORMAT) > date, transactions['transactions']))
+      if date > datetime.now():
+        return {'error': 'Invalid date. Provide a date representing the past!'}
+      transactions['transactions'] = list(filter(lambda t: datetime.strptime(t['date'], self.DATE_FORMAT) > date, transactions['transactions']))
 
     vouchers = self.getVouchers(user)
     amount_to_discount = self.getAmountToDiscount(user)

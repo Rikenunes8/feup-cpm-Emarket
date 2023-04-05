@@ -37,10 +37,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
  * @see UserResponse
  */
 fun updateUserData(data: UserResponse) {
-    dbLayer.cleanUnusedVouchers()
     data.vouchers.forEach { dbLayer.addVoucher(it) }
-
-    dbLayer.cleanTransactions()
     data.transactions.forEach { dbLayer.addTransaction(it) }
 
     val prevUser = UserViewModel(appApplication).user!!

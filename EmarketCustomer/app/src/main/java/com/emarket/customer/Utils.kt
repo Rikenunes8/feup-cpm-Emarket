@@ -3,6 +3,9 @@ package com.emarket.customer
 import android.content.Context
 import android.util.TypedValue
 import android.widget.Toast
+import com.emarket.customer.activities.dbLayer
+import com.emarket.customer.activities.transactions
+import com.emarket.customer.activities.vouchers
 import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
@@ -68,6 +71,14 @@ object Utils {
         val calendar = Calendar.getInstance().time
         val formatter = SimpleDateFormat("yyyy/M/dd - HH:mm:ss", Locale.getDefault())
         return formatter.format(calendar)
+    }
+
+    /**
+     * fetch vouchers and transactions from the database
+     */
+    fun fetchDataFromDatabase() {
+        vouchers = dbLayer.getVouchers(onlyUnused = true)
+        transactions = dbLayer.getTransactions()
     }
 
 }

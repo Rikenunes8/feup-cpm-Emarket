@@ -9,6 +9,7 @@ import com.emarket.customer.Constants
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.Utils.fetchDataFromDatabase
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.activities.transactions
@@ -66,11 +67,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchDatabase() {
-        vouchers = dbLayer.getVouchers(onlyUnused = true)
-        transactions = dbLayer.getTransactions()
-    }
-
     private fun fetchUserData() {
         thread(start = true) {
             try {
@@ -80,13 +76,15 @@ class LoginActivity : AppCompatActivity() {
 
                 val data = Gson().fromJson(response, UserResponse::class.java)
                 if (data.error != null) throw Exception()
-                
+
+                dbLayer.cleanTransactions()
+                dbLayer.cleanUnusedVouchers()
                 updateUserData(data)
             } catch (e: Exception) {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             }
 
-            fetchDatabase()
+            fetchDataFromDatabase()
         }
     }
 }

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.Utils.fetchDataFromDatabase
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.profile.ProfileActivity
@@ -217,8 +218,7 @@ class BasketActivity : AppCompatActivity() {
     private fun fetchUserData() {
         thread(start = true) {
             val user = UserViewModel(this.application).user!!
-            val date = Utils.getCurrentDate()
-            Log.d("BasketActivity", "Updating user data for ${user.userId} on $date")
+            val date = dbLayer.getLastTransaction()?.date
 
             val url = Constants.SERVER_URL + Constants.USER_ENDPOINT +
                     "?user=${URLEncoder.encode(user.userId)}" + "&date=${URLEncoder.encode(date)}"
@@ -229,7 +229,9 @@ class BasketActivity : AppCompatActivity() {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             } else {
                 updateUserData(userData)
+                fetchDataFromDatabase()
             }
         }
     }
+
 }
