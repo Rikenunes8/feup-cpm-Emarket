@@ -12,7 +12,7 @@ import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.Voucher
 
 const val DB_NAME = "Emarket.db"
-const val DB_VERSION = 1
+const val DB_VERSION = 2
 
 class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) {
 
@@ -26,6 +26,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     private val keyProductId = "ProductId"
     private val colProductName = "ProductName"
     private val colProductPrice = "ProductPrice"
+    private val colProductUrl = "ProductUrl"
 
     private val tableVouchers = "Vouchers"
     private val keyVoucherId = "VoucherId"
@@ -38,24 +39,25 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
 
     override fun onCreate(db: SQLiteDatabase) {
         val sqlCreateVouchers = "CREATE TABLE $tableVouchers(" +
-                "$keyVoucherId VARCHAR(100) PRIMARY KEY, " +
+                "$keyVoucherId TEXT PRIMARY KEY, " +
                 "$colVoucherDiscount INTEGER, " +
                 "$colVoucherUsed INTEGER)"
         val sqlCreateProducts = "CREATE TABLE $tableProducts(" +
-                "$keyProductId VARCHAR(100) PRIMARY KEY, " +
-                "$colProductName VARCHAR(100), " +
-                "$colProductPrice FLOAT)"
+                "$keyProductId TEXT PRIMARY KEY, " +
+                "$colProductName TEXT, " +
+                "$colProductPrice FLOAT, " +
+                "$colProductUrl TEXT)"
         val sqlCreateTransactions = "CREATE TABLE $tableTransactions(" +
                 "$keyTransactionId INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "$colTransactionDate VARCHAR(100), " +
+                "$colTransactionDate TEXT, " +
                 "$colTransactionTotal FLOAT, " +
-                "$keyVoucherId VARCHAR(100), " +
+                "$keyVoucherId TEXT, " +
                 "$colTransactionDiscount FLOAT, " +
                 "FOREIGN KEY ($keyVoucherId) REFERENCES $tableVouchers($keyVoucherId))"
         val sqlCreateTransactionProducts = "CREATE TABLE $tableTransactionProducts(" +
                 "$keyTransactionProducts INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$keyTransactionId INTEGER, " +
-                "$keyProductId VARCHAR(100), " +
+                "$keyProductId TEXT, " +
                 "$colQuantity INTEGER, " +
                 "FOREIGN KEY ($keyTransactionId) REFERENCES $tableTransactions($keyTransactionId), " +
                 "FOREIGN KEY ($keyProductId) REFERENCES $tableProducts($keyProductId))"
@@ -134,6 +136,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
             it.put(keyProductId, product.uuid)
             it.put(colProductName, product.name)
             it.put(colProductPrice, product.price)
+            it.put(colProductUrl, product.url)
         }
         writableDatabase.insert(tableProducts, null, values)
     }
@@ -146,7 +149,8 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         if (cursor.moveToFirst()) {
             product = ProductDTO(id,
                 cursor.getString(cursor.getColumnIndexOrThrow(colProductName)),
-                cursor.getDouble(cursor.getColumnIndexOrThrow(colProductPrice))
+                cursor.getDouble(cursor.getColumnIndexOrThrow(colProductPrice)),
+                cursor.getStringOrNull(cursor.getColumnIndexOrThrow(colProductUrl))
             )
         }
         cursor.close()
@@ -214,7 +218,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
             val quantity = cursor.getInt(cursor.getColumnIndexOrThrow(colQuantity))
             val productId = cursor.getString(cursor.getColumnIndexOrThrow(keyProductId))
             val product = getProduct(productId)!!
-            products.add(Product(null, product.uuid, product.name, product.price, quantity))
+            products.add(Product(product.uuid, product.name, product.price, product.url, quantity))
         }
         cursor.close()
         return products

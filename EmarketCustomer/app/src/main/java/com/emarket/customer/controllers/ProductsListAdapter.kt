@@ -7,6 +7,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.emarket.customer.R
 import com.emarket.customer.models.Product
 
@@ -21,7 +22,12 @@ class ProductsListAdapter(private val productItems: MutableList<Product>, privat
         internal val delete: ImageButton = item.findViewById(R.id.delete_btn)
 
         fun bindData(product: Product) {
-            icon.setImageResource(product.imgRes ?: R.drawable.icon)
+            if (product.url == null) icon.setImageResource(R.drawable.icon)
+            else icon.load(product.url) {
+                    crossfade(true) // Improve image quality
+                    error(R.drawable.icon) // Default image if an error occur
+                }
+
             name.text = product.name
             qnt.text = item.context.getString(R.string.template_quantity_times, product.quantity)
             price.text = item.context.getString(R.string.template_price, product.price)

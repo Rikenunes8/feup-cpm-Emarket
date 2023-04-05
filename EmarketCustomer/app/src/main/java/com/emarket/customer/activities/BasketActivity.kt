@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.*
 import android.widget.Button
@@ -15,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
@@ -34,14 +31,14 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
+/*
+val product1 = Product("1", "Banana", 1.15)
+val product2 = Product("2", "Apple", 2.50)
+val product3 = Product("3", "Pear", 1.75)
+val product4 = Product("4", "Microwave", 49.99)
+private var productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)*/
 
-val product1 = Product(R.drawable.icon, "1", "Banana", 1.15)
-val product2 = Product(R.drawable.icon, "2", "Apple", 2.50)
-val product3 = Product(R.drawable.icon, "3", "Pear", 1.75)
-val product4 = Product(R.drawable.icon, "4", "Microwave", 49.99)
-private var productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)
-
-//private var productItems = mutableListOf<Product>()
+private var productItems = mutableListOf<Product>()
 
 data class ProductSignature (
     val product : String,
@@ -62,10 +59,8 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("Creating")
         setContentView(R.layout.activity_basket)
         if (savedInstanceState != null) {
-            println("Restoring on create")
             val productItemsJson = savedInstanceState.getString(Constants.BASKET_ITEMS)
             productItems = Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
         }
@@ -84,7 +79,7 @@ class BasketActivity : AppCompatActivity() {
         }
         // TODO: Remove bypass to add a fake product
         addBtn.setOnLongClickListener {
-            val newProduct = Product(R.drawable.icon, "0", "FAKE", 40.0)
+            val newProduct = Product("0", "FAKE", 40.0)
             val oldProduct = productItems.find { it.uuid == newProduct.uuid }
             if (oldProduct != null) { oldProduct.quantity++;updateProduct(oldProduct) }
             else { addProduct(newProduct) }
@@ -120,7 +115,6 @@ class BasketActivity : AppCompatActivity() {
 
 
     override fun onSaveInstanceState(outState: Bundle) {
-        println("Saving")
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
         super.onSaveInstanceState(outState)
     }
@@ -161,12 +155,13 @@ class BasketActivity : AppCompatActivity() {
             }
 
             val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
+            println(newProductDTO)
             val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
             if (oldProduct != null) {
                 oldProduct.quantity++
                 updateProduct(oldProduct)
             } else {
-                val newProduct = Product(R.drawable.icon, newProductDTO.uuid, newProductDTO.name, newProductDTO.price)
+                val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)
                 addProduct(newProduct)
                 thread(start=true) { dbLayer.addProduct(newProduct) }
                 enableAddProduct()
