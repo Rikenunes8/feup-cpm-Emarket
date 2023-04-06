@@ -32,8 +32,6 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
-private var productItems = mutableListOf<Product>()
-
 data class ProductSignature (
     val product : String,
     val signature : String
@@ -45,19 +43,24 @@ class BasketActivity : AppCompatActivity() {
         const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
 
-    private lateinit var adapter : ProductsListAdapter
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
     private val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
 
+    private lateinit var adapter : ProductsListAdapter
+    private lateinit var productItems : MutableList<Product>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        println("Create")
         setContentView(R.layout.activity_basket)
-        if (savedInstanceState != null) {
+        productItems = if (savedInstanceState == null) mutableListOf() else {
             val productItemsJson = savedInstanceState.getString(Constants.BASKET_ITEMS)
-            productItems = Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
+            println("Restore in create")
+            Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
         }
+
         adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
         rv.adapter = adapter
 
@@ -81,8 +84,29 @@ class BasketActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        println("Start")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        println("Pause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        println("Stop")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        println("Resume")
+    }
+
     override fun onRestart() {
         super.onRestart()
+        println("Restart")
         fetchUserData(this, complete = false)
     }
 
@@ -103,6 +127,7 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
+        println("saving")
         super.onSaveInstanceState(outState)
     }
 

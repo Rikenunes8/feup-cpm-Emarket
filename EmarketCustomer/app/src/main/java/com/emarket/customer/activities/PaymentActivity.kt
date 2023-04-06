@@ -1,12 +1,13 @@
 package com.emarket.customer.activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
@@ -24,6 +25,8 @@ data class Payment(
 
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
+    private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
+
     private val foregroundColor by lazy { getColor(R.color.dark_gray) }
     private val backgroundColor by lazy { getColor(R.color.light_gray) }
 
@@ -38,6 +41,11 @@ class PaymentActivity : AppCompatActivity() {
         val userUUID = storedUser!!.userId
         val paymentJson = Gson().toJson(Payment(userUUID, basket))
         val qrContent = Utils.genQRCode(paymentJson)
+
+        finishPaymentBtn.setOnClickListener {
+            startActivity(Intent(this, BasketActivity::class.java), null)
+            finish()
+        }
 
         thread(start = true) {
             try {
