@@ -10,6 +10,7 @@ import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.fetchDataFromDatabase
+import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.activities.transactions
@@ -51,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    fetchUserData()
+                    fetchUserData(this)
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
@@ -64,25 +65,6 @@ class LoginActivity : AppCompatActivity() {
                 // THIS SHOULD NEVER HAPPEN
                 showToast(this, "User not registered")
             }
-        }
-    }
-
-    private fun fetchUserData() {
-        thread(start = true) {
-            try {
-                val userId = UserViewModel(this.application).user?.userId!!
-                val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
-                val response = NetworkService.makeRequest(RequestType.GET, endpoint)
-
-                val data = Gson().fromJson(response, UserResponse::class.java)
-                if (data.error != null) throw Exception()
-
-                updateUserData(data)
-            } catch (e: Exception) {
-                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
-            }
-
-            fetchDataFromDatabase()
         }
     }
 }

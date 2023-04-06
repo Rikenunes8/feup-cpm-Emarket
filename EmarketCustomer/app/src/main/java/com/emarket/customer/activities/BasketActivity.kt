@@ -16,35 +16,21 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils
-import com.emarket.customer.Utils.fetchDataFromDatabase
+import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.Utils.showToast
-import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
-import com.emarket.customer.models.UserViewModel
-import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
-import com.emarket.customer.services.NetworkService
-import com.emarket.customer.services.RequestType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
-import java.net.URLEncoder
 import java.util.*
 import kotlin.concurrent.thread
-
-/*
-val product1 = Product("1", "Banana", 1.15)
-val product2 = Product("2", "Apple", 2.50)
-val product3 = Product("3", "Pear", 1.75)
-val product4 = Product("4", "Microwave", 49.99)
-private var productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)*/
 
 private var productItems = mutableListOf<Product>()
 
@@ -83,7 +69,6 @@ class BasketActivity : AppCompatActivity() {
             if (!requestCameraPermission()) {
                 readQRCode.launch(IntentIntegrator(this).createScanIntent())
             }
-
         }
         // TODO: Remove bypass to add a fake product
         addBtn.setOnLongClickListener {
@@ -123,7 +108,7 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        fetchUserData()
+        fetchUserData(this, complete = false)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -211,29 +196,4 @@ class BasketActivity : AppCompatActivity() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
         totalView.text = getString(R.string.template_price, sum)
     }
-
-    /**
-     * Updates the user data in the database and the shared preferences since the last transaction
-     */
-    private fun fetchUserData() {
-        thread(start = true) {
-            val user = UserViewModel(this.application).user!!
-            val date = dbLayer.getLastTransaction()?.date
-
-            val query = "?user=${URLEncoder.encode(user.userId)}" +
-                    if (date != null) "&date=${URLEncoder.encode(date)}" else ""
-            val url = Constants.SERVER_URL + Constants.USER_ENDPOINT + query
-
-            val response = NetworkService.makeRequest(RequestType.GET, url, null)
-            val userData = Gson().fromJson(response, UserResponse::class.java)
-            if (userData.error != null) {
-                Log.e("LoginActivity", "Error:  ${userData.error}")
-                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
-            } else {
-                updateUserData(userData, cleanTransactions = false)
-                fetchDataFromDatabase()
-            }
-        }
-    }
-
 }
