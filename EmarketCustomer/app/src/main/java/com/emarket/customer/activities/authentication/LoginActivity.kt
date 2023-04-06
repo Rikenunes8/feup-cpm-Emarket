@@ -77,8 +77,6 @@ class LoginActivity : AppCompatActivity() {
                 val data = Gson().fromJson(response, UserResponse::class.java)
                 if (data.error != null) throw Exception()
 
-                dbLayer.cleanTransactions()
-                dbLayer.cleanUnusedVouchers()
                 updateUserData(data)
             } catch (e: Exception) {
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }

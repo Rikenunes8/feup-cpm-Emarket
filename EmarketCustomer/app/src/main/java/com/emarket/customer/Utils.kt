@@ -65,16 +65,7 @@ object Utils {
     }
 
     /**
-     * Get the current date in the format dd/mm/yyyy - hh:mm:ss
-     */
-    fun getCurrentDate() : String {
-        val calendar = Calendar.getInstance().time
-        val formatter = SimpleDateFormat("yyyy/M/dd - HH:mm:ss", Locale.getDefault())
-        return formatter.format(calendar)
-    }
-
-    /**
-     * fetch vouchers and transactions from the database
+     * Fetch vouchers and transactions from the database
      */
     fun fetchDataFromDatabase() {
         vouchers = dbLayer.getVouchers(onlyUnused = true)

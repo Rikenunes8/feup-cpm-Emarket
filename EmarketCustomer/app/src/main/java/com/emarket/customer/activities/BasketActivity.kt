@@ -213,22 +213,24 @@ class BasketActivity : AppCompatActivity() {
     }
 
     /**
-     * Updates the user data in the database and the shared preferences
+     * Updates the user data in the database and the shared preferences since the last transaction
      */
     private fun fetchUserData() {
         thread(start = true) {
             val user = UserViewModel(this.application).user!!
             val date = dbLayer.getLastTransaction()?.date
 
-            val url = Constants.SERVER_URL + Constants.USER_ENDPOINT +
-                    "?user=${URLEncoder.encode(user.userId)}" + "&date=${URLEncoder.encode(date)}"
+            val query = "?user=${URLEncoder.encode(user.userId)}" +
+                    if (date != null) "&date=${URLEncoder.encode(date)}" else ""
+            val url = Constants.SERVER_URL + Constants.USER_ENDPOINT + query
+
             val response = NetworkService.makeRequest(RequestType.GET, url, null)
             val userData = Gson().fromJson(response, UserResponse::class.java)
             if (userData.error != null) {
                 Log.e("LoginActivity", "Error:  ${userData.error}")
                 runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
             } else {
-                updateUserData(userData)
+                updateUserData(userData, cleanTransactions = false)
                 fetchDataFromDatabase()
             }
         }

@@ -31,12 +31,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 }
 
 /**
- * Update the user data in the database and in the shared preferences
- * with the data from the server.
- * @param data the data from the server
- * @see UserResponse
+ * Update the user data in the database and in the shared preferences with the data from the server.
  */
-fun updateUserData(data: UserResponse) {
+fun updateUserData(data: UserResponse, cleanTransactions: Boolean = true) {
+    if (cleanTransactions) dbLayer.cleanTransactions()
+    dbLayer.cleanUnusedVouchers()
     data.vouchers.forEach { dbLayer.addVoucher(it) }
     data.transactions.forEach { dbLayer.addTransaction(it) }
 
