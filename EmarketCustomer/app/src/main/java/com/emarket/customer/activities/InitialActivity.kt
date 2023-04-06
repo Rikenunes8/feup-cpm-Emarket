@@ -7,14 +7,10 @@ import com.emarket.customer.Database
 import com.emarket.customer.R
 import com.emarket.customer.activities.authentication.LoginActivity
 import com.emarket.customer.activities.authentication.RegisterActivity
-import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
-import com.emarket.customer.models.Voucher
 import com.emarket.customer.services.CryptoService
 
 lateinit var dbLayer : Database
-var vouchers : MutableList<Voucher> = mutableListOf()
-var transactions : MutableList<Transaction> = mutableListOf()
 
 class InitialActivity : AppCompatActivity() {
 

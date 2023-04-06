@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
@@ -53,11 +53,9 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("Create")
         setContentView(R.layout.activity_basket)
         productItems = if (savedInstanceState == null) mutableListOf() else {
             val productItemsJson = savedInstanceState.getString(Constants.BASKET_ITEMS)
-            println("Restore in create")
             Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
         }
 
@@ -84,29 +82,8 @@ class BasketActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        println("Start")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        println("Pause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        println("Stop")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        println("Resume")
-    }
-
     override fun onRestart() {
         super.onRestart()
-        println("Restart")
         fetchUserData(this, complete = false)
     }
 
@@ -127,7 +104,6 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
-        println("saving")
         super.onSaveInstanceState(outState)
     }
 

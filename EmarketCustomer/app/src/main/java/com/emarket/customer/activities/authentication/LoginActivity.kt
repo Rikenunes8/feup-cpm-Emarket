@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
