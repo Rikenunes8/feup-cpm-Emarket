@@ -2,7 +2,6 @@ package com.emarket.customer.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +9,8 @@ import com.emarket.customer.Constants
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.Utils.fetchDataFromDatabase
+import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.activities.transactions
@@ -17,6 +18,7 @@ import com.emarket.customer.activities.vouchers
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
+import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
@@ -50,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    fetchUserData()
+                    fetchUserData(this)
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
@@ -63,41 +65,6 @@ class LoginActivity : AppCompatActivity() {
                 // THIS SHOULD NEVER HAPPEN
                 showToast(this, "User not registered")
             }
-        }
-    }
-
-    private fun fetchDatabase() {
-        vouchers = dbLayer.getVouchers(onlyUnused = true)
-        transactions = dbLayer.getTransactions()
-    }
-
-    private fun fetchUserData() {
-        thread(start = true) {
-            try {
-                val userId = UserViewModel(this.application).user?.userId!!
-                val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT + "?user=${URLEncoder.encode(userId)}"
-                val response = NetworkService.makeRequest(RequestType.GET, endpoint)
-
-                val data = Gson().fromJson(response, UserResponse::class.java)
-                if (data.error != null) throw Exception()
-                
-                dbLayer.cleanUnusedVouchers()
-                data.vouchers.forEach { dbLayer.addVoucher(it) }
-
-                // TODO: only add new transactions to the database (check date of last transaction or
-                //   iterate over the list and check if the transaction is already in the database to be safer)
-                dbLayer.cleanTransactions()
-                data.transactions.forEach { dbLayer.addTransaction(it) }
-
-                val prevUser = UserViewModel(application).user!!
-                prevUser.amountToDiscount = data.amountToDiscount
-                prevUser.totalSpent = data.totalSpent
-                UserViewModel(application).user = prevUser
-            } catch (e: Exception) {
-                runOnUiThread { showToast(this, getString(R.string.error_fetching_user_information)) }
-            }
-
-            fetchDatabase()
         }
     }
 }

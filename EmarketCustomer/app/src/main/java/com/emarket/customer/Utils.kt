@@ -1,13 +1,24 @@
 package com.emarket.customer
 
+import android.app.Activity
 import android.content.Context
 import android.util.TypedValue
 import android.widget.Toast
+import com.emarket.customer.activities.authentication.UserResponse
+import com.emarket.customer.activities.dbLayer
+import com.emarket.customer.activities.transactions
+import com.emarket.customer.activities.vouchers
+import com.emarket.customer.models.UserViewModel
+import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.CryptoService
+import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.*
+import kotlin.concurrent.thread
 
 data class DataSigned(
     val signature: String,
@@ -60,4 +71,38 @@ object Utils {
         return Base64.getEncoder().encodeToString(signature)
     }
 
+    /**
+     * Fetch vouchers and transactions from the database
+     */
+    fun fetchDataFromDatabase() {
+        vouchers = dbLayer.getVouchers(onlyUnused = true)
+        transactions = dbLayer.getTransactions()
+    }
+
+    /**
+     * Updates the user data in the database and the shared preferences
+     */
+    fun fetchUserData(activity: Activity, complete : Boolean = true) {
+        thread(start = true) {
+            try {
+                val user = UserViewModel(activity.application).user!!
+                var query = "?user=${URLEncoder.encode(user.userId)}"
+                if (!complete) {
+                    val date = dbLayer.getLastTransaction()?.date
+                    if (date != null) query += "&date=${URLEncoder.encode(date)}"
+                }
+                val url = Constants.SERVER_URL + Constants.USER_ENDPOINT + query
+
+                val response = NetworkService.makeRequest(RequestType.GET, url)
+                val userData = Gson().fromJson(response, UserResponse::class.java)
+                if (userData.error != null) throw Exception()
+
+                updateUserData(userData, cleanTransactions = complete)
+                fetchDataFromDatabase()
+            } catch (e: Exception) {
+                activity.runOnUiThread { showToast(activity, activity.getString(R.string.error_fetching_user_information)) }
+            }
+
+        }
+    }
 }

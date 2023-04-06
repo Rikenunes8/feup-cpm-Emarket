@@ -8,6 +8,10 @@ from datetime import datetime
 from src.database.DB import DB
 
 class Emarket:
+
+  DATE_FORMAT = "%Y/%m/%d - %H:%M:%S"
+
+
   def __init__(self) -> None:
     self._db = DB()
     # TODO: should we handle the error of not finding the keys?
@@ -113,7 +117,7 @@ class Emarket:
       'voucher': voucher,
       'discounted': discounted,
       'total': total,
-      'date': datetime.now().strftime("%Y/%m/%d - %H:%M")
+      'date': datetime.now().strftime(self.DATE_FORMAT)
     }
 
     DB().addUserTransaction(user['uuid'], transaction)
@@ -138,11 +142,25 @@ class Emarket:
 
     return {'success': 'You are free to go!', 'total': total_paid}
 
-  def getUser(self, user_id : str):
+  '''
+  Get user data. If date is provided, only transactions after that date will be returned.
+  @param user_id: user id
+  @param date: date in format 2023/04/03 - 17:24
+  '''
+  def getUser(self, user_id : str, date : str = None) -> dict:
     user = self._db.findUserById(user_id)
     if (user == None): return {'error': 'User not found!'}
     
     transactions = self.getTransactions(user)
+    if (date != None):
+      # check date format
+      try: date = datetime.strptime(date, self.DATE_FORMAT)
+      except: return {'error': 'Invalid date format!'}
+
+      if date > datetime.now():
+        return {'error': 'Invalid date. Provide a date representing the past!'}
+      transactions['transactions'] = list(filter(lambda t: datetime.strptime(t['date'], self.DATE_FORMAT) > date, transactions['transactions']))
+
     vouchers = self.getVouchers(user)
     amount_to_discount = self.getAmountToDiscount(user)
     total_spent = self.getTotalSpent(user)
@@ -156,7 +174,7 @@ class Emarket:
     return { 'amountToDiscount': user.get('amountToDiscount', 0) }
   def getTotalSpent(self, user : dict):
     return { 'totalSpent': user.get('totalSpent', 0) }
-      
+
   def updateUser(self, data : dict) -> dict:
     if data.get('data') == None: return {'error': 'Missing data property!'}
     if data.get('signature' == None): return {'error': 'Missing signature property!'}

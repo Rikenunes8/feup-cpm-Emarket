@@ -2,6 +2,7 @@ package com.emarket.customer
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getDoubleOrNull
@@ -185,17 +186,30 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         val cursor = readableDatabase.rawQuery(query, null)
         if (cursor.count == 0) return transactions
         while (cursor.moveToNext()) {
-            val id = cursor.getInt(cursor.getColumnIndexOrThrow(keyTransactionId))
-            val date = cursor.getString(cursor.getColumnIndexOrThrow(colTransactionDate))
-            val total = cursor.getDouble(cursor.getColumnIndexOrThrow(colTransactionTotal))
-            val discounted = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(colTransactionDiscount))
-            val voucherId = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(keyVoucherId))
-            val voucher = getVoucher(voucherId)
-            val products = getTransactionProducts(id)
-            transactions.add(Transaction(products,discounted, voucher, total, date))
+            val transaction = getTransactionFromCursor(cursor)
+            transactions.add(transaction)
         }
         cursor.close()
         return transactions
+    }
+    fun getLastTransaction() : Transaction? {
+        val query = "SELECT * FROM $tableTransactions ORDER BY $colTransactionDate DESC LIMIT 1"
+        val cursor = readableDatabase.rawQuery(query, null)
+        if (cursor.count == 0) return null
+        cursor.moveToFirst()
+        val transaction = getTransactionFromCursor(cursor)
+        cursor.close()
+        return transaction
+    }
+    private fun getTransactionFromCursor(cursor: Cursor) : Transaction {
+        val id = cursor.getInt(cursor.getColumnIndexOrThrow(keyTransactionId))
+        val date = cursor.getString(cursor.getColumnIndexOrThrow(colTransactionDate))
+        val total = cursor.getDouble(cursor.getColumnIndexOrThrow(colTransactionTotal))
+        val discounted = cursor.getDoubleOrNull(cursor.getColumnIndexOrThrow(colTransactionDiscount))
+        val voucherId = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(keyVoucherId))
+        val voucher = getVoucher(voucherId)
+        val products = getTransactionProducts(id)
+        return Transaction(products,discounted, voucher, total, date)
     }
 
     private fun addTransProd(transactionId: Long, productId: String, qnt: Int) {

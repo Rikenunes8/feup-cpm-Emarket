@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.ProductsListAdapter
@@ -30,13 +31,6 @@ import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
-
-/*
-val product1 = Product("1", "Banana", 1.15)
-val product2 = Product("2", "Apple", 2.50)
-val product3 = Product("3", "Pear", 1.75)
-val product4 = Product("4", "Microwave", 49.99)
-private var productItems : MutableList<Product> = mutableListOf(product1, product2, product3, product4)*/
 
 private var productItems = mutableListOf<Product>()
 
@@ -75,7 +69,6 @@ class BasketActivity : AppCompatActivity() {
             if (!requestCameraPermission()) {
                 readQRCode.launch(IntentIntegrator(this).createScanIntent())
             }
-
         }
         // TODO: Remove bypass to add a fake product
         addBtn.setOnLongClickListener {
@@ -113,6 +106,10 @@ class BasketActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchUserData(this, complete = false)
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
