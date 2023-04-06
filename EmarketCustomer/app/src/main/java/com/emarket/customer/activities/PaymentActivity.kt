@@ -4,11 +4,13 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
 import com.google.gson.Gson
@@ -43,7 +45,8 @@ class PaymentActivity : AppCompatActivity() {
         val qrContent = Utils.genQRCode(paymentJson)
 
         finishPaymentBtn.setOnClickListener {
-            startActivity(Intent(this, BasketActivity::class.java), null)
+            fetchUserData(this, complete = false, force = true)
+            startActivity(Intent(this, BasketActivity::class.java))
             finish()
         }
 
@@ -56,6 +59,13 @@ class PaymentActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home -> fetchUserData(this, complete = false, force=true)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {

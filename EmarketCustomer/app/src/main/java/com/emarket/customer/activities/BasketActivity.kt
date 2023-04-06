@@ -82,11 +82,6 @@ class BasketActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        fetchUserData(this, complete = false)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -95,6 +90,7 @@ class BasketActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_profile -> {
+                fetchUserData(this, complete = false)
                 startActivity(Intent(this, ProfileActivity::class.java))
                 return true
             }

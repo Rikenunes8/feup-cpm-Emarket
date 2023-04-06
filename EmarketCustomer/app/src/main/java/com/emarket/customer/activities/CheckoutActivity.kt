@@ -81,7 +81,6 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home -> {
-                print("Going back")
                 finish()
                 return true
             }

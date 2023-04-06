@@ -14,12 +14,16 @@ import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import java.net.URLEncoder
+import java.time.LocalDateTime
+import java.util.*
 import kotlin.concurrent.thread
 
 
 
 class Fetcher {
     companion object {
+        private const val MIN_TIME_BETWEEN_REQUESTS = 30000 // milliseconds
+        private var lastUpdate : Long? = null
         var vouchers : MutableList<Voucher> = mutableListOf()
         var transactions : MutableList<Transaction> = mutableListOf()
         /**
@@ -33,7 +37,9 @@ class Fetcher {
         /**
          * Updates the user data in the database and the shared preferences
          */
-        fun fetchUserData(activity: Activity, complete : Boolean = true) {
+        fun fetchUserData(activity: Activity, complete : Boolean = true, force : Boolean = false) {
+            val elapsedTime = Date().time - (lastUpdate ?: 0)
+            if (!force && elapsedTime < MIN_TIME_BETWEEN_REQUESTS) return
             thread(start = true) {
                 try {
                     val user = UserViewModel(activity.application).user!!
@@ -49,6 +55,7 @@ class Fetcher {
                     if (userData.error != null) throw Exception()
 
                     updateUserData(activity.application, userData, cleanTransactions = complete)
+                    lastUpdate = Date().time
                 } catch (e: Exception) {
                     activity.runOnUiThread { Utils.showToast(activity, activity.getString(R.string.error_fetching_user_information)) }
                 }
