@@ -76,4 +76,3 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
 }
-

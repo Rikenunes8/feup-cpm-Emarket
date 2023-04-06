@@ -70,16 +70,6 @@ class BasketActivity : AppCompatActivity() {
                 readQRCode.launch(IntentIntegrator(this).createScanIntent())
             }
         }
-        // TODO: Remove bypass to add a fake product
-        addBtn.setOnLongClickListener {
-            val newProduct = Product("0", "FAKE", 40.0)
-            val oldProduct = productItems.find { it.uuid == newProduct.uuid }
-            if (oldProduct != null) { oldProduct.quantity++;updateProduct(oldProduct) }
-            else { addProduct(newProduct) }
-            enableAddProduct()
-            enableCheckout()
-            return@setOnLongClickListener true
-        }
 
         checkoutBtn.setOnClickListener {
             val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
@@ -89,6 +79,11 @@ class BasketActivity : AppCompatActivity() {
             }
             startActivity(Intent(this, CheckoutActivity::class.java))
         }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        fetchUserData(this, complete = false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -104,11 +99,6 @@ class BasketActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        fetchUserData(this, complete = false)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

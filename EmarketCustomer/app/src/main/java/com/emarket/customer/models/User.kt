@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import com.emarket.customer.Constants
-import com.emarket.customer.activities.appApplication
 import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.dbLayer
 import com.google.gson.Gson
@@ -33,14 +32,14 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 /**
  * Update the user data in the database and in the shared preferences with the data from the server.
  */
-fun updateUserData(data: UserResponse, cleanTransactions: Boolean = true) {
+fun updateUserData(app: Application, data: UserResponse, cleanTransactions: Boolean = true) {
     if (cleanTransactions) dbLayer.cleanTransactions()
     dbLayer.cleanUnusedVouchers()
     data.vouchers.forEach { dbLayer.addVoucher(it) }
     data.transactions.forEach { dbLayer.addTransaction(it) }
 
-    val prevUser = UserViewModel(appApplication).user!!
+    val prevUser = UserViewModel(app).user!!
     prevUser.amountToDiscount = data.amountToDiscount
     prevUser.totalSpent = data.totalSpent
-    UserViewModel(appApplication).user = prevUser
+    UserViewModel(app).user = prevUser
 }

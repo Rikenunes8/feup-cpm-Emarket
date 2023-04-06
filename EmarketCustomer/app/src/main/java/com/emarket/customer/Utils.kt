@@ -97,12 +97,11 @@ object Utils {
                 val userData = Gson().fromJson(response, UserResponse::class.java)
                 if (userData.error != null) throw Exception()
 
-                updateUserData(userData, cleanTransactions = complete)
-                fetchDataFromDatabase()
+                updateUserData(activity.application, userData, cleanTransactions = complete)
             } catch (e: Exception) {
                 activity.runOnUiThread { showToast(activity, activity.getString(R.string.error_fetching_user_information)) }
             }
-
+            fetchDataFromDatabase()
         }
     }
 }

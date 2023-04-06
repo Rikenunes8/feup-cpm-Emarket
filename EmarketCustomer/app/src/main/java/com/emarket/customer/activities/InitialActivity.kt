@@ -1,6 +1,5 @@
 package com.emarket.customer.activities
 
-import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -14,9 +13,8 @@ import com.emarket.customer.models.Voucher
 import com.emarket.customer.services.CryptoService
 
 lateinit var dbLayer : Database
-lateinit var vouchers : MutableList<Voucher>
-lateinit var transactions : MutableList<Transaction>
-lateinit var appApplication : Application
+var vouchers : MutableList<Voucher> = mutableListOf()
+var transactions : MutableList<Transaction> = mutableListOf()
 
 class InitialActivity : AppCompatActivity() {
 
@@ -25,7 +23,6 @@ class InitialActivity : AppCompatActivity() {
         setContentView(R.layout.activity_initial)
 
         dbLayer = Database(applicationContext)
-        appApplication = this.application
 
         // check if user already registered
         val user = UserViewModel(this.application).user
