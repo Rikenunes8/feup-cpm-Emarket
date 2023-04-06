@@ -5,25 +5,14 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.emarket.customer.Constants
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.Utils.fetchDataFromDatabase
 import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.activities.BasketActivity
-import com.emarket.customer.activities.dbLayer
-import com.emarket.customer.activities.transactions
-import com.emarket.customer.activities.vouchers
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
-import com.emarket.customer.models.updateUserData
-import com.emarket.customer.services.NetworkService
-import com.emarket.customer.services.RequestType
-import com.google.gson.Gson
-import java.net.URLEncoder
-import kotlin.concurrent.thread
 
 data class UserResponse (
     val totalSpent : Double,
