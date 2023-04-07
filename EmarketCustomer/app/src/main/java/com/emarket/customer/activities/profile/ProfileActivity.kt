@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.viewpager.widget.ViewPager
 import com.emarket.customer.R
 import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.SectionsPagerAdapter
 import com.emarket.customer.databinding.ActivityProfileBinding
 import com.google.android.material.tabs.TabLayout
@@ -37,7 +38,10 @@ class ProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_shop -> {
-                startActivity(Intent(this, BasketActivity::class.java))
+                fetchUserData(this, complete = false)
+                intent = Intent(this, BasketActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                startActivity(intent)
                 return true
             }
         }

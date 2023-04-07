@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.controllers.Fetcher.Companion.vouchers
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.controllers.VoucherListAdapter
 import com.emarket.customer.models.*
@@ -74,5 +76,15 @@ class CheckoutActivity : AppCompatActivity() {
             }
             startActivity(qrcode)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

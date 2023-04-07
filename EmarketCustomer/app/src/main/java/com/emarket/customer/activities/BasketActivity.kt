@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
@@ -32,8 +32,6 @@ import com.google.zxing.integration.android.IntentResult
 import java.util.*
 import kotlin.concurrent.thread
 
-private var productItems = mutableListOf<Product>()
-
 data class ProductSignature (
     val product : String,
     val signature : String
@@ -45,19 +43,22 @@ class BasketActivity : AppCompatActivity() {
         const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
 
-    private lateinit var adapter : ProductsListAdapter
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
     private val totalView by lazy {findViewById<TextView>(R.id.total_price)}
     private val checkoutBtn by lazy {findViewById<Button>(R.id.checkout_btn)}
 
+    private lateinit var adapter : ProductsListAdapter
+    private lateinit var productItems : MutableList<Product>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_basket)
-        if (savedInstanceState != null) {
+        productItems = if (savedInstanceState == null) mutableListOf() else {
             val productItemsJson = savedInstanceState.getString(Constants.BASKET_ITEMS)
-            productItems = Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
+            Gson().fromJson(productItemsJson, object : TypeToken<MutableList<Product>>() {}.type)
         }
+
         adapter = ProductsListAdapter(productItems) { enableAddProduct(); enableCheckout(); updateTotal() }
         rv.adapter = adapter
 
@@ -81,11 +82,6 @@ class BasketActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        fetchUserData(this, complete = false)
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -94,6 +90,7 @@ class BasketActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_profile -> {
+                fetchUserData(this, complete = false)
                 startActivity(Intent(this, ProfileActivity::class.java))
                 return true
             }

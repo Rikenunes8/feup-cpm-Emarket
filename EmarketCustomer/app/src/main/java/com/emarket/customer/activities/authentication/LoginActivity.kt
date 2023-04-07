@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.Utils.fetchUserData
 import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Transaction
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
                     // login successful
-                    fetchUserData(this)
+                    fetchUserData(this, force = true)
                     showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()

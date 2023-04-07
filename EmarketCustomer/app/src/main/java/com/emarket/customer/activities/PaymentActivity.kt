@@ -1,13 +1,16 @@
 package com.emarket.customer.activities
 
+import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.Utils.getAttributeColor
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
 import com.google.gson.Gson
@@ -24,6 +27,8 @@ data class Payment(
 
 class PaymentActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
+    private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
+
     private val foregroundColor by lazy { getColor(R.color.dark_gray) }
     private val backgroundColor by lazy { getColor(R.color.light_gray) }
 
@@ -39,6 +44,12 @@ class PaymentActivity : AppCompatActivity() {
         val paymentJson = Gson().toJson(Payment(userUUID, basket))
         val qrContent = Utils.genQRCode(paymentJson)
 
+        finishPaymentBtn.setOnClickListener {
+            fetchUserData(this, complete = false, force = true)
+            startActivity(Intent(this, BasketActivity::class.java))
+            finish()
+        }
+
         thread(start = true) {
             try {
                 val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
@@ -48,6 +59,13 @@ class PaymentActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home -> fetchUserData(this, complete = false, force=true)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun encodeAsBitmap(str: String, foregroundColor : Int, backgroundColor : Int): Bitmap? {
