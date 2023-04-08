@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    tools:context=".activities.PaymentActivity">
+    tools:context=".activities.payment.QrCodePaymentActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
@@ -20,8 +20,9 @@
             android:id="@+id/payment_qrcode_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"/>
     </androidx.cardview.widget.CardView>
+
 
     <ImageButton
         android:id="@+id/finish_payment_btn"

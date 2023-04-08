@@ -1,4 +1,4 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.payment
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +10,7 @@ import android.widget.ImageView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
@@ -25,7 +26,7 @@ data class Payment(
     val basket: Basket
 )
 
-class PaymentActivity : AppCompatActivity() {
+class QrCodePaymentActivity : PaymentActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
     private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
 
@@ -34,14 +35,9 @@ class PaymentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
+        setContentView(R.layout.activity_payment_qrcode)
 
-        val basketJSON = intent.getStringExtra("Basket")!!
-        val basket = Gson().fromJson(basketJSON, Basket::class.java)
-
-        val storedUser = UserViewModel(this.application).user
-        val userUUID = storedUser!!.userId
-        val paymentJson = Gson().toJson(Payment(userUUID, basket))
+        val paymentJson = getPaymentJson()
         val qrContent = Utils.genQRCode(paymentJson)
 
         finishPaymentBtn.setOnClickListener {

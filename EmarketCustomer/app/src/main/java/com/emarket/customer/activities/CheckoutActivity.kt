@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -12,6 +13,8 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.activities.payment.NFCActivity
+import com.emarket.customer.activities.payment.QrCodePaymentActivity
 import com.emarket.customer.controllers.Fetcher.Companion.vouchers
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.controllers.VoucherListAdapter
@@ -39,9 +42,7 @@ class CheckoutActivity : AppCompatActivity() {
         setContentView(R.layout.activity_checkout)
 
         val amountToDiscount = UserViewModel(application).user!!.amountToDiscount
-        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
-        val products = Gson().fromJson<MutableList<Product>>(json, object : TypeToken<MutableList<Product>>() {}.type)
+        val products = getProducts()
 
         val total = products.fold(0.0) { sum, product -> sum + product.price * product.quantity }
 
@@ -65,17 +66,10 @@ class CheckoutActivity : AppCompatActivity() {
         }
 
         confirmButton.setOnClickListener {
-            basket = Basket(
-                products.map { ProductToCheckout(it.uuid, it.price, it.quantity) },
-                discountCheck.isChecked,
-                (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
-            )
-
-            val qrcode = Intent(this, PaymentActivity::class.java).apply {
-                putExtra("Basket", Gson().toJson(basket))
-            }
-            startActivity(qrcode)
+            goToQRCode()
         }
+
+        registerForContextMenu(confirmButton)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -86,5 +80,69 @@ class CheckoutActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menuInflater.inflate(R.menu.checkout_ctx_menu, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.mn_by_qrcode -> {
+                goToQRCode()
+            }
+            R.id.mn_by_nfc -> {
+                goToNFC()
+            }
+            else -> false
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    /**
+     * Gets products from shared preferences, which are the
+     * products in the basket
+     */
+    private fun getProducts() : MutableList<Product> {
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
+        return Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
+    }
+
+    /**
+     * Creates a basket from products
+     */
+    private fun getBasketFromProducts() : Basket {
+        val products = getProducts()
+        return Basket(
+            products.map { ProductToCheckout(it.uuid, it.price, it.quantity) },
+            discountCheck.isChecked,
+            (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
+        )
+    }
+
+    /**
+     * Go to QRCode activity to pay
+     */
+    private fun goToQRCode() {
+        basket = getBasketFromProducts()
+
+        val qrcode = Intent(this, QrCodePaymentActivity::class.java).apply {
+            putExtra("Basket", Gson().toJson(basket))
+        }
+        startActivity(qrcode)
+    }
+
+
+    /**
+     * Go to NFC activity to pay
+     */
+    private fun goToNFC() {
+        basket = getBasketFromProducts()
+
+        val nfc = Intent(this, NFCActivity::class.java).apply {
+            putExtra("Basket", Gson().toJson(basket))
+        }
+        startActivity(nfc)
     }
 }

@@ -62,5 +62,10 @@
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
     <string name="no_transactions">No past transactions</string>
+    <string name="nfc_paying">Paying with NFC, please wait.</string>
+
+
+    <string name="checkout_qrcode">Checkout by QRcode</string>
+    <string name="checkout_nfc">Checkout by NFC</string>
 
 </resources>
