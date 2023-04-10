@@ -31,6 +31,26 @@ class Emarket:
   def _pkcs8ToPublicKey(self, pkcs8: str) -> rsa.PublicKey:
     if (pkcs8 is None): return None
     return rsa.PublicKey.load_pkcs1_openssl_pem(pkcs8)
+
+
+  def register(self, data: dict) -> dict:
+    pubKeyPKCS8 = data.get('pubKey')
+    cardNo = data.get('cardNo')
+    if (pubKeyPKCS8 is None or cardNo is None):
+      return {'error': 'Missing pubKey or cardNo property!'}
+    if (self._db.findUserByKey(pubKeyPKCS8) != None):
+      return {'error': 'A user with this public key already exists!'}
+
+    uid = str(uuid.uuid4())
+    self._db.addUser(uid, pubKeyPKCS8, cardNo)
+
+    pubKey = self._pkcs8ToPublicKey(pubKeyPKCS8)
+    uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
+    uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
+
+    print(self._pubkey.save_pkcs1().decode())
+
+    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
   
   def _validateCheckout(self, data: dict) -> str:
     # Check if data json structure is valid
@@ -82,26 +102,6 @@ class Emarket:
       product['name'] = p['name']
 
     return (user, products, voucher, to_discount)
-
-
-  def register(self, data: dict) -> dict:
-    pubKeyPKCS8 = data.get('pubKey')
-    cardNo = data.get('cardNo')
-    if (pubKeyPKCS8 is None or cardNo is None):
-      return {'error': 'Missing pubKey or cardNo property!'}
-    if (self._db.findUserByKey(pubKeyPKCS8) != None):
-      return {'error': 'A user with this public key already exists!'}
-
-    uid = str(uuid.uuid4())
-    self._db.addUser(uid, pubKeyPKCS8, cardNo)
-
-    pubKey = self._pkcs8ToPublicKey(pubKeyPKCS8)
-    uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
-    uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
-
-    print(self._pubkey.save_pkcs1().decode())
-
-    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
   
   def checkout(self, data : dict) -> dict:
     validation = self._validateCheckout(data)
@@ -195,17 +195,16 @@ class Emarket:
     return {'success': 'User updated!', 'user': user}
 
   def addProduct(self, data: dict) -> dict:
-    uuid = data.get('uuid')
-    if (uuid is None): return {'error': 'Missing uuid property!'}
+    voucher_uuid = str(uuid.uuid4())
     name = data.get('name')
     if (name is None or not isinstance(name, str)): 
       return {'error': 'Missing name property or invalid type!'}
     price = data.get('price')
     if (price is None or not isinstance(price, float)): 
       return {'error': 'Missing price property or invalid type!'}
-    content = {'uuid': uuid, 'name': name, 'price': price, 'url': data.get('url')}
+    content = {'uuid': voucher_uuid, 'name': name, 'price': price, 'url': data.get('url')}
 
-    return self.generate_qr_code(uuid, content)
+    return self.generate_qr_code(voucher_uuid, content)
   
   def generate_qr_code(self, uid: str, content: dict = None) -> dict:
     product = self._db.findProductById(uid)
