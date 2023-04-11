@@ -195,16 +195,16 @@ class Emarket:
     return {'success': 'User updated!', 'user': user}
 
   def addProduct(self, data: dict) -> dict:
-    voucher_uuid = str(uuid.uuid4())
+    product_uuid = str(uuid.uuid4())
     name = data.get('name')
     if (name is None or not isinstance(name, str)): 
       return {'error': 'Missing name property or invalid type!'}
     price = data.get('price')
     if (price is None or not isinstance(price, float)): 
       return {'error': 'Missing price property or invalid type!'}
-    content = {'uuid': voucher_uuid, 'name': name, 'price': price, 'url': data.get('url')}
+    content = {'uuid': product_uuid, 'name': name, 'price': price, 'url': data.get('url')}
 
-    return self.generate_qr_code(voucher_uuid, content)
+    return self.generate_qr_code(product_uuid, content)
   
   def generate_qr_code(self, uid: str, content: dict = None) -> dict:
     product = self._db.findProductById(uid)
