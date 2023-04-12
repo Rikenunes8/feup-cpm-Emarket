@@ -52,6 +52,7 @@
     <string name="template_price">%.2f €</string>
     <string name="template_percentage">%d%%</string>
     <string name="template_quantity_times">%d x</string>
+    <string name="template_notification_title">New transaction - %.2f €</string>
 
     <string name="name">Name</string>
     <string name="card_number">Card Number</string>
@@ -63,10 +64,10 @@
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
     <string name="no_transactions">No past transactions</string>
+    <string name="notification_message">Check out your latest transaction details!</string>
     <string name="notifications">Notifications</string>
     <string name="default_checkout_method">Default checkout method</string>
     <string name="info_checkout_method">(Long click the checkout button to alternate  between methods)</string>
     <string name="nfc">NFC</string>
     <string name="qrcode">QRCode</string>
-
 </resources>

@@ -1,9 +1,12 @@
 package com.emarket.customer.controllers
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.activities.TransactionDetailsActivity
 import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.dbLayer
 import com.emarket.customer.models.Transaction
@@ -11,6 +14,7 @@ import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.models.Voucher
 import com.emarket.customer.models.updateUserData
 import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.NotificationService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import java.net.URLEncoder
@@ -41,6 +45,7 @@ class Fetcher {
             val elapsedTime = Date().time - (lastUpdate ?: 0)
             if (!force && elapsedTime < MIN_TIME_BETWEEN_REQUESTS) return
             thread(start = true) {
+                var newTransaction = false
                 try {
                     val user = UserViewModel(activity.application).user!!
                     var query = "?user=${URLEncoder.encode(user.userId)}"
@@ -54,13 +59,33 @@ class Fetcher {
                     val userData = Gson().fromJson(response, UserResponse::class.java)
                     if (userData.error != null) throw Exception()
 
-                    updateUserData(activity.application, userData, cleanTransactions = complete)
+                    newTransaction = updateUserData(activity.application, userData, cleanTransactions = complete)
                     lastUpdate = Date().time
                 } catch (e: Exception) {
                     activity.runOnUiThread { Utils.showToast(activity, activity.getString(R.string.error_fetching_user_information)) }
                 }
                 fetchDataFromDatabase()
+                sendNewTransactionNotification(activity, newTransaction)
             }
+        }
+
+        private fun sendNewTransactionNotification(activity: Activity, toSend: Boolean) {
+            if (!toSend) return
+            val sharedPreferences = activity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val areNotificationsEnabled = sharedPreferences.getBoolean(Constants.NOTIFICATIONS_ENABLED, true)
+            if (!areNotificationsEnabled) return
+
+            val lastTransaction = transactions[0]
+            val total = lastTransaction.total - ( lastTransaction.discounted ?: 0.0)
+            val intent = Intent(activity, TransactionDetailsActivity::class.java).apply {
+                putExtra("transaction", Gson().toJson(lastTransaction))
+            }
+            NotificationService.sendNotification(
+                activity,
+                activity.getString(R.string.template_notification_title, total),
+                activity.getString(R.string.notification_message),
+                intent
+            )
         }
     }
 }
