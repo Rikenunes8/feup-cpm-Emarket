@@ -67,9 +67,9 @@ class BasketActivity : AppCompatActivity() {
         updateTotal()
 
         addBtn.setOnClickListener {
-            if (!requestCameraPermission()) {
+            if (!requestCameraPermission())
                 readQRCode.launch(IntentIntegrator(this).createScanIntent())
-            }
+
         }
 
         checkoutBtn.setOnClickListener {
@@ -79,6 +79,23 @@ class BasketActivity : AppCompatActivity() {
                 apply()
             }
             startActivity(Intent(this, CheckoutActivity::class.java))
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            REQUEST_CAMERA_PERMISSION -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    showToast(this, "Camera permission not granted!")
+                } else {
+                    readQRCode.launch(IntentIntegrator(this).createScanIntent())
+                }
+            }
         }
     }
 
@@ -103,12 +120,12 @@ class BasketActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private fun requestCameraPermission(): Boolean {
+    private fun requestCameraPermission() : Boolean {
         val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        if (permission == PackageManager.PERMISSION_GRANTED) return false
+        if (permission == PackageManager.PERMISSION_GRANTED) return true
         val requests = arrayOf(Manifest.permission.CAMERA)
         ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
-        return true
+        return false
     }
 
     private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
