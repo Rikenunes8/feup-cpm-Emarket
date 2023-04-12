@@ -1,6 +1,7 @@
 package com.emarket.customer.controllers
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.emarket.customer.Constants
 import com.emarket.customer.R
@@ -64,20 +65,27 @@ class Fetcher {
                     activity.runOnUiThread { Utils.showToast(activity, activity.getString(R.string.error_fetching_user_information)) }
                 }
                 fetchDataFromDatabase()
-                if (newTransaction) {
-                    val lastTransaction = transactions[0]
-                    val total = lastTransaction.total - ( lastTransaction.discounted ?: 0.0)
-                    val intent = Intent(activity, TransactionDetailsActivity::class.java).apply {
-                        putExtra("transaction", Gson().toJson(lastTransaction))
-                    }
-                    NotificationService.sendNotification(
-                        activity,
-                        activity.getString(R.string.template_notification_title, total),
-                        activity.getString(R.string.notification_message),
-                        intent
-                    )
-                }
+                sendNewTransactionNotification(activity, newTransaction)
             }
+        }
+
+        private fun sendNewTransactionNotification(activity: Activity, toSend: Boolean) {
+            if (!toSend) return
+            val sharedPreferences = activity.getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            val areNotificationsEnabled = sharedPreferences.getBoolean(Constants.NOTIFICATIONS_ENABLED, true)
+            if (!areNotificationsEnabled) return
+
+            val lastTransaction = transactions[0]
+            val total = lastTransaction.total - ( lastTransaction.discounted ?: 0.0)
+            val intent = Intent(activity, TransactionDetailsActivity::class.java).apply {
+                putExtra("transaction", Gson().toJson(lastTransaction))
+            }
+            NotificationService.sendNotification(
+                activity,
+                activity.getString(R.string.template_notification_title, total),
+                activity.getString(R.string.notification_message),
+                intent
+            )
         }
     }
 }
