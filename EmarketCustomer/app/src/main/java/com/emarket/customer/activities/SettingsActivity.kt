@@ -1,5 +1,6 @@
 package com.emarket.customer.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.transition.AutoTransition
@@ -8,9 +9,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
+import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.Fetcher
@@ -20,11 +24,16 @@ class SettingsActivity : AppCompatActivity() {
     private val cardView by lazy { findViewById<CardView>(R.id.card_settings) }
     private val moreToggle by lazy { findViewById<ImageButton>(R.id.more_toggle) }
     private val checkoutRg by lazy { findViewById<RadioGroup>(R.id.checkout_rg) }
+    private val notificationsSwitch by lazy { findViewById<Switch>(R.id.notifications) }
+    private val nfcRadio by lazy { findViewById<RadioButton>(R.id.nfc_radio) }
+    private val qrcodeRadio by lazy { findViewById<RadioButton>(R.id.qrcode_radio) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
-        moreToggle.setOnClickListener { view ->
+        moreToggle.setOnClickListener {
             if (checkoutRg.visibility === View.VISIBLE) {
                 TransitionManager.beginDelayedTransition(cardView, AutoTransition())
                 checkoutRg.visibility = View.GONE
@@ -35,6 +44,31 @@ class SettingsActivity : AppCompatActivity() {
                 moreToggle.setImageResource(R.drawable.arrow_up)
             }
         }
+
+        notificationsSwitch.isChecked = sharedPreferences.getBoolean(Constants.NOTIFICATIONS_ENABLED, true)
+        notificationsSwitch.setOnClickListener {
+            sharedPreferences.edit().apply {
+                putBoolean(Constants.NOTIFICATIONS_ENABLED, notificationsSwitch.isChecked)
+                apply()
+            }
+        }
+
+        nfcRadio.isChecked = !sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
+        nfcRadio.setOnClickListener {
+            sharedPreferences.edit().apply {
+                putBoolean(Constants.IS_QRCODE, !nfcRadio.isChecked)
+                apply()
+            }
+        }
+
+        qrcodeRadio.isChecked = sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
+        qrcodeRadio.setOnClickListener {
+            sharedPreferences.edit().apply {
+                putBoolean(Constants.IS_QRCODE, qrcodeRadio.isChecked)
+                apply()
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
