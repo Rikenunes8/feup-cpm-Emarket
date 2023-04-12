@@ -180,6 +180,14 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         cleanTable(tableTransactions)
         cleanTransProd()
     }
+    fun countTransactions() : Int {
+        val query = "SELECT COUNT(*) FROM $tableTransactions"
+        val cursor = readableDatabase.rawQuery(query, null)
+        cursor.moveToFirst()
+        val count = cursor.getInt(0)
+        cursor.close()
+        return count
+    }
     fun getTransactions() : MutableList<Transaction> {
         val transactions = mutableListOf<Transaction>()
         val query = "SELECT * FROM $tableTransactions ORDER BY $colTransactionDate DESC"
