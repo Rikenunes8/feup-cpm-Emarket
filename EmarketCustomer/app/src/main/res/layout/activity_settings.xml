@@ -35,7 +35,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/label_notifications"
+                        android:text="@string/notifications"
                         android:textStyle="bold"
                         android:textAlignment="textStart" />
 
@@ -61,7 +61,7 @@
                             style="@style/FormLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/label_checkout_method"
+                            android:text="@string/default_checkout_method"
                             android:textStyle="bold"
                             android:textAlignment="textStart" />
 
@@ -94,14 +94,14 @@
                     android:id="@+id/qrcode_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_qrcode"
+                    android:text="@string/qrcode"
                     android:theme="@style/CheckedCompatTheme"/>
 
                 <RadioButton
                     android:id="@+id/nfc_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_nfc"
+                    android:text="@string/nfc"
                     android:theme="@style/CheckedCompatTheme"/>
             </RadioGroup>
 
