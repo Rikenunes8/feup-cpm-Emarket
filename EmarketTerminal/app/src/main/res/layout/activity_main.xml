@@ -40,6 +40,11 @@
                     <TextView
                         style="@style/Body"
                         android:text="@string/body_scan" />
+                    <TextView
+                        android:id="@+id/asdf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -71,9 +71,10 @@ class CheckoutActivity : AppCompatActivity() {
                 (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
             )
 
-            val qrcode = Intent(this, PaymentActivity::class.java).apply {
+            /*val qrcode = Intent(this, PaymentActivity::class.java).apply {
                 putExtra("Basket", Gson().toJson(basket))
-            }
+            }*/
+            val qrcode = Intent(this, PaymentNfcActivity::class.java)
             startActivity(qrcode)
         }
     }

@@ -3,10 +3,12 @@ package com.emarket.terminal
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -17,13 +19,18 @@ import com.google.zxing.integration.android.IntentResult
 import java.nio.charset.StandardCharsets
 import kotlin.concurrent.thread
 
+const val READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
+
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
 
+    private val nfc by lazy { NfcAdapter.getDefaultAdapter(this) }
+    private val paymentReader by lazy { PaymentReader(::paymentListener) }
     private val scanBtn by lazy { findViewById<Button>(R.id.scan_btn) }
+    private val asdf by lazy { findViewById<TextView>(R.id.asdf) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +38,22 @@ class MainActivity : AppCompatActivity() {
 
         scanBtn.setOnClickListener {
             requestCameraPermissionAndStartScan()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfc.enableReaderMode(this, paymentReader, READER_FLAGS, null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfc.disableReaderMode(this)
+    }
+
+    private fun paymentListener(array: ByteArray) {
+        runOnUiThread {
+            asdf.text = array.toString()
         }
     }
 

@@ -46,4 +46,5 @@ dependencies {
     implementation "io.coil-kt:coil:2.3.0"
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
     implementation 'org.bouncycastle:bcprov-jdk15on:1.69'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }

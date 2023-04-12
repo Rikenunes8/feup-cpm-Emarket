@@ -63,7 +63,25 @@ object Utils {
     }
 
     fun formatDate(date: String) : String {
-        val timestamp = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
+        val timestamp =
+            LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
         return timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm"))
+    }
+
+    /* Utility top-level function */
+    fun byteArrayToHex(ba: ByteArray): String {
+        val sb = StringBuilder(ba.size * 2)
+        for (b in ba) sb.append(String.format("%02x", b))
+        return sb.toString()
+    }
+
+    fun hexStringToByteArray(s: String): ByteArray {
+        val data = ByteArray(s.length / 2)
+        var k = 0
+        while (k < s.length) {
+            data[k/2] = ((Character.digit(s[k], 16) shl 4) + Character.digit(s[k+1], 16)).toByte()
+            k += 2
+        }
+        return data
     }
 }
