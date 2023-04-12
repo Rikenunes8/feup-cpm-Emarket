@@ -67,5 +67,6 @@
     <string name="info_checkout_method">(Long click the checkout button to alternate  between methods)</string>
     <string name="label_nfc">NFC</string>
     <string name="label_qrcode">QRCode</string>
+    <string name="header_settings">Settings</string>
 
 </resources>

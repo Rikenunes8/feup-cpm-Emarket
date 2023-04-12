@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.viewpager.widget.ViewPager
 import com.emarket.customer.R
 import com.emarket.customer.activities.BasketActivity
+import com.emarket.customer.activities.SettingsActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.SectionsPagerAdapter
 import com.emarket.customer.databinding.ActivityProfileBinding
@@ -42,6 +43,10 @@ class ProfileActivity : AppCompatActivity() {
                 intent = Intent(this, BasketActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 startActivity(intent)
+                return true
+            }
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
         }
