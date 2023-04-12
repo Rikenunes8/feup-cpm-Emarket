@@ -34,12 +34,11 @@ class SettingsActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
 
         moreToggle.setOnClickListener {
-            if (checkoutRg.visibility === View.VISIBLE) {
-                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            TransitionManager.beginDelayedTransition(cardView, AutoTransition())
+            if (checkoutRg.visibility == View.VISIBLE) {
                 checkoutRg.visibility = View.GONE
                 moreToggle.setImageResource(R.drawable.arrow_down)
             } else {
-                TransitionManager.beginDelayedTransition(cardView, AutoTransition())
                 checkoutRg.visibility = View.VISIBLE
                 moreToggle.setImageResource(R.drawable.arrow_up)
             }
@@ -53,7 +52,8 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        nfcRadio.isChecked = !sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
+        val isQrcode = sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
+        nfcRadio.isChecked = !isQrcode
         nfcRadio.setOnClickListener {
             sharedPreferences.edit().apply {
                 putBoolean(Constants.IS_QRCODE, !nfcRadio.isChecked)
@@ -61,7 +61,7 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        qrcodeRadio.isChecked = sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
+        qrcodeRadio.isChecked = isQrcode
         qrcodeRadio.setOnClickListener {
             sharedPreferences.edit().apply {
                 putBoolean(Constants.IS_QRCODE, qrcodeRadio.isChecked)
@@ -80,14 +80,12 @@ class SettingsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_shop -> {
-                Fetcher.fetchUserData(this, complete = false)
                 intent = Intent(this, BasketActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 startActivity(intent)
                 return true
             }
             R.id.action_profile -> {
-                Fetcher.fetchUserData(this, complete = false)
                 startActivity(Intent(this, ProfileActivity::class.java))
                 return true
             }
