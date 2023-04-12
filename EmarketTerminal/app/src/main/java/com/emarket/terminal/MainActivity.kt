@@ -30,8 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         scanBtn.setOnClickListener {
-            if (!requestCameraPermission())
-                read.launch(IntentIntegrator(this).createScanIntent())
+            requestCameraPermissionAndStartScan()
         }
     }
 
@@ -41,23 +40,35 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.mn_scanner -> {
-                if (!requestCameraPermission())
-                    read.launch(IntentIntegrator(this).createScanIntent())
-            }
+            R.id.mn_scanner -> requestCameraPermissionAndStartScan()
         }
         return true
     }
 
-    private fun requestCameraPermission(): Boolean {
-        val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-        if (permission == PackageManager.PERMISSION_GRANTED) return false
-        val requests = arrayOf(Manifest.permission.CAMERA)
-        ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
-        return true
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            REQUEST_CAMERA_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) startScan()
+            }
+        }
     }
 
-    private val read = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private fun requestCameraPermissionAndStartScan() {
+        val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startScan()
+        } else {
+            val requests = arrayOf(Manifest.permission.CAMERA)
+            ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
+        }
+    }
+
+    private fun startScan() {
+        readQRCode.launch(IntentIntegrator(this).createScanIntent())
+    }
+
+    private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
         if (intentResult != null) {
             if (intentResult.contents != null)
