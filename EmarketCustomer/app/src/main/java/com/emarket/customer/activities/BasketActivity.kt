@@ -22,6 +22,7 @@ import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
+import com.emarket.customer.services.CryptoService
 import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -136,6 +137,13 @@ class BasketActivity : AppCompatActivity() {
         try {
             val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
             val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
+            val serverPubKey = constructRSAPubKey(keyData)
+            val content = result.contents
+            val contentBytes = Base64.getDecoder().decode(content)
+            val decryptedContent = CryptoService.decryptFromServerContent(contentBytes, serverPubKey)
+
+            Log.e("QR", "decryptedContent $decryptedContent")
+            /*
             val productSign = Gson().fromJson(result.contents, ProductSignature::class.java)
 
             val productBytes = productSign.product.toByteArray(Charsets.UTF_8)
@@ -161,6 +169,7 @@ class BasketActivity : AppCompatActivity() {
                 enableAddProduct()
                 enableCheckout()
             }
+             */
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")

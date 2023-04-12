@@ -88,3 +88,4 @@ class DB(metaclass=DBMeta):
 
   def findProductById(self, id) -> dict:
     return self._products.find_one({'uuid': id})
+  

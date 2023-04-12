@@ -215,10 +215,14 @@ class Emarket:
       if product != None: return {'error': 'A product with this uuid already exists!'}
       else: self._db.addProduct(content)
 
-    signature = rsa.sign(str(content).encode(), self._privkey, 'SHA-256')
-    signatureEncoded = base64.b64encode(signature).decode('utf-8')
+    qrcode_content = {'uuid': uid}
 
-    img = qrcode.make(str({'product': str(content), 'signature': signatureEncoded}))
+    #signature = rsa.sign(str(qrcode_content).encode(), self._privkey, 'SHA-256')
+    #signatureEncoded = base64.b64encode(signature).decode('utf-8')
+    qrcode_encrypted = rsa.encrypt(str(qrcode_content).encode(), self._privkey)
+    qrcode_encrypted = base64.b64encode(qrcode_encrypted).decode('utf-8')
+
+    img = qrcode.make(qrcode_encrypted)#, 'signature': signatureEncoded}))
     img.save(f'qrcodes/{uid}.png')
     return content
     
