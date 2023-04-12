@@ -6,6 +6,7 @@
     <string name="header_checkout">Checkout</string>
     <string name="header_payment">Payment</string>
     <string name="header_transaction_detail">Transaction Details</string>
+    <string name="header_settings">Settings</string>
 
     <string name="title_registration">Registration</string>
     <string name="title_login">Login</string>
@@ -62,5 +63,10 @@
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
     <string name="no_transactions">No past transactions</string>
+    <string name="notifications">Notifications</string>
+    <string name="default_checkout_method">Default checkout method</string>
+    <string name="info_checkout_method">(Long click the checkout button to alternate  between methods)</string>
+    <string name="nfc">NFC</string>
+    <string name="qrcode">QRCode</string>
 
 </resources>

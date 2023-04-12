@@ -15,4 +15,11 @@
         android:title="@string/header_profile"
         app:iconTint="?attr/colorOnPrimary"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/settings_icon"
+        android:title="@string/header_settings"
+        app:iconTint="?attr/colorOnPrimary"
+        app:showAsAction="ifRoom" />
 </menu>
