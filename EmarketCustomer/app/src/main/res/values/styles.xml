@@ -48,4 +48,9 @@
         <item name="cornerRadius">20dp</item>
     </style>
 
+    <style name="CheckedCompatTheme" >
+        <item name="colorControlActivated">?attr/titleTextColor</item>
+    </style>
+
+
 </resources>

@@ -42,7 +42,8 @@
                     <Switch
                         android:id="@+id/notifications"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:theme="@style/CheckedCompatTheme"/>
                 </TableRow>
 
                 <TableRow
@@ -93,13 +94,15 @@
                     android:id="@+id/qrcode_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_qrcode" />
+                    android:text="@string/label_qrcode"
+                    android:theme="@style/CheckedCompatTheme"/>
 
                 <RadioButton
                     android:id="@+id/nfc_radio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_nfc" />
+                    android:text="@string/label_nfc"
+                    android:theme="@style/CheckedCompatTheme"/>
             </RadioGroup>
 
         </LinearLayout>
