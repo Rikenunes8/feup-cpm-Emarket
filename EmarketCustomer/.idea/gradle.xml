@@ -9,8 +9,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/FEUP/4a2s/CPM/feup-cpm-Emarket/EmarketCustomer" />
-            <option value="$USER_HOME$/FEUP/4a2s/CPM/feup-cpm-Emarket/EmarketCustomer/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>

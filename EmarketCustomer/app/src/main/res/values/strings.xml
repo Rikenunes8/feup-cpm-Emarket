@@ -62,5 +62,10 @@
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
     <string name="no_transactions">No past transactions</string>
+    <string name="label_notifications">Notifications</string>
+    <string name="label_checkout_method">Default checkout method</string>
+    <string name="info_checkout_method">(Long click the checkout button to alternate  between methods)</string>
+    <string name="label_nfc">NFC</string>
+    <string name="label_qrcode">QRCode</string>
 
 </resources>
