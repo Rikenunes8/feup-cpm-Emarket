@@ -32,14 +32,21 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 /**
  * Update the user data in the database and in the shared preferences with the data from the server.
  */
-fun updateUserData(app: Application, data: UserResponse, cleanTransactions: Boolean = true) {
-    if (cleanTransactions) dbLayer.cleanTransactions()
+fun updateUserData(app: Application, data: UserResponse, cleanTransactions: Boolean = true) : Boolean {
+    var oldTransactionNumber = 0
+    var newTransactionNumber = 0
+
+    if (!cleanTransactions) oldTransactionNumber = dbLayer.countTransactions()
+    else dbLayer.cleanTransactions()
     dbLayer.cleanUnusedVouchers()
     data.vouchers.forEach { dbLayer.addVoucher(it) }
     data.transactions.forEach { dbLayer.addTransaction(it) }
+    if (!cleanTransactions) newTransactionNumber = dbLayer.countTransactions()
 
     val prevUser = UserViewModel(app).user!!
     prevUser.amountToDiscount = data.amountToDiscount
     prevUser.totalSpent = data.totalSpent
     UserViewModel(app).user = prevUser
+
+    return newTransactionNumber - oldTransactionNumber != 0
 }
