@@ -66,7 +66,11 @@ class CheckoutActivity : AppCompatActivity() {
             discountView.text = if (isChecked) getString(R.string.template_price, maxOf(total - amountToDiscount, 0.0) ) else ""
         }
 
-        confirmButton.setOnClickListener { goToQRCode() }
+        confirmButton.setOnClickListener {
+            val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+            if (sharedPreferences.getBoolean(Constants.IS_QRCODE, true)) goToQRCode()
+            else goToNFC()
+        }
         registerForContextMenu(confirmButton)
     }
 
