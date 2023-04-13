@@ -156,7 +156,8 @@ class BasketActivity : AppCompatActivity() {
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("error")) {
                     runOnUiThread { showToast(this, getString(R.string.error_getting_product))}
-                    throw Exception(jsonResponse.getString("error"))
+                    Log.e("QRCode", jsonResponse.getString("error"))
+                    return@thread
                 }
                 val product = jsonResponse.get("product").toString()
                 val newProductDTO = Gson().fromJson(product, ProductDTO::class.java)

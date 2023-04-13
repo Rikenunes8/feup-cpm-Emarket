@@ -35,7 +35,6 @@ import kotlin.concurrent.thread
 
 data class ServerResponse (
     val uuid: String,
-    val serverPubKey: String,
     val certificate: String
 )
 
@@ -109,7 +108,6 @@ class RegisterActivity : AppCompatActivity() {
         return true
     }
 
-
     /**
      * Send the registration data to the server
      * @param pubKey public key of the user
@@ -140,7 +138,6 @@ class RegisterActivity : AppCompatActivity() {
 
                 val serverResp = Gson().fromJson(jsonResponse.toString(), ServerResponse::class.java)
                 val uuidEncoded = serverResp.uuid
-                val serverPubKey = serverResp.serverPubKey
                 val certificate = serverResp.certificate
 
                 val encryptedUUID = Base64.getDecoder().decode(uuidEncoded)
@@ -152,7 +149,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
 
-                savePersistently(user, serverPubKey, certificate)
+                savePersistently(user, certificate)
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             } catch (ex: Exception) {
@@ -170,17 +167,14 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     /**
-     * Save the public key and user uuid persistently
+     * Save user uuid and server certificate persistently
      */
-    private fun savePersistently(user: User, serverPubKey: String, certificate: String) {
+    private fun savePersistently(user: User, certificate: String) {
         // Store the UUID and server public key
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         editor.putString(Constants.USER_KEY, Gson().toJson(user))
-
-        // TODO: check if this should be a string and if it is ok to store in SharedPreferences
-        editor.putString(Constants.SERVER_PUB_KEY, serverPubKey)
         editor.apply()
 
         // Store the server certificate

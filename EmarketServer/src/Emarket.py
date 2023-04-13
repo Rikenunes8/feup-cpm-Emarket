@@ -56,7 +56,7 @@ class Emarket:
     print(self._certificate)
     print(self._pubkey.save_pkcs1().decode())
 
-    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8'), 'certificate': self._certificate}
+    return {'uuid': uidEncoded, 'certificate': self._certificate}
   
   def _validateCheckout(self, data: dict) -> str:
     # Check if data json structure is valid
