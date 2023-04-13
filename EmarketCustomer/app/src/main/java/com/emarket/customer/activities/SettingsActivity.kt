@@ -70,28 +70,4 @@ class SettingsActivity : AppCompatActivity() {
         }
 
     }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.main_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_shop -> {
-                intent = Intent(this, BasketActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                startActivity(intent)
-                return true
-            }
-            R.id.action_profile -> {
-                startActivity(Intent(this, ProfileActivity::class.java))
-                return true
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-
 }

@@ -18,7 +18,8 @@
         <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
-            android:label="@string/header_settings" />
+            android:label="@string/header_settings"
+            android:parentActivityName=".activities.profile.ProfileActivity"/>
         <activity
             android:name=".activities.PaymentActivity"
             android:exported="false"

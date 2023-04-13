@@ -88,6 +88,7 @@ class BasketActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+        menu?.removeItem(R.id.action_settings); // remove the settings option
         return true
     }
 
@@ -96,10 +97,6 @@ class BasketActivity : AppCompatActivity() {
             R.id.action_profile -> {
                 fetchUserData(this, complete = false)
                 startActivity(Intent(this, ProfileActivity::class.java))
-                return true
-            }
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
                 return true
             }
         }
