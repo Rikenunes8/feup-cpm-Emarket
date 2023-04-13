@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.preference.PreferenceManager
 import android.view.View
 import android.widget.ImageButton
@@ -15,8 +16,12 @@ import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher
+import com.google.gson.Gson
 
 class PaymentNfcActivity : AppCompatActivity() {
+    companion object {
+        const val FINISH_BTN_VISIBLE = "FINISH_BTN_VISIBLE"
+    }
     private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
 
     private val broadcastReceiver = object: BroadcastReceiver() {
@@ -39,6 +44,14 @@ class PaymentNfcActivity : AppCompatActivity() {
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putString(Constants.PAYMENT, nfcContent).apply()
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onRestoreInstanceState(savedInstanceState, persistentState)
+        savedInstanceState?.getBoolean(FINISH_BTN_VISIBLE, false).let {
+            if (it!!) finishPaymentBtn.visibility = View.VISIBLE
+            else finishPaymentBtn.visibility = View.GONE
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putBoolean(Constants.PREF_SEND_ENABLED, true).apply()
@@ -50,5 +63,10 @@ class PaymentNfcActivity : AppCompatActivity() {
         super.onPause()
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putBoolean(Constants.PREF_SEND_ENABLED, false).apply()
         LocalBroadcastManager.getInstance(applicationContext).unregisterReceiver(broadcastReceiver)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        outState.putBoolean(FINISH_BTN_VISIBLE, finishPaymentBtn.visibility == View.VISIBLE)
+        super.onSaveInstanceState(outState, outPersistentState)
     }
 }
