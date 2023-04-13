@@ -14,9 +14,6 @@ class Emarket:
 
   def __init__(self) -> None:
     self._db = DB()
-    # TODO: should we handle the error of not finding the keys?
-    self._privkey : rsa.PrivateKey = self._readKey('private.pem', True)
-    self._pubkey : rsa.PublicKey = self._readKey('public.pem', False)
     self._certificate = self._readCertificate('certificate.pem')
 
   def _readCertificate(self, path) -> str:
@@ -52,9 +49,6 @@ class Emarket:
     pubKey = self._pkcs8ToPublicKey(pubKeyPKCS8)
     uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
     uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
-
-    print(self._certificate)
-    print(self._pubkey.save_pkcs1().decode())
 
     return {'uuid': uidEncoded, 'certificate': self._certificate}
   
@@ -201,7 +195,6 @@ class Emarket:
     return {'success': 'User updated!', 'user': user}
   
   def getProduct(self, uuid: str) -> dict:
-    print("UUID: ", uuid)
     product = self._db.findProductById(uuid)
     if product is None:
         return {'error': 'Product not found!'}
