@@ -132,7 +132,7 @@
                             style="@style/FormEdit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:inputType="textPersonName" />
+                            android:inputType="number" />
                     </LinearLayout>
 
                     <Button
