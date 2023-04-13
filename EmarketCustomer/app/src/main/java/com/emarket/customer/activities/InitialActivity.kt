@@ -31,7 +31,7 @@ class InitialActivity : AppCompatActivity() {
             if (isRegistered) startActivity(Intent(this, LoginActivity::class.java))
             else startActivity(Intent(this, RegisterActivity::class.java))
             finish()
-        }, 1000)
+        }, 2000)
 
     }
 }
