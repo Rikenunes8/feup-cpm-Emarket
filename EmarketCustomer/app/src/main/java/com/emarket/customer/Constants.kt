@@ -20,7 +20,8 @@ object Constants {
     const val IS_QRCODE = "IS_QRCODE"
 
     // Server connection
-    const val SERVER_URL = "http://10.227.144.241:5000/"
+    const val SERVER_URL = "http://192.168.1.64:5000/"
     const val REGISTER_ENDPOINT = "register"
+    const val PRODUCT_ENDPOINT = "product"
     const val USER_ENDPOINT = "user"
 }

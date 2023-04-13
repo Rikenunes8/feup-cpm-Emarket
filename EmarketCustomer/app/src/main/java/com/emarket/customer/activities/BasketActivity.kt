@@ -25,17 +25,22 @@ import com.emarket.customer.models.ProductDTO
 import com.emarket.customer.services.CryptoService
 import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
 import com.emarket.customer.services.CryptoService.Companion.verifySignature
+import com.emarket.customer.services.NetworkService
+import com.emarket.customer.services.RequestType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
+import org.json.JSONObject
+import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 import java.util.*
+import javax.crypto.Cipher
 import kotlin.concurrent.thread
 
-data class ProductSignature (
+data class ServerProduct (
     val product : String,
-    val signature : String
 )
 
 class BasketActivity : AppCompatActivity() {
@@ -135,41 +140,46 @@ class BasketActivity : AppCompatActivity() {
 
     private fun processQRCode(result : IntentResult) {
         try {
-            val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-            val keyData = sharedPreferences.getString(Constants.SERVER_PUB_KEY, null)!!
-            val serverPubKey = constructRSAPubKey(keyData)
-            val content = result.contents
-            val contentBytes = Base64.getDecoder().decode(content)
-            val decryptedContent = CryptoService.decryptFromServerContent(contentBytes, serverPubKey)
+            val cert = CryptoService.loadCertificate(Constants.SERVER_CERTIFICATE)
+            val serverPubKey = cert?.publicKey
+            val qrContent = result.contents.toByteArray(StandardCharsets.ISO_8859_1)
 
-            Log.e("QR", "decryptedContent $decryptedContent")
-            /*
-            val productSign = Gson().fromJson(result.contents, ProductSignature::class.java)
-
-            val productBytes = productSign.product.toByteArray(Charsets.UTF_8)
-            val serverPubKey = constructRSAPubKey(keyData)
-            val signature = Base64.getDecoder().decode(productSign.signature)
-            val verified = verifySignature(productBytes, signature, serverPubKey)
-
-            if (verified == null || !verified) {
-                showToast(this, "Unreliable QR code")
-                return
+            val content = Cipher.getInstance(Constants.ENC_ALGO).run {
+                init(Cipher.DECRYPT_MODE, serverPubKey)
+                doFinal(qrContent)
             }
+            val tag = ByteBuffer.wrap(content)
+            val tId = tag.int
+            val id = UUID(tag.long, tag.long).toString()
 
-            val newProductDTO = Gson().fromJson(productSign.product, ProductDTO::class.java)
-            println(newProductDTO)
-            val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
-            if (oldProduct != null) {
-                oldProduct.quantity++
-                updateProduct(oldProduct)
-            } else {
-                val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)
-                addProduct(newProduct)
-                thread(start=true) { dbLayer.addProduct(newProduct) }
-                enableAddProduct()
-                enableCheckout()
+            thread(start = true) {
+                val response = NetworkService.makeRequest(
+                    RequestType.GET,
+                    Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id")
+                Log.e("QR", "response $response")
+
+                val jsonResponse = JSONObject(response)
+                if (jsonResponse.has("error")) {
+                    runOnUiThread { showToast(this, getString(R.string.error_getting_product))}
+                    throw Exception(jsonResponse.getString("error"))
+                }
+                val product = jsonResponse.get("product").toString()
+                val newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
+                val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
+                if (oldProduct != null) {
+                    oldProduct.quantity++
+                    updateProduct(oldProduct)
+                } else {
+                    val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)
+                    dbLayer.addProduct(newProduct)
+
+                    runOnUiThread {
+                        addProduct(newProduct)
+                        enableAddProduct()
+                        enableCheckout()
+                    }
+                }
             }
-             */
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")

@@ -199,6 +199,18 @@ class Emarket:
 
     self._db.updateUserValues(uid, {'cardNo': cardNumber})
     return {'success': 'User updated!', 'user': user}
+  
+  def getProduct(self, uuid: str) -> dict:
+    print("UUID: ", uuid)
+    product = self._db.findProductById(uuid)
+    if product is None:
+        return {'error': 'Product not found!'}
+    else:
+        # Check if all the required fields are present in the document
+        if 'name' not in product or 'price' not in product or 'url' not in product:
+            return {'error': 'Product data is incomplete!'}
+        else:
+            return {'product': {'uuid': product['uuid'], 'name': product['name'], 'price': product['price'], 'url': product['url']}}
 
   def addProduct(self, data: dict) -> dict:
     product_uuid = str(uuid.uuid4())

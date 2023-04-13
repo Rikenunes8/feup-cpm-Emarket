@@ -185,8 +185,6 @@ class RegisterActivity : AppCompatActivity() {
 
         // Store the server certificate
         CryptoService.storeCertificate(Constants.SERVER_CERTIFICATE, certificate)
-        val cert = CryptoService.loadCertificate(Constants.SERVER_CERTIFICATE)
-        Log.e("RegisterActivity", "Certificate: " + cert.toString())
     }
 
     private fun startLoading() {
