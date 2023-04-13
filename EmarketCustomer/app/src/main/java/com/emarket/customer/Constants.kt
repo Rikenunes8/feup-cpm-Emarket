@@ -14,12 +14,13 @@ object Constants {
     const val SHARED_PREFERENCES = "EmarketSharedPref"
     const val USER_KEY = "USER_KEY"
     const val SERVER_PUB_KEY = "SERVER_PUB_KEY"
+    const val SERVER_CERTIFICATE = "SERVER_CERTIFICATE"
     const val BASKET_ITEMS = "BASKET_ITEMS"
     const val NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED"
     const val IS_QRCODE = "IS_QRCODE"
 
     // Server connection
-    const val SERVER_URL = "http://192.168.1.98:5000/"
+    const val SERVER_URL = "http://10.227.144.241:5000/"
     const val REGISTER_ENDPOINT = "register"
     const val USER_ENDPOINT = "user"
 }

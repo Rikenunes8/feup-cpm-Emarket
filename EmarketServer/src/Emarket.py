@@ -17,6 +17,11 @@ class Emarket:
     # TODO: should we handle the error of not finding the keys?
     self._privkey : rsa.PrivateKey = self._readKey('private.pem', True)
     self._pubkey : rsa.PublicKey = self._readKey('public.pem', False)
+    self._certificate = self._readCertificate('certificate.pem')
+
+  def _readCertificate(self, path) -> str:
+    with open(path, 'r') as f: data = f.read()
+    return data
 
   def _readKey(self, path: str, private = True) -> rsa.PrivateKey or rsa.PublicKey:
     with open(path, 'r') as f: data = f.read()
@@ -48,9 +53,10 @@ class Emarket:
     uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
     uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
 
+    print(self._certificate)
     print(self._pubkey.save_pkcs1().decode())
 
-    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
+    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8'), 'certificate': self._certificate}
   
   def _validateCheckout(self, data: dict) -> str:
     # Check if data json structure is valid
