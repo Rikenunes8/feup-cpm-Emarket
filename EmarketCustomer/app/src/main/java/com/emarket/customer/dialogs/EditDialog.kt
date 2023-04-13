@@ -2,12 +2,14 @@ package com.emarket.customer.dialogs
 
 import android.content.Context
 import android.os.Bundle
+import android.text.InputType
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatDialog
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.controllers.CardNumberEditTextController
 
 enum class EditDialogType {
     PERSONAL, PAYMENT
@@ -26,6 +28,7 @@ class EditDialog(ctx: Context,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.edit_single_info)
 
         var titleId = 0
         var fieldName = ""
@@ -34,6 +37,8 @@ class EditDialog(ctx: Context,
             EditDialogType.PAYMENT -> {
                 titleId = R.string.dialog_title_edit_payment
                 fieldName = context.getString(R.string.card_number)
+                edtField.addTextChangedListener(CardNumberEditTextController())
+                edtField.inputType = InputType.TYPE_CLASS_NUMBER
             }
             EditDialogType.PERSONAL -> {
                 titleId = R.string.dialog_title_edit_personal
@@ -42,7 +47,6 @@ class EditDialog(ctx: Context,
         }
 
         setTitle(titleId)
-        setContentView(R.layout.edit_single_info)
 
         edtField.setText(field)
         edtField.hint = fieldName
@@ -50,10 +54,14 @@ class EditDialog(ctx: Context,
         window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 
         saveBtn.setOnClickListener {
-
             val value = edtField.text.toString()
             if (value.isEmpty()) {
                 edtField.error = "$fieldName is required"
+                edtField.requestFocus()
+                return@setOnClickListener
+            }
+            if (editDialogType == EditDialogType.PAYMENT && value.length != 19) {
+                edtField.error = "Should have 16 digits"
                 edtField.requestFocus()
                 return@setOnClickListener
             }

@@ -16,6 +16,7 @@ import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.controllers.CardNumberEditTextController
 import com.emarket.customer.models.User
 import com.emarket.customer.services.CryptoService.Companion.decryptContent
 import com.emarket.customer.services.CryptoService.Companion.generateAndStoreKeys
@@ -70,28 +71,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        cardEditText.addTextChangedListener(object : TextWatcher {
-            private val SEPARATOR = "-"
-            private val DIGIT_NUMBER = 16
-            private val GROUP_SIZE = 4
-
-            private var current = ""
-            private val nonDigits = Regex("\\D")
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-            override fun afterTextChanged(s: Editable) {
-                if (s.toString() == current) return
-                val userInput = s.toString().replace(nonDigits, "")
-                if (userInput.length <= DIGIT_NUMBER) {
-                    current = userInput.chunked(GROUP_SIZE).joinToString(SEPARATOR)
-                    s.filters = arrayOfNulls<InputFilter>(0)
-                }
-                s.replace(0, s.length, current, 0, current.length)
-            }
-        })
+        cardEditText.addTextChangedListener(CardNumberEditTextController())
     }
 
     /**
