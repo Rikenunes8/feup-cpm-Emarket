@@ -164,7 +164,7 @@ class BasketActivity : AppCompatActivity() {
                 val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
                 if (oldProduct != null) {
                     oldProduct.quantity++
-                    updateProduct(oldProduct)
+                    runOnUiThread { updateProduct(oldProduct) }
                 } else {
                     val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)
                     dbLayer.addProduct(newProduct)
