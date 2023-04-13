@@ -1,9 +1,11 @@
 package com.emarket.customer.services
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
@@ -26,13 +28,18 @@ object Card {
 
 class NfcService : HostApduService() {
     override fun processCommandApdu(command: ByteArray, extra: Bundle?): ByteArray {
-        Log.d("PaymentNFC", "processCommandAPDU")
-        if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(Constants.PREF_SEND_ENABLED, false))
-            return Card.UNKNOWN_CMD_SW  // if app not running NfcSendActivity don't send anything
+        Log.d("PaymentNFC", "Shared")
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val content : String = sharedPreferences.getString("Payment", "")!!
+        Log.d("PaymentNFC", "Shared: $content")
+        if (!sharedPreferences.getBoolean(Constants.PREF_SEND_ENABLED, false)) {
+            Log.d("PaymentNFC", "Double fuck")
+            return Card.UNKNOWN_CMD_SW  // if app not running PaymentNfcActivity don't send anything
+        }
         if (Card.SELECT_APDU.contentEquals(command)) {
-            Card.payment = "checkout payment".encodeToByteArray()
-            Log.d("PaymentNFC", "Card.SELECT_APDU.contentEquals(command)")
-            if (Card.payment.size <= Card.MAX_RES_SIZE) { // send complete certificate (no second part)
+            Card.payment = content.encodeToByteArray()
+            Log.d("PaymentNFC", "Content: $content")
+            if (Card.payment.size <= Card.MAX_RES_SIZE) { // send complete payment (no second part)
                 Log.d("PaymentNFC", "min size")
                 return byteArrayOf(0) + Card.payment + Card.OK_SW
             } else {    // send first part if too big

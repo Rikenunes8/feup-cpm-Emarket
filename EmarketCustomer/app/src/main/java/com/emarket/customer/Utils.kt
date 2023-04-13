@@ -1,11 +1,15 @@
 package com.emarket.customer
 
+import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
 import android.widget.Toast
+import com.emarket.customer.activities.Payment
+import com.emarket.customer.models.Basket
+import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,15 +44,18 @@ object Utils {
         return typedValue.resourceId
     }
 
-    /**
-     * Generate the QR code content signed with the user's private key
-     * @param jsonData the data to sign and put in qrcode
-     */
-    fun genQRCode(jsonData: String) : String {
+    fun signDataJson(jsonData: String): String {
         val signatureEncoded = getSignature(jsonData)
-        val data = Gson().toJson(DataSigned(signatureEncoded, jsonData))
+        return Gson().toJson(DataSigned(signatureEncoded, jsonData))
+    }
 
-        return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
+    fun buildPayment(application: Application, intent: Intent) : String {
+        val basketJSON = intent.getStringExtra("Basket")!!
+        val basket = Gson().fromJson(basketJSON, Basket::class.java)
+
+        val storedUser = UserViewModel(application).user
+        val userUUID = storedUser!!.userId
+        return Gson().toJson(Payment(userUUID, basket))
     }
 
     /**

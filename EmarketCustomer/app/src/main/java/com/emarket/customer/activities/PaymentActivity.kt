@@ -9,7 +9,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.Utils.buildPayment
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.Utils.signDataJson
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
@@ -17,6 +19,7 @@ import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
+import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -36,13 +39,9 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
-        val basketJSON = intent.getStringExtra("Basket")!!
-        val basket = Gson().fromJson(basketJSON, Basket::class.java)
-
-        val storedUser = UserViewModel(this.application).user
-        val userUUID = storedUser!!.userId
-        val paymentJson = Gson().toJson(Payment(userUUID, basket))
-        val qrContent = Utils.genQRCode(paymentJson)
+        val paymentJson = buildPayment(this.application, intent)
+        val qrContent = signDataJson(paymentJson)
+        val qrContentEncoded = String(qrContent.toByteArray(), StandardCharsets.ISO_8859_1)
 
         finishPaymentBtn.setOnClickListener {
             fetchUserData(this, complete = false, force = true)
@@ -52,7 +51,7 @@ class PaymentActivity : AppCompatActivity() {
 
         thread(start = true) {
             try {
-                val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
+                val bitmap = encodeAsBitmap(qrContentEncoded, foregroundColor, backgroundColor)
                 runOnUiThread { qrCodeImageview.setImageBitmap(bitmap) }
             } catch (e: Exception) {
                 showToast(this, getString(R.string.error_qrcode_generation))
