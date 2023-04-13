@@ -7,31 +7,34 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
-import android.widget.Toast
+import android.view.View
+import android.widget.ImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.models.Basket
-import com.emarket.customer.models.UserViewModel
-import com.google.gson.Gson
+import com.emarket.customer.controllers.Fetcher
 
 class PaymentNfcActivity : AppCompatActivity() {
+    private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
+
     private val broadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(ctx: Context, intent: Intent) {
-            // TODO make something useful
-            Toast.makeText(this@PaymentNfcActivity, "NFC link lost", Toast.LENGTH_LONG).show()
-            finish()
+            finishPaymentBtn.visibility = View.VISIBLE
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment_nfc)
 
+        finishPaymentBtn.setOnClickListener {
+            Fetcher.fetchUserData(this, complete = false, force = true)
+            startActivity(Intent(this, BasketActivity::class.java))
+            finish()
+        }
+
         val paymentJson = Utils.buildPayment(this.application, intent)
         val nfcContent = Utils.signDataJson(paymentJson)
-        Log.d("PaymentNFC", nfcContent)
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putString(Constants.PAYMENT, nfcContent).apply()
     }
 

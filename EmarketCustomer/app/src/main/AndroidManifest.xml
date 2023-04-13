@@ -32,7 +32,9 @@
         </service>
         <activity
             android:name=".activities.PaymentNfcActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/header_payment_nfc"
+            android:parentActivityName=".activities.CheckoutActivity"/>
         <activity
             android:name=".activities.SettingsActivity"
             android:exported="false"
