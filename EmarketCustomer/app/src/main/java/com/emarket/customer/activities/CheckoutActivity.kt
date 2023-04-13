@@ -71,6 +71,7 @@ class CheckoutActivity : AppCompatActivity() {
                 (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
             )
 
+            // TODO run default and add context menu to choose one
             val qrcode = Intent(this, PaymentNfcActivity::class.java).apply {
                 putExtra("Basket", Gson().toJson(basket))
             }

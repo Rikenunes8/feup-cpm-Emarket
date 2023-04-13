@@ -167,7 +167,6 @@ class RegisterActivity : AppCompatActivity() {
 
         editor.putString(Constants.USER_KEY, Gson().toJson(user))
 
-        // TODO: check if this should be a string and if it is ok to store in SharedPreferences
         editor.putString(Constants.SERVER_PUB_KEY, serverPubKey)
         editor.apply()
     }
