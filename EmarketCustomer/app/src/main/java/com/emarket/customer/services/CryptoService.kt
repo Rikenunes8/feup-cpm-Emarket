@@ -95,15 +95,14 @@ class CryptoService {
             return null
         }
 
-        fun decryptFromServerContent(content: ByteArray, key: PublicKey?) : String? {
+        fun decryptFromServerContent(content: ByteArray, key: PublicKey?) : ByteArray? {
             if (content.isEmpty()) return null
             if (key == null) return null
             try {
-                val result = Cipher.getInstance(Constants.ENC_ALGO).run {
+                return Cipher.getInstance(Constants.ENC_ALGO).run {
                     init(Cipher.DECRYPT_MODE, key)
                     doFinal(content)
                 }
-                return String(result, StandardCharsets.UTF_8)
             }
             catch (e: Exception) {
                 e.message?.let { Log.e("DECRYPT", it) }

@@ -23,8 +23,6 @@ import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
 import com.emarket.customer.services.CryptoService
-import com.emarket.customer.services.CryptoService.Companion.constructRSAPubKey
-import com.emarket.customer.services.CryptoService.Companion.verifySignature
 import com.emarket.customer.services.NetworkService
 import com.emarket.customer.services.RequestType
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,10 +36,6 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.Cipher
 import kotlin.concurrent.thread
-
-data class ServerProduct (
-    val product : String,
-)
 
 class BasketActivity : AppCompatActivity() {
     companion object {
@@ -143,11 +137,13 @@ class BasketActivity : AppCompatActivity() {
             val cert = CryptoService.loadCertificate(Constants.SERVER_CERTIFICATE)
             val serverPubKey = cert?.publicKey
             val qrContent = result.contents.toByteArray(StandardCharsets.ISO_8859_1)
+            val content = CryptoService.decryptFromServerContent(qrContent, serverPubKey)
 
-            val content = Cipher.getInstance(Constants.ENC_ALGO).run {
-                init(Cipher.DECRYPT_MODE, serverPubKey)
-                doFinal(qrContent)
+            if (content == null) {
+                showToast(this, getString(R.string.error_invalid_qrcode))
+                return
             }
+
             val tag = ByteBuffer.wrap(content)
             val tId = tag.int
             val id = UUID(tag.long, tag.long).toString()
@@ -156,7 +152,6 @@ class BasketActivity : AppCompatActivity() {
                 val response = NetworkService.makeRequest(
                     RequestType.GET,
                     Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id")
-                Log.e("QR", "response $response")
 
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("error")) {

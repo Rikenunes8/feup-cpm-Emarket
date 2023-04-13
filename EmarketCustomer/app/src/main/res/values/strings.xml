@@ -48,6 +48,7 @@
     <string name="error_qrcode_generation">Error generating qrcode</string>
     <string name="error_fetching_user_information">Error fetching user information from server</string>
     <string name="error_updating_user_cardNo">Error updating user card number</string>
+    <string name="error_invalid_qrcode">That qrcode is not legit.</string>
     <string name="error_getting_product">Error getting product information from server</string>
 
     <string name="template_price">%.2f €</string>
