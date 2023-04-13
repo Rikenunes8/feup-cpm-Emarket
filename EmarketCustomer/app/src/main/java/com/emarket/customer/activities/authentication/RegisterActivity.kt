@@ -4,6 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -66,6 +69,29 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+
+        cardEditText.addTextChangedListener(object : TextWatcher {
+            private val SEPARATOR = "-"
+            private val DIGIT_NUMBER = 16
+            private val GROUP_SIZE = 4
+
+            private var current = ""
+            private val nonDigits = Regex("\\D")
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun afterTextChanged(s: Editable) {
+                if (s.toString() == current) return
+                val userInput = s.toString().replace(nonDigits, "")
+                if (userInput.length <= DIGIT_NUMBER) {
+                    current = userInput.chunked(GROUP_SIZE).joinToString(SEPARATOR)
+                    s.filters = arrayOfNulls<InputFilter>(0)
+                }
+                s.replace(0, s.length, current, 0, current.length)
+            }
+        })
     }
 
     /**
@@ -84,13 +110,17 @@ class RegisterActivity : AppCompatActivity() {
     /**
      * Validate the input data of the input view
      * @param paramName the name of the parameter
-     * @param viewId the id of the view
+     * @param editText the edit text view
      * @return true if the data is valid, false otherwise
      */
     private fun validateData(paramName: String, editText: EditText): Boolean {
         val value = editText.text.toString()
         if (value.isEmpty()) {
             editText.error = "$paramName is required"
+            editText.requestFocus()
+            return false
+        } else if (paramName == "Card no." && value.length != 19) {
+            editText.error = "$paramName should have 16 digits"
             editText.requestFocus()
             return false
         }
