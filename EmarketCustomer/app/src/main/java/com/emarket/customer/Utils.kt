@@ -7,6 +7,8 @@ import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 data class DataSigned(
@@ -58,5 +60,10 @@ object Utils {
         val dataByteArray = jsonData.toByteArray()
         val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
         return Base64.getEncoder().encodeToString(signature)
+    }
+
+    fun formatDate(date: String) : String {
+        val timestamp = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
+        return timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm"))
     }
 }

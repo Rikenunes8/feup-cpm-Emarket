@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.activities.TransactionDetailsActivity
 import com.emarket.customer.models.Transaction
 import com.google.gson.Gson
@@ -31,7 +32,7 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
 
             val totalPaid = transaction.total - (transaction.discounted ?: 0.0)
             total.text = item.context.getString(R.string.template_price, totalPaid)
-            date.text = transaction.date
+            date.text = transaction.date?.let { Utils.formatDate(it) }
 
             transactionItem.setOnClickListener {
                 val intent = Intent(item.context, TransactionDetailsActivity::class.java)

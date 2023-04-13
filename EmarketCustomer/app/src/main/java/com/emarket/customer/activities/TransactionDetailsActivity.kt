@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
+import com.emarket.customer.Utils
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.models.Transaction
 import com.google.gson.Gson
@@ -35,7 +36,7 @@ class TransactionDetailsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         transaction = Gson().fromJson(intent.getStringExtra("transaction"), Transaction::class.java)
-        transactionDateTv.text = transaction.date
+        transactionDateTv.text = transaction.date?.let { Utils.formatDate(it) }
         totalPriceTv.text = getString(R.string.template_price, transaction.total)
 
         transaction.discounted?.let {
