@@ -73,4 +73,6 @@
     <string name="qrcode">QRCode</string>
     <string name="nfc_service">NfcService</string>
     <string name="nfc_instructions">Hold your phone against the terminal to proceed with the checkout!</string>
+    <string name="checkout_qrcode">Checkout by QRcode</string>
+    <string name="checkout_nfc">Checkout by NFC</string>
 </resources>

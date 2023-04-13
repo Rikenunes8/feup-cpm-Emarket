@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Paint
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.activities.payment.PaymentNfcActivity
+import com.emarket.customer.activities.payment.PaymentQRCodeActivity
 import com.emarket.customer.controllers.Fetcher.Companion.vouchers
 import com.emarket.customer.controllers.ProductsListAdapter
 import com.emarket.customer.controllers.VoucherListAdapter
@@ -23,6 +25,7 @@ import com.google.gson.reflect.TypeToken
 
 class CheckoutActivity : AppCompatActivity() {
     private lateinit var basket : Basket
+    private lateinit var products : MutableList<Product>
 
     private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }
     private val basketView by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
@@ -35,17 +38,15 @@ class CheckoutActivity : AppCompatActivity() {
     private val accumulatedAmountCardView by lazy { findViewById<CardView>(R.id.accumulated_amount_cv) }
     private val accumulatedAmountSubtitle by lazy { findViewById<TextView>(R.id.accumulated_amount_subtitle) }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
 
-        val amountToDiscount = UserViewModel(application).user!!.amountToDiscount
-        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
-        val products = Gson().fromJson<MutableList<Product>>(json, object : TypeToken<MutableList<Product>>() {}.type)
-
+        products = getProducts()
         val total = products.fold(0.0) { sum, product -> sum + product.price * product.quantity }
 
+        val amountToDiscount = UserViewModel(application).user!!.amountToDiscount
         if (amountToDiscount > 0.0) {
             accumulatedAmountCardView.visibility = View.VISIBLE
             accumulatedAmountSubtitle.visibility = View.VISIBLE
@@ -65,28 +66,53 @@ class CheckoutActivity : AppCompatActivity() {
             discountView.text = if (isChecked) getString(R.string.template_price, maxOf(total - amountToDiscount, 0.0) ) else ""
         }
 
-        confirmButton.setOnClickListener {
-            basket = Basket(
-                products.map { ProductToCheckout(it.uuid, it.price, it.quantity) },
-                discountCheck.isChecked,
-                (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
-            )
-
-            // TODO run default and add context menu to choose one
-            val qrcode = Intent(this, PaymentNfcActivity::class.java).apply {
-                putExtra("Basket", Gson().toJson(basket))
-            }
-            startActivity(qrcode)
-        }
+        confirmButton.setOnClickListener { goToQRCode() }
+        registerForContextMenu(confirmButton)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            android.R.id.home -> {
-                finish()
-                return true
-            }
+            android.R.id.home -> { finish(); return true }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menuInflater.inflate(R.menu.checkout_ctx_menu, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.mn_by_qrcode -> goToQRCode()
+            R.id.mn_by_nfc -> goToNFC()
+        }
+        return super.onContextItemSelected(item)
+    }
+
+    private fun getProducts() : MutableList<Product> {
+        val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString(Constants.BASKET_ITEMS, null)
+        return Gson().fromJson(json, object : TypeToken<MutableList<Product>>() {}.type)
+    }
+
+    private fun goToQRCode() { goToPayment(PaymentQRCodeActivity::class.java) }
+
+    private fun goToNFC() { goToPayment(PaymentNfcActivity::class.java) }
+
+    private fun goToPayment(to: Class<*>) {
+        basket = getBasketFromProducts()
+
+        val intent = Intent(this, to).apply {
+            putExtra("Basket", Gson().toJson(basket))
+        }
+        startActivity(intent)
+    }
+
+    private fun getBasketFromProducts() : Basket {
+        return Basket(
+            products.map { ProductToCheckout(it.uuid, it.price, it.quantity) },
+            discountCheck.isChecked,
+            (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
+        )
     }
 }
