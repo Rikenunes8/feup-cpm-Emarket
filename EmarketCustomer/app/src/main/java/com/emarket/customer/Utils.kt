@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.TypedValue
 import android.widget.Toast
-import com.emarket.customer.activities.Payment
+import com.emarket.customer.activities.payment.Payment
 import com.emarket.customer.models.Basket
 import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.services.CryptoService

@@ -7,7 +7,7 @@
     android:gravity="center"
     android:orientation="vertical"
     android:paddingHorizontal="20dp"
-    tools:context=".activities.PaymentActivity">
+    tools:context=".activities.payment.PaymentQRCodeActivity">
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"

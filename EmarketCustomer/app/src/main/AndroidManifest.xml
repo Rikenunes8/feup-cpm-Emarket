@@ -31,7 +31,7 @@
                 android:resource="@xml/aid_list"/>
         </service>
         <activity
-            android:name=".activities.PaymentNfcActivity"
+            android:name=".activities.payment.PaymentNfcActivity"
             android:exported="false"
             android:label="@string/header_payment_nfc"
             android:parentActivityName=".activities.CheckoutActivity"/>
@@ -40,7 +40,7 @@
             android:exported="false"
             android:label="@string/header_settings" />
         <activity
-            android:name=".activities.PaymentActivity"
+            android:name=".activities.payment.PaymentQRCodeActivity"
             android:exported="false"
             android:label="@string/header_payment"
             android:parentActivityName=".activities.CheckoutActivity" />

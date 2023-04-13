@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activities.PaymentNfcActivity">
+    tools:context=".activities.payment.PaymentNfcActivity">
 
     <TextView
         android:id="@+id/app_name"

@@ -1,4 +1,4 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.payment
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,6 +13,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher
 
 class PaymentNfcActivity : AppCompatActivity() {
