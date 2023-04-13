@@ -27,29 +27,21 @@ object Card {
 
 class NfcService : HostApduService() {
     override fun processCommandApdu(command: ByteArray, extra: Bundle?): ByteArray {
-        Log.d("PaymentNFC", "Processing command")
         val content : String = PreferenceManager.getDefaultSharedPreferences(applicationContext).getString(Constants.PAYMENT, "") ?: ""
-        Log.d("PaymentNFC", "Content: $content")
         if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(Constants.PREF_SEND_ENABLED, false)) {
-            Log.d("PaymentNFC", "Double fuck")
             return Card.UNKNOWN_CMD_SW  // if app not running PaymentNfcActivity don't send anything
         }
-        if (Card.SELECT_APDU.contentEquals(command)) {
+        return if (Card.SELECT_APDU.contentEquals(command)) {
             Card.payment = content.encodeToByteArray()
-            Log.d("PaymentNFC", "Equal select apdu")
             if (Card.payment.size <= Card.MAX_RES_SIZE) { // send complete payment (no second part)
-                Log.d("PaymentNFC", "min size")
-                return byteArrayOf(0) + Card.payment + Card.OK_SW
+                byteArrayOf(0) + Card.payment + Card.OK_SW
             } else {    // send first part if too big
-                Log.d("PaymentNFC", "To big")
-                return byteArrayOf(1) + Card.payment.sliceArray(0 until Card.MAX_RES_SIZE) + Card.OK_SW
+                byteArrayOf(1) + Card.payment.sliceArray(0 until Card.MAX_RES_SIZE) + Card.OK_SW
             }
         } else if (Card.SECOND_APDU.contentEquals(command)) {   // send second part
-            Log.d("PaymentNFC", "Second apdu")
-            return Card.payment.sliceArray(Card.MAX_RES_SIZE until Card.payment.size) + Card.OK_SW
+            Card.payment.sliceArray(Card.MAX_RES_SIZE until Card.payment.size) + Card.OK_SW
         } else {    // APDU not recognized
-            Log.d("PaymentNFC", "Fuck it")
-            return Card.UNKNOWN_CMD_SW
+            Card.UNKNOWN_CMD_SW
         }
     }
 

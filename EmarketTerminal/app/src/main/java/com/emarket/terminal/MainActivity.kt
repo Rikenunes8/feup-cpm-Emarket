@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun paymentListener(array: ByteArray) {
         runOnUiThread {
-            Log.d("Main", "Executing listener with content ${String(array)}")
             asdf.text = String(array)
         }
     }
