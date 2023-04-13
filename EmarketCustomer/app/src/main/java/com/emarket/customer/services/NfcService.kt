@@ -4,6 +4,7 @@ import android.content.Intent
 import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils.hexStringToByteArray
@@ -25,20 +26,26 @@ object Card {
 
 class NfcService : HostApduService() {
     override fun processCommandApdu(command: ByteArray, extra: Bundle?): ByteArray {
+        Log.d("PaymentNFC", "processCommandAPDU")
         if (!PreferenceManager.getDefaultSharedPreferences(applicationContext).getBoolean(Constants.PREF_SEND_ENABLED, false))
-            return Card.UNKNOWN_CMD_SW                                   // if app not running NfcSendActivity don't send anything
+            return Card.UNKNOWN_CMD_SW  // if app not running NfcSendActivity don't send anything
         if (Card.SELECT_APDU.contentEquals(command)) {
             Card.payment = "checkout payment".encodeToByteArray()
-            return if (Card.payment.size <= Card.MAX_RES_SIZE)
-                byteArrayOf(0) + Card.payment + Card.OK_SW                     // send complete certificate (no second part)
-            else                                                          // send first part if too big
-                byteArrayOf(1) + Card.payment.sliceArray(0 until Card.MAX_RES_SIZE) + Card.OK_SW
-        }
-        else if (Card.SECOND_APDU.contentEquals(command)) {             // send second part
+            Log.d("PaymentNFC", "Card.SELECT_APDU.contentEquals(command)")
+            if (Card.payment.size <= Card.MAX_RES_SIZE) { // send complete certificate (no second part)
+                Log.d("PaymentNFC", "min size")
+                return byteArrayOf(0) + Card.payment + Card.OK_SW
+            } else {    // send first part if too big
+                Log.d("PaymentNFC", "To big")
+                return byteArrayOf(1) + Card.payment.sliceArray(0 until Card.MAX_RES_SIZE) + Card.OK_SW
+            }
+        } else if (Card.SECOND_APDU.contentEquals(command)) {   // send second part
+            Log.d("PaymentNFC", "Second apdu")
             return Card.payment.sliceArray(Card.MAX_RES_SIZE until Card.payment.size) + Card.OK_SW
+        } else {    // APDU not recognized
+            Log.d("PaymentNFC", "Fuck it")
+            return Card.UNKNOWN_CMD_SW
         }
-        else
-            return Card.UNKNOWN_CMD_SW                                    // APDU not recognized
     }
 
     override fun onDeactivated(cause: Int) {

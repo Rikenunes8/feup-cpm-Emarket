@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -53,7 +54,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun paymentListener(array: ByteArray) {
         runOnUiThread {
-            asdf.text = array.toString()
+            Log.d("Main", "Executing listener with content ${String(array)}")
+            asdf.text = String(array)
         }
     }
 

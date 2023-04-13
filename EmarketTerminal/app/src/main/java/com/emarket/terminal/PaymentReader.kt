@@ -30,23 +30,34 @@ private val RES_OK_SW = hexStringToByteArray("9000")
 
 class PaymentReader(private val paymentListener: (ByteArray)->Unit) : NfcAdapter.ReaderCallback {
     override fun onTagDiscovered(tag: Tag) {
-        val isoDep = IsoDep.get(tag)                    // Android smartcard reader emulator
+        val isoDep = IsoDep.get(tag)    // Android smartcard reader emulator
+        Log.d("PaymentReader", "Tag discovered")
         if (isoDep != null) {
             try {
+                Log.d("PaymentReader", "Trying")
                 isoDep.connect()                            // establish a connection with the card and send 'select aid' command
                 val result = isoDep.transceive(hexStringToByteArray(CMD_SEL_AID + String.format("%02X", CARD_AID.length/2) + CARD_AID))
                 val rLen = result.size
+                Log.d("PaymentReader", "Result size: $rLen")
                 val status = byteArrayOf(result[rLen-2], result[rLen-1])
                 val more = (result[0] == 1.toByte())
                 if (RES_OK_SW.contentEquals(status)) {
+                    Log.d("PaymentReader", "Equal status")
                     if (more) {
+                        Log.d("PaymentReader", "More")
                         val second = isoDep.transceive(hexStringToByteArray(CMD_GET_SECOND))
                         val len = second.size
-                        if (RES_OK_SW.contentEquals(byteArrayOf(second[len-2], second[len-1])))
+                        if (RES_OK_SW.contentEquals(byteArrayOf(second[len-2], second[len-1]))){
+                            Log.d("PaymentReader", "First listener")
                             paymentListener(result.sliceArray(1..rLen-3) + second.sliceArray(0..len-3))
+                        }
                     }
-                    else
+                    else {
+                        Log.d("PaymentReader", "Second listener")
                         paymentListener(result.sliceArray(1..rLen-3))
+                    }
+                } else {
+                    Log.d("PaymentReader", "Not Equal status")
                 }
             } catch (e: IOException) {
                 Log.e("PaymentReader", "Error communicating with customer: $e")
