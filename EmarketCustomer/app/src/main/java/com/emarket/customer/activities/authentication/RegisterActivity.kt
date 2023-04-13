@@ -4,6 +4,9 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -13,6 +16,7 @@ import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.controllers.CardNumberEditTextController
 import com.emarket.customer.models.User
 import com.emarket.customer.services.CryptoService.Companion.decryptContent
 import com.emarket.customer.services.CryptoService.Companion.generateAndStoreKeys
@@ -42,30 +46,32 @@ class RegisterActivity : AppCompatActivity() {
 
     private val loadingIcon by lazy { findViewById<ProgressBar>(R.id.loading_icon) }
     private val registerButton by lazy { findViewById<Button>(R.id.btn_reg_submit) }
+    private val nameEditText by lazy { findViewById<EditText>(R.id.edt_reg_name) }
+    private val nickEditText by lazy { findViewById<EditText>(R.id.edt_reg_nick) }
+    private val passEditText by lazy { findViewById<EditText>(R.id.edt_reg_pass) }
+    private val cardEditText by lazy { findViewById<EditText>(R.id.edt_reg_card) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
         registerButton.setOnClickListener {
-
             if (!validateInputData()) return@setOnClickListener
-
-            val cardEditText = findViewById<EditText>(R.id.edt_reg_card)
-            val card = cardEditText.text.toString()
 
             // generate key pair
             if (generateAndStoreKeys(this, getString(R.string.error_already_registered))) {
                 val pubKey = getPubKey()
                 if (pubKey != null) {
                     startLoading()
-                    sendRegistrationData(pubKey, card) // send registration data to server
+                    sendRegistrationData(pubKey, cardEditText.text.toString()) // send registration data to server
                 } else {
                     Log.e("RegisterActivity", getString(R.string.error_getting_keys))
                     showToast(this, getString(R.string.error_getting_keys))
                 }
             }
         }
+
+        cardEditText.addTextChangedListener(CardNumberEditTextController())
     }
 
     /**
@@ -73,10 +79,10 @@ class RegisterActivity : AppCompatActivity() {
      * @return true if all the data is valid, false otherwise
      */
     private fun validateInputData(): Boolean {
-        if (!validateData("Name", R.id.edt_reg_name)) return false
-        if (!validateData("Nickname", R.id.edt_reg_nick)) return false
-        if (!validateData("Password", R.id.edt_reg_pass)) return false
-        if (!validateData("Card no.", R.id.edt_reg_card)) return false
+        if (!validateData("Name", nameEditText)) return false
+        if (!validateData("Nickname", nickEditText)) return false
+        if (!validateData("Password", passEditText)) return false
+        if (!validateData("Card no.", cardEditText)) return false
 
         return true
     }
@@ -84,14 +90,17 @@ class RegisterActivity : AppCompatActivity() {
     /**
      * Validate the input data of the input view
      * @param paramName the name of the parameter
-     * @param viewId the id of the view
+     * @param editText the edit text view
      * @return true if the data is valid, false otherwise
      */
-    private fun validateData(paramName: String, viewId: Int): Boolean {
-        val editText = findViewById<EditText>(viewId)
+    private fun validateData(paramName: String, editText: EditText): Boolean {
         val value = editText.text.toString()
         if (value.isEmpty()) {
             editText.error = "$paramName is required"
+            editText.requestFocus()
+            return false
+        } else if (paramName == "Card no." && value.length != 19) {
+            editText.error = "$paramName should have 16 digits"
             editText.requestFocus()
             return false
         }
