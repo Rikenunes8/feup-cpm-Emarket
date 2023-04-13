@@ -212,6 +212,7 @@ class Emarket:
         else:
             return {'product': {'uuid': product['uuid'], 'name': product['name'], 'price': product['price'], 'url': product['url']}}
 
+  '''
   def addProduct(self, data: dict) -> dict:
     product_uuid = str(uuid.uuid4())
     name = data.get('name')
@@ -243,4 +244,4 @@ class Emarket:
     img = qrcode.make(qrcode_encrypted)#, 'signature': signatureEncoded}))
     img.save(f'qrcodes/{uid}.png')
     return content
-    
+  '''
