@@ -44,13 +44,13 @@ object Utils {
         return typedValue.resourceId
     }
 
-    fun signDataJson(jsonData: String): String {
-        val signatureEncoded = getSignature(jsonData)
-        return Gson().toJson(DataSigned(signatureEncoded, jsonData))
+    fun signDataJson(content: String): String {
+        val signatureEncoded = getSignature(content)
+        return Gson().toJson(DataSigned(signatureEncoded, content))
     }
 
     fun buildPayment(application: Application, intent: Intent) : String {
-        val basketJSON = intent.getStringExtra("Basket")!!
+        val basketJSON = intent.getStringExtra("Basket")
         val basket = Gson().fromJson(basketJSON, Basket::class.java)
 
         val storedUser = UserViewModel(application).user

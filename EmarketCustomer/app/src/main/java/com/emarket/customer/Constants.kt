@@ -18,6 +18,7 @@ object Constants {
     const val BASKET_ITEMS = "BASKET_ITEMS"
     const val NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED"
     const val IS_QRCODE = "IS_QRCODE"
+    const val PAYMENT = "PAYMENT"
 
     // Server connection
     const val SERVER_URL = "http://192.168.1.9:5000/"
