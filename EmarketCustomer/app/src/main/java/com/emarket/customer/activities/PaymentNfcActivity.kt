@@ -20,6 +20,7 @@ import com.google.gson.Gson
 class PaymentNfcActivity : AppCompatActivity() {
     private val broadcastReceiver = object: BroadcastReceiver() {
         override fun onReceive(ctx: Context, intent: Intent) {
+            // TODO make something useful
             Toast.makeText(this@PaymentNfcActivity, "NFC link lost", Toast.LENGTH_LONG).show()
             finish()
         }

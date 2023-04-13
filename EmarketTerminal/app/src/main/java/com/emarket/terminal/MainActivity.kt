@@ -5,11 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -31,7 +29,6 @@ class MainActivity : AppCompatActivity() {
     private val nfc by lazy { NfcAdapter.getDefaultAdapter(this) }
     private val paymentReader by lazy { PaymentReader(::paymentListener) }
     private val scanBtn by lazy { findViewById<Button>(R.id.scan_btn) }
-    private val asdf by lazy { findViewById<TextView>(R.id.asdf) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +50,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun paymentListener(array: ByteArray) {
-        runOnUiThread {
-            asdf.text = String(array)
-        }
+        val payment = String(array)
+        processPayment(payment)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -94,14 +90,13 @@ class MainActivity : AppCompatActivity() {
 
     private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
-        if (intentResult != null) {
-            if (intentResult.contents != null)
-                processQRCode(intentResult)
+        if (intentResult?.contents != null) {
+            val data = intentResult.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+            processPayment(data)
         }
     }
 
-    private fun processQRCode(result : IntentResult) {
-        val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+    private fun processPayment(data : String) {
         thread(start = true) {
             val res = makeRequest(
                 RequestType.POST,

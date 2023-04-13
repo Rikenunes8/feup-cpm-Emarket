@@ -6,13 +6,6 @@ import android.nfc.tech.IsoDep
 import android.util.Log
 import java.io.IOException
 
-/* Utility top-level function */
-fun byteArrayToHex(ba: ByteArray): String {
-    val sb = StringBuilder(ba.size * 2)
-    for (b in ba) sb.append(String.format("%02x", b))
-    return sb.toString()
-}
-
 fun hexStringToByteArray(s: String): ByteArray {
     val data = ByteArray(s.length/2)
     var k = 0
@@ -45,8 +38,7 @@ class PaymentReader(private val paymentListener: (ByteArray)->Unit) : NfcAdapter
                         if (RES_OK_SW.contentEquals(byteArrayOf(second[len-2], second[len-1]))){
                             paymentListener(result.sliceArray(1..rLen-3) + second.sliceArray(0..len-3))
                         }
-                    }
-                    else {
+                    } else {
                         paymentListener(result.sliceArray(1..rLen-3))
                     }
                 }
