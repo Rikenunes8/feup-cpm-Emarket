@@ -3,6 +3,7 @@ package com.emarket.terminal
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -17,12 +18,16 @@ import com.google.zxing.integration.android.IntentResult
 import java.nio.charset.StandardCharsets
 import kotlin.concurrent.thread
 
+const val READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK
+
 class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
 
+    private val nfc by lazy { NfcAdapter.getDefaultAdapter(this) }
+    private val paymentReader by lazy { PaymentReader(::paymentListener) }
     private val scanBtn by lazy { findViewById<Button>(R.id.scan_btn) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +37,21 @@ class MainActivity : AppCompatActivity() {
         scanBtn.setOnClickListener {
             requestCameraPermissionAndStartScan()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfc.enableReaderMode(this, paymentReader, READER_FLAGS, null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfc.disableReaderMode(this)
+    }
+
+    private fun paymentListener(array: ByteArray) {
+        val payment = String(array)
+        processPayment(payment)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -70,14 +90,13 @@ class MainActivity : AppCompatActivity() {
 
     private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
-        if (intentResult != null) {
-            if (intentResult.contents != null)
-                processQRCode(intentResult)
+        if (intentResult?.contents != null) {
+            val data = intentResult.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+            processPayment(data)
         }
     }
 
-    private fun processQRCode(result : IntentResult) {
-        val data = result.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+    private fun processPayment(data : String) {
         thread(start = true) {
             val res = makeRequest(
                 RequestType.POST,
