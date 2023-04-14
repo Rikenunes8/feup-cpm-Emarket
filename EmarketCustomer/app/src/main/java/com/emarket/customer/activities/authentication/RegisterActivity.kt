@@ -172,10 +172,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun savePersistently(user: User, certificate: String) {
         // Store the UUID and server public key
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        editor.putString(Constants.USER_KEY, Gson().toJson(user))
-        editor.apply()
+        sharedPreferences.edit().putString(Constants.USER_KEY, Gson().toJson(user)).apply()
 
         // Store the server certificate
         CryptoService.storeCertificate(Constants.SERVER_CERTIFICATE, certificate)

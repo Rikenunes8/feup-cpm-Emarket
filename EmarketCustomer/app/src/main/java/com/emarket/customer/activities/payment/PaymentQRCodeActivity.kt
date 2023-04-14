@@ -1,4 +1,4 @@
-package com.emarket.customer.activities
+package com.emarket.customer.activities.payment
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,15 +8,16 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
-import com.emarket.customer.Utils
+import com.emarket.customer.Utils.buildPayment
 import com.emarket.customer.Utils.showToast
+import com.emarket.customer.Utils.signDataJson
+import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.models.Basket
-import com.emarket.customer.models.UserViewModel
-import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
+import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -25,7 +26,7 @@ data class Payment(
     val basket: Basket
 )
 
-class PaymentActivity : AppCompatActivity() {
+class PaymentQRCodeActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
     private val finishPaymentBtn by lazy { findViewById<ImageButton>(R.id.finish_payment_btn) }
 
@@ -34,15 +35,11 @@ class PaymentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_payment)
+        setContentView(R.layout.activity_payment_qrcode)
 
-        val basketJSON = intent.getStringExtra("Basket")!!
-        val basket = Gson().fromJson(basketJSON, Basket::class.java)
-
-        val storedUser = UserViewModel(this.application).user
-        val userUUID = storedUser!!.userId
-        val paymentJson = Gson().toJson(Payment(userUUID, basket))
-        val qrContent = Utils.genQRCode(paymentJson)
+        val paymentJson = buildPayment(this.application, intent)
+        val qrContent = signDataJson(paymentJson)
+        val qrContentEncoded = String(qrContent.toByteArray(), StandardCharsets.ISO_8859_1)
 
         finishPaymentBtn.setOnClickListener {
             fetchUserData(this, complete = false, force = true)
@@ -52,7 +49,7 @@ class PaymentActivity : AppCompatActivity() {
 
         thread(start = true) {
             try {
-                val bitmap = encodeAsBitmap(qrContent, foregroundColor, backgroundColor)
+                val bitmap = encodeAsBitmap(qrContentEncoded, foregroundColor, backgroundColor)
                 runOnUiThread { qrCodeImageview.setImageBitmap(bitmap) }
             } catch (e: Exception) {
                 showToast(this, getString(R.string.error_qrcode_generation))

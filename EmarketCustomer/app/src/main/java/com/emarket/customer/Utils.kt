@@ -1,11 +1,15 @@
 package com.emarket.customer
 
+import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.util.TypedValue
 import android.widget.Toast
+import com.emarket.customer.activities.payment.Payment
+import com.emarket.customer.models.Basket
+import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.services.CryptoService
 import com.google.gson.Gson
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,15 +44,18 @@ object Utils {
         return typedValue.resourceId
     }
 
-    /**
-     * Generate the QR code content signed with the user's private key
-     * @param jsonData the data to sign and put in qrcode
-     */
-    fun genQRCode(jsonData: String) : String {
-        val signatureEncoded = getSignature(jsonData)
-        val data = Gson().toJson(DataSigned(signatureEncoded, jsonData))
+    fun signDataJson(content: String): String {
+        val signatureEncoded = getSignature(content)
+        return Gson().toJson(DataSigned(signatureEncoded, content))
+    }
 
-        return String(data.toByteArray(), StandardCharsets.ISO_8859_1)
+    fun buildPayment(application: Application, intent: Intent) : String {
+        val basketJSON = intent.getStringExtra("Basket")
+        val basket = Gson().fromJson(basketJSON, Basket::class.java)
+
+        val storedUser = UserViewModel(application).user
+        val userUUID = storedUser!!.userId
+        return Gson().toJson(Payment(userUUID, basket))
     }
 
     /**
@@ -63,7 +70,25 @@ object Utils {
     }
 
     fun formatDate(date: String) : String {
-        val timestamp = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
+        val timestamp =
+            LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
         return timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm"))
+    }
+
+    /* Utility top-level function */
+    fun byteArrayToHex(ba: ByteArray): String {
+        val sb = StringBuilder(ba.size * 2)
+        for (b in ba) sb.append(String.format("%02x", b))
+        return sb.toString()
+    }
+
+    fun hexStringToByteArray(s: String): ByteArray {
+        val data = ByteArray(s.length / 2)
+        var k = 0
+        while (k < s.length) {
+            data[k/2] = ((Character.digit(s[k], 16) shl 4) + Character.digit(s[k+1], 16)).toByte()
+            k += 2
+        }
+        return data
     }
 }
