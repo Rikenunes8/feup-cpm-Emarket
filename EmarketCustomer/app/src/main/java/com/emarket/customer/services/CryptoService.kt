@@ -11,6 +11,8 @@ import java.io.StringReader
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
 import java.security.interfaces.RSAPublicKey
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
@@ -86,6 +88,21 @@ class CryptoService {
                     doFinal(content)
                 }
                 return String(result, StandardCharsets.UTF_8)
+            }
+            catch (e: Exception) {
+                e.message?.let { Log.e("DECRYPT", it) }
+            }
+            return null
+        }
+
+        fun decryptFromServerContent(content: ByteArray, key: PublicKey?) : ByteArray? {
+            if (content.isEmpty()) return null
+            if (key == null) return null
+            try {
+                return Cipher.getInstance(Constants.ENC_ALGO).run {
+                    init(Cipher.DECRYPT_MODE, key)
+                    doFinal(content)
+                }
             }
             catch (e: Exception) {
                 e.message?.let { Log.e("DECRYPT", it) }
@@ -174,6 +191,22 @@ class CryptoService {
             val keySpec = X509EncodedKeySpec(publicKeyInfo.encoded)
             val keyFactory = KeyFactory.getInstance("RSA")
             return keyFactory.generatePublic(keySpec) as RSAPublicKey
+        }
+
+        fun storeCertificate(name: String, cert: String) {
+            val certFactory = CertificateFactory.getInstance("X509")
+            val certStream = certFactory.generateCertificate(cert.byteInputStream())
+            KeyStore.getInstance(Constants.ANDROID_KEYSTORE).apply {
+                load(null)
+                setCertificateEntry(name, certStream)
+            }
+        }
+
+        fun loadCertificate(name: String) : Certificate? {
+            return KeyStore.getInstance(Constants.ANDROID_KEYSTORE).run {
+                load(null)
+                getCertificate(name)
+            }
         }
 
     }

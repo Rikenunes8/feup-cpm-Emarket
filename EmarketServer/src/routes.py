@@ -38,7 +38,13 @@ def userUpdate():
   if (not isContentJson(request)): return notJson()
   res = emarket.updateUser(request.json)
   return makeResponse(res)
+
+@routes.get('/product/<uuid>')
+def getProduct(uuid):
+  res = emarket.getProduct(uuid)
+  return makeResponse(res)
   
+'''
 @routes.post('/products/add')
 def addProduct():
   if (not isContentJson(request)): return notJson()
@@ -49,5 +55,5 @@ def addProduct():
 def generateProduct(uuid):
   res = emarket.generate_qr_code(uuid)
   return makeResponse(res)
-  
+  '''
 

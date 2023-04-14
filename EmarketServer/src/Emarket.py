@@ -14,9 +14,11 @@ class Emarket:
 
   def __init__(self) -> None:
     self._db = DB()
-    # TODO: should we handle the error of not finding the keys?
-    self._privkey : rsa.PrivateKey = self._readKey('private.pem', True)
-    self._pubkey : rsa.PublicKey = self._readKey('public.pem', False)
+    self._certificate = self._readCertificate('certificate.pem')
+
+  def _readCertificate(self, path) -> str:
+    with open(path, 'r') as f: data = f.read()
+    return data
 
   def _readKey(self, path: str, private = True) -> rsa.PrivateKey or rsa.PublicKey:
     with open(path, 'r') as f: data = f.read()
@@ -48,9 +50,7 @@ class Emarket:
     uidEncrypted = rsa.encrypt(uid.encode(), pubKey)
     uidEncoded = base64.b64encode(uidEncrypted).decode('utf-8')
 
-    print(self._pubkey.save_pkcs1().decode())
-
-    return {'uuid': uidEncoded, 'serverPubKey': self._pubkey.save_pkcs1().decode('utf-8')}
+    return {'uuid': uidEncoded, 'certificate': self._certificate}
   
   def _validateCheckout(self, data: dict) -> str:
     # Check if data json structure is valid
@@ -193,7 +193,19 @@ class Emarket:
 
     self._db.updateUserValues(uid, {'cardNo': cardNumber})
     return {'success': 'User updated!', 'user': user}
+  
+  def getProduct(self, uuid: str) -> dict:
+    product = self._db.findProductById(uuid)
+    if product is None:
+        return {'error': 'Product not found!'}
+    else:
+        # Check if all the required fields are present in the document
+        if 'name' not in product or 'price' not in product or 'url' not in product:
+            return {'error': 'Product data is incomplete!'}
+        else:
+            return {'product': {'uuid': product['uuid'], 'name': product['name'], 'price': product['price'], 'url': product['url']}}
 
+  '''
   def addProduct(self, data: dict) -> dict:
     product_uuid = str(uuid.uuid4())
     name = data.get('name')
@@ -215,10 +227,14 @@ class Emarket:
       if product != None: return {'error': 'A product with this uuid already exists!'}
       else: self._db.addProduct(content)
 
-    signature = rsa.sign(str(content).encode(), self._privkey, 'SHA-256')
-    signatureEncoded = base64.b64encode(signature).decode('utf-8')
+    qrcode_content = {'uuid': uid}
 
-    img = qrcode.make(str({'product': str(content), 'signature': signatureEncoded}))
+    #signature = rsa.sign(str(qrcode_content).encode(), self._privkey, 'SHA-256')
+    #signatureEncoded = base64.b64encode(signature).decode('utf-8')
+    qrcode_encrypted = rsa.encrypt(str(qrcode_content).encode(), self._privkey)
+    qrcode_encrypted = base64.b64encode(qrcode_encrypted).decode('utf-8')
+
+    img = qrcode.make(qrcode_encrypted)#, 'signature': signatureEncoded}))
     img.save(f'qrcodes/{uid}.png')
     return content
-    
+  '''

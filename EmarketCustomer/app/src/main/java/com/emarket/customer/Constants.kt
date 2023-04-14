@@ -15,14 +15,16 @@ object Constants {
     const val PREF_SEND_ENABLED = "SendEnabled"
     const val USER_KEY = "USER_KEY"
     const val SERVER_PUB_KEY = "SERVER_PUB_KEY"
+    const val SERVER_CERTIFICATE = "SERVER_CERTIFICATE"
     const val BASKET_ITEMS = "BASKET_ITEMS"
     const val NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED"
     const val IS_QRCODE = "IS_QRCODE"
     const val PAYMENT = "PAYMENT"
 
     // Server connection
-    const val SERVER_URL = "http://192.168.1.9:5000/"
+    const val SERVER_URL = "http://192.168.1.64:5000/"
     const val REGISTER_ENDPOINT = "register"
+    const val PRODUCT_ENDPOINT = "product"
     const val USER_ENDPOINT = "user"
 
     const val ACTION_CARD_DONE = "CMD_PROCESSING_DONE"
