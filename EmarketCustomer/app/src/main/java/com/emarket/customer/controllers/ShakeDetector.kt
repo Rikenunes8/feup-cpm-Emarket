@@ -8,9 +8,9 @@ import android.hardware.SensorManager
 import kotlin.math.abs
 
 class ShakeDetector(ctx: Context, listener: () -> Unit) {
-  private val MIN_SHAKE_ACCELERATION = 20
+  private val MIN_SHAKE_ACCELERATION = 12
   private val MIN_MOVEMENTS = 8
-  private val MAX_SHAKE_DURATION = 500
+  private val MAX_SHAKE_DURATION = 800
   private val X = 0
   private val Y = 1
   private val Z = 2
