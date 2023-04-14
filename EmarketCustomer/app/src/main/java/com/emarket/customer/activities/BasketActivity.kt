@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,6 +21,7 @@ import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
 import com.emarket.customer.controllers.ProductsListAdapter
+import com.emarket.customer.controllers.ShakeDetector
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
 import com.emarket.customer.services.CryptoService
@@ -42,6 +44,8 @@ class BasketActivity : AppCompatActivity() {
         const val REQUEST_CAMERA_PERMISSION = 1
         const val MAXIMUM_NUMBER_OF_ITEMS = 10
     }
+
+    private val shakeDetector by lazy { ShakeDetector(this, ::startScanUponPermission) }
 
     private val rv by lazy { findViewById<RecyclerView>(R.id.rv_basket) }
     private val addBtn by lazy {findViewById<FloatingActionButton>(R.id.add_item)}
@@ -66,15 +70,7 @@ class BasketActivity : AppCompatActivity() {
         enableCheckout()
         updateTotal()
 
-        addBtn.setOnClickListener {
-            val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            if (permission == PackageManager.PERMISSION_GRANTED) {
-                startScan()
-            } else {
-                val requests = arrayOf(Manifest.permission.CAMERA)
-                ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
-            }
-        }
+        addBtn.setOnClickListener { startScanUponPermission() }
 
         checkoutBtn.setOnClickListener {
             val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
@@ -84,6 +80,16 @@ class BasketActivity : AppCompatActivity() {
             }
             startActivity(Intent(this, CheckoutActivity::class.java))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        shakeDetector.startSensing()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        shakeDetector.stopSensing()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -106,6 +112,16 @@ class BasketActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString(Constants.BASKET_ITEMS, Gson().toJson(productItems))
         super.onSaveInstanceState(outState)
+    }
+
+    private fun startScanUponPermission() {
+        val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            startScan()
+        } else {
+            val requests = arrayOf(Manifest.permission.CAMERA)
+            ActivityCompat.requestPermissions(this, requests, REQUEST_CAMERA_PERMISSION)
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
