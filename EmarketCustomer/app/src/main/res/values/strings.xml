@@ -78,4 +78,6 @@
     <string name="checkout_qrcode">Checkout by QRcode</string>
     <string name="checkout_nfc">Checkout by NFC</string>
     <string name="scanner_prompt">Scan your product!</string>
+    <string name="nfc_not_enabled">NFC is not enabled</string>
+    <string name="nfc_not_supported">NFC is not supported</string>
 </resources>
