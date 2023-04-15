@@ -83,4 +83,14 @@ class VoucherListAdapter(private val vouchers: MutableList<Voucher>, private val
         if (checkedPosition < 0) return null
         return vouchers[checkedPosition]
     }
+
+    fun getSelectedPosition() : Int {
+        return checkedPosition
+    }
+
+    fun setSelectedPosition(position: Int) {
+        if (position < 0 || position > vouchers.size) return
+        checkedPosition = position
+        notifyItemChanged(checkedPosition)
+    }
 }
