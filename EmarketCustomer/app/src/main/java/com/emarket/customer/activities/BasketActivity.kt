@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,7 +19,7 @@ import com.emarket.customer.R
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.profile.ProfileActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
-import com.emarket.customer.controllers.ProductsListAdapter
+import com.emarket.customer.controllers.adapters.ProductsListAdapter
 import com.emarket.customer.controllers.ShakeDetector
 import com.emarket.customer.models.Product
 import com.emarket.customer.models.ProductDTO
@@ -36,7 +35,6 @@ import org.json.JSONObject
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.*
-import javax.crypto.Cipher
 import kotlin.concurrent.thread
 
 class BasketActivity : AppCompatActivity() {

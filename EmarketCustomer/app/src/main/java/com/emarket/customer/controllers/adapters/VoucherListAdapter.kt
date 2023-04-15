@@ -1,4 +1,4 @@
-package com.emarket.customer.controllers
+package com.emarket.customer.controllers.adapters
 
 import android.view.LayoutInflater
 import android.view.View

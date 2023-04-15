@@ -11,7 +11,7 @@ import com.emarket.customer.R
 import com.emarket.customer.Utils
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.controllers.Fetcher.Companion.vouchers
-import com.emarket.customer.controllers.VoucherListAdapter
+import com.emarket.customer.controllers.adapters.VoucherListAdapter
 import com.emarket.customer.databinding.FragmentProfileBinding
 import com.emarket.customer.dialogs.EditDialogFragment
 import com.emarket.customer.dialogs.EditDialogType

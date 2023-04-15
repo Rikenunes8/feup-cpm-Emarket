@@ -1,6 +1,5 @@
 package com.emarket.customer.activities
 
-import android.content.res.Configuration
 import android.graphics.Paint
 import android.os.Bundle
 import android.view.View
@@ -8,11 +7,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.R
 import com.emarket.customer.Utils
-import com.emarket.customer.controllers.ProductsListAdapter
+import com.emarket.customer.controllers.adapters.ProductsListAdapter
 import com.emarket.customer.models.Transaction
 import com.google.gson.Gson
 
