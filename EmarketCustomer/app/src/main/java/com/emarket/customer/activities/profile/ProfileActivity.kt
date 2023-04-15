@@ -10,7 +10,7 @@ import com.emarket.customer.R
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.activities.SettingsActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
-import com.emarket.customer.controllers.SectionsPagerAdapter
+import com.emarket.customer.controllers.adapters.SectionsPagerAdapter
 import com.emarket.customer.databinding.ActivityProfileBinding
 import com.google.android.material.tabs.TabLayout
 

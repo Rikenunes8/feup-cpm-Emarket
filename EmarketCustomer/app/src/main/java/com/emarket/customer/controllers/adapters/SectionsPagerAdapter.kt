@@ -1,4 +1,4 @@
-package com.emarket.customer.controllers
+package com.emarket.customer.controllers.adapters
 
 import android.content.Context
 import androidx.fragment.app.Fragment

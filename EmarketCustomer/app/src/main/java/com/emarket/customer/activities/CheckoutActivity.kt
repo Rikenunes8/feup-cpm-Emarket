@@ -16,8 +16,8 @@ import com.emarket.customer.R
 import com.emarket.customer.activities.payment.PaymentNfcActivity
 import com.emarket.customer.activities.payment.PaymentQRCodeActivity
 import com.emarket.customer.controllers.Fetcher.Companion.vouchers
-import com.emarket.customer.controllers.ProductsListAdapter
-import com.emarket.customer.controllers.VoucherListAdapter
+import com.emarket.customer.controllers.adapters.ProductsListAdapter
+import com.emarket.customer.controllers.adapters.VoucherListAdapter
 import com.emarket.customer.models.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
