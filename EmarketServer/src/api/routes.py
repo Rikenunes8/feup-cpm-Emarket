@@ -43,19 +43,3 @@ def userUpdate():
 def getProduct(uuid):
   res = emarket.getProduct(uuid)
   return makeResponse(res)
-
-
-# Commented since it's not used in the last version of the app
-# Detailed explanation in Emarket.py
-'''
-@routes.post('/products/add')
-def addProduct():
-  if (not isContentJson(request)): return notJson()
-  res = emarket.addProduct(request.json)
-  return makeResponse(res)
-
-@routes.post('/products/generate/<uuid>')
-def generateProduct(uuid):
-  res = emarket.generate_qr_code(uuid)
-  return makeResponse(res)
-'''
