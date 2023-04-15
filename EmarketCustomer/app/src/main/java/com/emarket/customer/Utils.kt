@@ -3,6 +3,7 @@ package com.emarket.customer
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.nfc.NfcAdapter
 import android.util.TypedValue
 import android.widget.Toast
 import com.emarket.customer.activities.payment.Payment
@@ -90,5 +91,12 @@ object Utils {
             k += 2
         }
         return data
+    }
+
+    fun hasNfc(ctx: Context) : Boolean? {
+        val adapter = NfcAdapter.getDefaultAdapter(ctx)
+        return if (adapter != null && adapter.isEnabled) true
+        else if (adapter != null && !adapter.isEnabled) false
+        else null
     }
 }

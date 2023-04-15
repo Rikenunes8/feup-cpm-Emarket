@@ -1,12 +1,9 @@
 package com.emarket.customer.activities
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.transition.AutoTransition
 import android.transition.TransitionManager
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.RadioButton
@@ -16,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.activities.profile.ProfileActivity
-import com.emarket.customer.controllers.Fetcher
+import com.emarket.customer.Utils.hasNfc
+import com.emarket.customer.Utils.showToast
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -53,13 +50,6 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         val isQrcode = sharedPreferences.getBoolean(Constants.IS_QRCODE, true)
-        nfcRadio.isChecked = !isQrcode
-        nfcRadio.setOnClickListener {
-            sharedPreferences.edit().apply {
-                putBoolean(Constants.IS_QRCODE, !nfcRadio.isChecked)
-                apply()
-            }
-        }
 
         qrcodeRadio.isChecked = isQrcode
         qrcodeRadio.setOnClickListener {
@@ -69,5 +59,13 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        nfcRadio.isEnabled = hasNfc(baseContext) != null
+        nfcRadio.isChecked = !isQrcode
+        nfcRadio.setOnClickListener {
+            sharedPreferences.edit().apply {
+                putBoolean(Constants.IS_QRCODE, !nfcRadio.isChecked)
+                apply()
+            }
+        }
     }
 }

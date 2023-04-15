@@ -13,6 +13,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
+import com.emarket.customer.Utils
+import com.emarket.customer.Utils.hasNfc
+import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.payment.PaymentNfcActivity
 import com.emarket.customer.activities.payment.PaymentQRCodeActivity
 import com.emarket.customer.controllers.Fetcher.Companion.vouchers
@@ -101,7 +104,12 @@ class CheckoutActivity : AppCompatActivity() {
 
     private fun goToQRCode() { goToPayment(PaymentQRCodeActivity::class.java) }
 
-    private fun goToNFC() { goToPayment(PaymentNfcActivity::class.java) }
+    private fun goToNFC() {
+        val nfc = hasNfc(baseContext)
+        if (nfc == null) { showToast(baseContext, getString(R.string.nfc_not_supported)); return }
+        else if (!nfc) { showToast(baseContext, getString(R.string.nfc_not_enabled)); return }
+        goToPayment(PaymentNfcActivity::class.java)
+    }
 
     private fun goToPayment(to: Class<*>) {
         basket = getBasketFromProducts()
