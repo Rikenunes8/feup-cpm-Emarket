@@ -77,4 +77,5 @@
     <string name="nfc_instructions">Hold your phone against the terminal to proceed with the checkout!</string>
     <string name="checkout_qrcode">Checkout by QRcode</string>
     <string name="checkout_nfc">Checkout by NFC</string>
+    <string name="scanner_prompt">Scan your product!</string>
 </resources>

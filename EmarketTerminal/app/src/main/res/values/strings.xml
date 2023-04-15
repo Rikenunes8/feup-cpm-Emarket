@@ -16,4 +16,6 @@
     <string name="label_price">Total amount:</string>
 
     <string name="template_price">%.2f €</string>
+
+    <string name="scanner_prompt">Scan payment QRCode!</string>
 </resources>
