@@ -2,7 +2,7 @@
 
 from flask_swagger_ui import get_swaggerui_blueprint
 from flask import Flask
-from src.routes import routes
+from src.api.routes import routes
 
 # Swagger documentation on http://<host>:5000/swagger
 SWAGGER_URL = '/swagger'

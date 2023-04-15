@@ -41,12 +41,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        nfc.enableReaderMode(this, paymentReader, READER_FLAGS, null)
+        nfc?.enableReaderMode(this, paymentReader, READER_FLAGS, null)
     }
 
     override fun onPause() {
         super.onPause()
-        nfc.disableReaderMode(this)
+        nfc?.disableReaderMode(this)
     }
 
     private fun paymentListener(array: ByteArray) {
