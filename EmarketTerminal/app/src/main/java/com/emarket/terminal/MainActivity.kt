@@ -85,7 +85,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startScan() {
-        readQRCode.launch(IntentIntegrator(this).createScanIntent())
+        val intentIntegrator = IntentIntegrator(this).apply {
+            setPrompt(getString(R.string.scanner_prompt))
+            setOrientationLocked(false)
+        }
+        readQRCode.launch(intentIntegrator.createScanIntent())
     }
 
     private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
