@@ -7,6 +7,9 @@ from datetime import datetime
 from src.database.DB import DB
 from src.utils import *
 
+VOUCHER_DISCOUNT = 15
+VOUCHER_GENERATION_THRESHOLD = 100
+
 def checkout(db: DB, validation: tuple) -> dict:
   (user, products, voucher, to_discount) = validation
 
@@ -29,9 +32,9 @@ def checkout(db: DB, validation: tuple) -> dict:
   total_paid = total - discounted
   previous_total_spent = user['totalSpent']
   total_spent = previous_total_spent + total_paid
-  spent_since_last_voucher_generated = total_paid + (previous_total_spent % 100)
-  for _ in range(int(spent_since_last_voucher_generated // 100)):
-    new_voucher = {'id': str(uuid.uuid4()), 'discount': 15}
+  spent_since_last_voucher_generated = total_paid + (previous_total_spent % VOUCHER_GENERATION_THRESHOLD)
+  for _ in range(int(spent_since_last_voucher_generated // VOUCHER_GENERATION_THRESHOLD)):
+    new_voucher = {'id': str(uuid.uuid4()), 'discount': VOUCHER_DISCOUNT}
     db.addUserVoucher(user['uuid'], new_voucher)
 
   # Calculate amount to discount
