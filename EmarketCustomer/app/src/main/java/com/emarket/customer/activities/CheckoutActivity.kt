@@ -27,6 +27,9 @@ import com.google.gson.reflect.TypeToken
 
 
 class CheckoutActivity : AppCompatActivity() {
+    companion object {
+        const val SELECTED_VOUCHER = "SELECTED_VOUCHER"
+    }
     private lateinit var basket : Basket
     private lateinit var products : MutableList<Product>
 
@@ -57,6 +60,11 @@ class CheckoutActivity : AppCompatActivity() {
         voucherView.adapter = VoucherListAdapter(vouchers, true)
         basketView.adapter = ProductsListAdapter(products)
 
+        if (savedInstanceState != null) {
+            val position = savedInstanceState.getInt(SELECTED_VOUCHER)
+            (voucherView.adapter as VoucherListAdapter).setSelectedPosition(position)
+        }
+
         if (vouchers.isEmpty()) {
             voucherView.visibility = View.GONE
             noVouchersView.visibility = View.VISIBLE
@@ -75,6 +83,11 @@ class CheckoutActivity : AppCompatActivity() {
             else goToNFC()
         }
         registerForContextMenu(confirmButton)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt(SELECTED_VOUCHER, (voucherView.adapter as VoucherListAdapter).getSelectedPosition())
+        super.onSaveInstanceState(outState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
