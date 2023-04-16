@@ -25,7 +25,7 @@ object Constants {
     const val REGISTRATION_DATE = "REGISTRATION_DATE"
 
     // Server connection
-    const val SERVER_URL = "http://192.168.1.240:5000/"
+    const val SERVER_URL = "http://192.168.1.9:5000/"
     const val REGISTER_ENDPOINT = "register"
     const val PRODUCT_ENDPOINT = "product"
     const val USER_ENDPOINT = "user"

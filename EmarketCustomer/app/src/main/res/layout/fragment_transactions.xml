@@ -38,6 +38,7 @@
             android:layout_marginHorizontal="30dp">
 
             <LinearLayout
+                android:id="@+id/date_bg_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/input_background"
@@ -57,13 +58,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
+                    <TextView
                         style="@style/DateTimeEdit"
-                        android:id="@+id/date_bg"
+                        android:id="@+id/date_bg_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ems="5"
-                        android:inputType="date" />
+                        android:ems="5" />
 
                     <ImageButton
                         android:id="@+id/bg_calendar_btn"
@@ -84,6 +84,7 @@
                 android:layout_weight="1" />
 
             <LinearLayout
+                android:id="@+id/date_end_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/input_background"
@@ -103,13 +104,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <EditText
+                    <TextView
                         style="@style/DateTimeEdit"
-                        android:id="@+id/date_end"
+                        android:id="@+id/date_end_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ems="5"
-                        android:inputType="date" />
+                        android:ems="5" />
 
                     <ImageButton
                         android:id="@+id/end_calendar_btn"

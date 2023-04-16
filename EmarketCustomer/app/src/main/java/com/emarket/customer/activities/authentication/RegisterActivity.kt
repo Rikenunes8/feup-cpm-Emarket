@@ -149,7 +149,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
 
-                savePersistently(user, certificate, System.currentTimeMillis())
+                savePersistently(user, certificate)
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             } catch (ex: Exception) {
@@ -169,14 +169,10 @@ class RegisterActivity : AppCompatActivity() {
     /**
      * Save user uuid and server certificate persistently
      */
-    private fun savePersistently(user: User, certificate: String, date: Long) {
+    private fun savePersistently(user: User, certificate: String) {
         // Store the UUID and server public key
         val sharedPreferences = getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        sharedPreferences.edit().apply {
-            putString(Constants.USER_KEY, Gson().toJson(user))
-            putLong(Constants.REGISTRATION_DATE, date)
-        }
-
+        sharedPreferences.edit().putString(Constants.USER_KEY, Gson().toJson(user)).apply()
 
         // Store the server certificate
         CryptoService.storeCertificate(Constants.SERVER_CERTIFICATE, certificate)
