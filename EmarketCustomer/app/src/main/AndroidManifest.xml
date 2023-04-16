@@ -43,7 +43,7 @@
         <activity
             android:name=".activities.payment.PaymentQRCodeActivity"
             android:exported="false"
-            android:label="@string/header_payment"
+            android:label="@string/header_payment_qrcode"
             android:parentActivityName=".activities.CheckoutActivity" />
         <activity
             android:name=".activities.BasketActivity"

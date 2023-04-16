@@ -37,21 +37,15 @@ class LoginActivity : AppCompatActivity() {
             val nickname = nicknameTv.text.toString()
             val pass = passwordTv.text.toString()
 
-            // just a double check
             if (storedUser != null) {
                 if (storedUser.nickname == nickname && storedUser.password == Utils.hashPassword(pass)) {
-                    // login successful
                     fetchUserData(this, force = true)
-                    showToast(this, "Login successful")
                     startActivity(Intent(this, BasketActivity::class.java))
                     finish()
                 } else {
-                    // login failed
                     showToast(this, getString(R.string.error_invalid_credentials))
                 }
             } else {
-                // user not registered
-                // THIS SHOULD NEVER HAPPEN
                 showToast(this, "User not registered")
             }
         }

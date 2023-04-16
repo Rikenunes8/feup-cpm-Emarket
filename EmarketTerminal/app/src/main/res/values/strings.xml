@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Emarket Terminal</string>
+    <string name="app_name">ACME Terminal</string>
 
     <string name="mn_scanner">Scanner</string>
     <string name="scan">Scan QRCode</string>

@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">Emarket Customer</string>
+    <string name="app_name">ACME</string>
 
     <string name="header_profile">Profile</string>
     <string name="header_basket">Basket</string>
     <string name="header_checkout">Checkout</string>
-    <string name="header_payment">Payment</string>
+    <string name="header_payment_qrcode">Payment - QRCode</string>
+    <string name="header_payment_nfc">Payment - NFC</string>
     <string name="header_transaction_detail">Transaction Details</string>
     <string name="header_settings">Settings</string>
-    <string name="header_payment_nfc">Payment - NFC</string>
 
     <string name="title_registration">Registration</string>
     <string name="title_login">Login</string>
