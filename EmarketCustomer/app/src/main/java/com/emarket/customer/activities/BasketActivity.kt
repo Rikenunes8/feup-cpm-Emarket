@@ -165,6 +165,7 @@ class BasketActivity : AppCompatActivity() {
             val tag = ByteBuffer.wrap(content)
             val tId = tag.int
             val id = UUID(tag.long, tag.long).toString()
+            // TODO check tId and verify size of tag / send price and name?
 
             thread(start = true) {
                 val response = NetworkService.makeRequest(
