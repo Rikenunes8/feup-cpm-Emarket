@@ -22,9 +22,10 @@ import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import kotlin.concurrent.thread
 
-data class UserCard (
-    val id: String,
-    val cardNumber: String,
+data class UserInfo (
+    val uuid: String,
+    val name: String? = null,
+    val cardNumber: String? = null,
 )
 
 data class UserResponse (
@@ -51,13 +52,9 @@ class ProfileFragment() : Fragment() {
         binding.cardNoTv.text = user.cardNumber
 
         binding.editPersonalBtn.setOnClickListener {
-            val fragment = EditDialogFragment.newInstance(user.name,
-                { name ->
-                    user.name = name
-                    UserViewModel(requireActivity().application).user = user
-                    binding.nameTv.text = user.name
-                    showToast(requireActivity(), getString(R.string.success_edit_personal))
-                },
+            val fragment = EditDialogFragment.newInstance(
+                user.name,
+                { name -> updateUserInfo(user, name =  name) },
                 EditDialogType.PERSONAL)
 
             fragment.show(requireActivity().supportFragmentManager, "EditPersonalDialogFragment")
@@ -66,7 +63,7 @@ class ProfileFragment() : Fragment() {
         binding.editPaymentBtn.setOnClickListener {
             val fragment = EditDialogFragment.newInstance(
                 user.cardNumber,
-                { cardNumber -> updateUserCard(user, cardNumber) },
+                { cardNumber -> updateUserInfo(user, cardNumber = cardNumber) },
                 EditDialogType.PAYMENT
             )
 
@@ -76,36 +73,39 @@ class ProfileFragment() : Fragment() {
         return binding.root
     }
 
-    /**
-     * Updates the user's card number by sending a POST request to the server
-     * and updating the UI.
-     * @param user the user to update
-     */
-    private fun updateUserCard(user: User, cardNumber: String) {
+    private fun updateUserInfo(user: User, name: String? = null, cardNumber: String? = null) {
         thread(start = true) {
             try {
                 val endpoint = Constants.SERVER_URL + Constants.USER_ENDPOINT
 
-                val userCardJSON = Gson().toJson(UserCard(user.userId, cardNumber))
-                val signature = Utils.getSignature(userCardJSON)
-                val requestData = Gson().toJson(DataSigned(signature, userCardJSON))
+                val userInfoJSON = Gson().toJson(UserInfo(user.userId, name=name, cardNumber=cardNumber))
+                val signature = Utils.getSignature(userInfoJSON)
+                val requestData = Gson().toJson(DataSigned(signature, userInfoJSON))
                 val response = NetworkService.makeRequest(RequestType.POST, endpoint, requestData)
 
                 val userResponse = Gson().fromJson(response, UserResponse::class.java)
                 if (userResponse.error != null) throw Exception()
 
-                user.cardNumber = cardNumber
+                user.name = name ?: user.name
+                user.cardNumber = cardNumber ?: user.cardNumber
                 UserViewModel(requireActivity().application).user = user
 
                 activity?.runOnUiThread {
-                    showToast(requireActivity(), getString(R.string.success_edit_payment))
-                    binding.cardNoTv.text = user.cardNumber
+                    name?.run {
+                        showToast(requireActivity(), getString(R.string.success_edit_personal))
+                        binding.nameTv.text = user.name
+                    }
+                    cardNumber?.run {
+                        showToast(requireActivity(), getString(R.string.success_edit_payment))
+                        binding.cardNoTv.text = user.cardNumber
+                    }
                 }
             } catch (e: Exception) {
-                activity?.runOnUiThread { showToast(requireActivity(),getString(R.string.error_updating_user_cardNo)) }
+                activity?.runOnUiThread {
+                    name?.run { showToast(requireActivity(),getString(R.string.error_updating_user_name)) }
+                    cardNumber?.run { showToast(requireActivity(),getString(R.string.error_updating_user_cardNo)) }
+                }
             }
-
         }
     }
-
 }

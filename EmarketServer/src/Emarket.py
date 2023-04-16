@@ -81,8 +81,8 @@ class Emarket:
     
     userStr = data['data']
     user = json.loads(userStr)
-    uid = user.get('id')
-    if uid == None: return {'error': 'Missing id property!'}
+    uid = user.get('uuid')
+    if uid == None: return {'error': 'Missing uuid property!'}
 
     signatureDecoded = base64.b64decode(data['signature'].encode())
     key = getUserPublicKey(self._db, uid)
