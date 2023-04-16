@@ -18,9 +18,11 @@ class DB():
 
   # ------------- Users --------------
 
-  def addUser(self, uuid, pubKey: str, cardNo: str):
+  def addUser(self, uuid, pubKey: str, name: str, nick: str, cardNo: str):
     user = {
       'uuid': uuid,
+      'name': name,
+      'nickname': nick,
       'pubKey': pubKey,
       'cardNo': cardNo,
       'totalSpent': 0,
@@ -66,6 +68,10 @@ class DB():
 
   def findUserById(self, id) -> dict:
     return self._users.find_one({'uuid': id})
+  
+  def findUserByNickname(self, nickname) -> dict:
+    return self._users.find_one({'nickname': nickname})
+
 
 
   # ------------ Products ------------

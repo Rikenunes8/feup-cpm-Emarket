@@ -30,14 +30,21 @@ class Emarket:
 
   def register(self, data: dict) -> dict:
     pubKeyPKCS8 = data.get('pubKey')
+    name = data.get('name')
+    nickname = data.get('nickname')
     cardNo = data.get('cardNo')
-    if (pubKeyPKCS8 is None or cardNo is None):
-      return {'error': 'Missing pubKey or cardNo property!'}
-    if (self._db.findUserByKey(pubKeyPKCS8) != None):
+    
+    if pubKeyPKCS8 is None: return {'error': 'Missing pubKey property!'}
+    if name is None: return {'error': 'Missing name property!'}
+    if nickname is None: return {'error': 'Missing nickname property!'}
+    if cardNo is None: return {'error': 'Missing cardNo property!'}
+    if self._db.findUserByKey(pubKeyPKCS8) != None:
       return {'error': 'A user with this public key already exists!'}
+    if self._db.findUserByNickname(nickname) != None:
+      return {'error': 'A user with this nickname already exists!'}
 
     uid = str(uuid.uuid4())
-    self._db.addUser(uid, pubKeyPKCS8, cardNo)
+    self._db.addUser(uid, pubKeyPKCS8, name, nickname, cardNo)
 
     pubKey = pkcs8ToPublicKey(pubKeyPKCS8)
     uidEncrypted = rsa.encrypt(uid.encode(), pubKey)

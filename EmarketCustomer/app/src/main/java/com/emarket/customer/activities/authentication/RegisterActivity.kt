@@ -40,6 +40,8 @@ data class ServerResponse (
 
 data class CustomerRegistrationBody (
     val pubKey: String,
+    val name: String,
+    val nickname: String,
     val cardNo : String
 )
 
@@ -59,12 +61,16 @@ class RegisterActivity : AppCompatActivity() {
         registerButton.setOnClickListener {
             if (!validateInputData()) return@setOnClickListener
 
+            val name = nameEditText.text.toString()
+            val nick = nickEditText.text.toString()
+            val card = cardEditText.text.toString()
+
             // generate key pair
             if (generateAndStoreKeys(this, getString(R.string.error_already_registered))) {
                 val pubKey = getPubKey()
                 if (pubKey != null) {
                     startLoading()
-                    sendRegistrationData(pubKey, cardEditText.text.toString()) // send registration data to server
+                    sendRegistrationData(pubKey, name, nick, card) // send registration data to server
                 } else {
                     Log.e("RegisterActivity", getString(R.string.error_getting_keys))
                     showToast(this, getString(R.string.error_getting_keys))
@@ -114,9 +120,11 @@ class RegisterActivity : AppCompatActivity() {
      * @param cardNo card number of the user
      * @return the response from the server (json string)
      */
-    private fun sendRegistrationData(pubKey: PublicKey, cardNo: String) {
+    private fun sendRegistrationData(pubKey: PublicKey, name: String, nick: String, cardNo: String) {
         val jsonInputString = Gson().toJson(CustomerRegistrationBody(
             publicKeyToPKCS1(pubKey),
+            name,
+            nick,
             cardNo
         )).toString()
 
@@ -131,8 +139,6 @@ class RegisterActivity : AppCompatActivity() {
                 val jsonResponse = JSONObject(response)
                 if (jsonResponse.has("error")) {
                     runOnUiThread { showToast(this@RegisterActivity, jsonResponse.getString("error")) }
-                    runOnUiThread { stopLoading() }
-
                     throw Exception(jsonResponse.getString("error"))
                 }
 
@@ -143,11 +149,8 @@ class RegisterActivity : AppCompatActivity() {
                 val encryptedUUID = Base64.getDecoder().decode(uuidEncoded)
                 val uuid = decryptContent(encryptedUUID, getPrivKey())!!
 
-                val name = findViewById<EditText>(R.id.edt_reg_name).text.toString()
-                val nickname = findViewById<EditText>(R.id.edt_reg_nick).text.toString()
-                val password = findViewById<EditText>(R.id.edt_reg_pass).text.toString()
-
-                val user = User(uuid, name, nickname, Utils.hashPassword(password), cardNo)
+                val password = passEditText.text.toString()
+                val user = User(uuid, name, nick, Utils.hashPassword(password), cardNo)
 
                 savePersistently(user, certificate)
                 startActivity(Intent(this, LoginActivity::class.java))
