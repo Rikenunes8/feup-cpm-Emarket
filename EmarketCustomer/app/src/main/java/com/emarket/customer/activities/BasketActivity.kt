@@ -184,19 +184,13 @@ class BasketActivity : AppCompatActivity() {
                     Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id")
 
                 val jsonResponse = JSONObject(response)
-                val newProductDTO: ProductDTO?
+                val newProductDTO: ProductDTO
                 if (jsonResponse.has("error")) {
                     newProductDTO = ProductDTO(id, name, price, null)
                     Log.e("QRCode", jsonResponse.getString("error"))
-                    runOnUiThread { showToast(this, getString(R.string.error_fetching_prodcut))}
                 } else {
                     val product = jsonResponse.get("product").toString()
                     newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
-                }
-
-                if (newProductDTO == null) {
-                    runOnUiThread { showToast(this, getString(R.string.error_getting_product))}
-                    return@thread
                 }
 
                 val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
