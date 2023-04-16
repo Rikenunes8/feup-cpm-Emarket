@@ -12,14 +12,12 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils
-import com.emarket.customer.Utils.showToast
 import com.emarket.customer.controllers.Fetcher.Companion.transactions
 import com.emarket.customer.controllers.adapters.TransactionsListAdapter
 import com.emarket.customer.databinding.FragmentTransactionsBinding
+import com.emarket.customer.models.Transaction
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.time.Duration.Companion.hours
 
 /**
  * Use the [TransactionsFragment.newInstance] factory method to
@@ -31,6 +29,7 @@ class TransactionsFragment : Fragment() {
     private var selectedBgDate: Calendar = Calendar.getInstance()
     private var selectedEndDate: Calendar = Calendar.getInstance()
     private var registrationTime: Long = currentTime
+    private lateinit var filteredTransactions: MutableList<Transaction>
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val sharedPreferences = requireContext().getSharedPreferences(Constants.SHARED_PREFERENCES, Context.MODE_PRIVATE)
@@ -39,24 +38,34 @@ class TransactionsFragment : Fragment() {
         selectedEndDate.timeInMillis = currentTime
 
         binding = FragmentTransactionsBinding.inflate(layoutInflater)
-        binding.rvTransactions.adapter = TransactionsListAdapter(transactions)
         binding.dateBg.setText(SimpleDateFormat("dd/MM/yyyy", Locale.US).format(selectedBgDate.time))
         binding.dateEnd.setText(SimpleDateFormat("dd/MM/yyyy", Locale.US).format(selectedEndDate.time))
 
+        filterTransactions()
+        binding.rvTransactions.adapter = TransactionsListAdapter(filteredTransactions)
         if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
+
 
         binding.dateBg.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) openDateDialog(view as EditText, selectedBgDate, registrationTime)
+            filterTransactions()
+            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
         binding.dateEnd.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) openDateDialog(view as EditText, selectedEndDate, selectedBgDate.timeInMillis)
+            filterTransactions()
+            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
 
         binding.bgCalendarBtn.setOnClickListener {
             openDateDialog(binding.dateBg, selectedBgDate, registrationTime)
+            filterTransactions()
+            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
         binding.endCalendarBtn.setOnClickListener {
             openDateDialog(binding.dateEnd, selectedEndDate, selectedBgDate.timeInMillis)
+            filterTransactions()
+            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
         
         return binding.root
@@ -64,6 +73,7 @@ class TransactionsFragment : Fragment() {
     private fun openDateDialog(dateView: EditText, selectedDate: Calendar, minDate: Long) {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
+            R.style.DialogTheme,
             { _, year, monthOfYear, dayOfMonth ->
                 // Update the selected date when the user selects a date
                 selectedDate.set(Calendar.YEAR, year)
@@ -83,6 +93,15 @@ class TransactionsFragment : Fragment() {
         datePickerDialog.datePicker.maxDate = currentTime
         datePickerDialog.show()
         dateView.clearFocus()
+    }
+
+    private fun filterTransactions() {
+        filteredTransactions = transactions.filter { transaction ->
+            val transactionDate = Calendar.getInstance().apply {
+                timeInMillis = SimpleDateFormat("yyyy/MM/dd - HH:mm:ss", Locale.getDefault()).parse(transaction.date).time
+            }
+            transactionDate in selectedBgDate..selectedEndDate
+        }.toMutableList()
     }
 
 }
