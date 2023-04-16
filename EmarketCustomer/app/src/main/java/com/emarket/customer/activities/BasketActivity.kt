@@ -164,25 +164,43 @@ class BasketActivity : AppCompatActivity() {
 
             val tag = ByteBuffer.wrap(content)
             val tId = tag.int
+            if (tId != Constants.TAG_ID) {
+                showToast(this, getString(R.string.error_invalid_qrcode))
+                return
+            }
+
             val id = UUID(tag.long, tag.long).toString()
-            // TODO check tId and verify size of tag / send price and name?
+            val euros = tag.int
+            val cents = tag.int
+            val price = euros + cents / 100.0
+            val bName = ByteArray(tag.get().toInt())
+            tag[bName]
+            val name = String(bName, StandardCharsets.ISO_8859_1)
 
             thread(start = true) {
+
                 val response = NetworkService.makeRequest(
                     RequestType.GET,
                     Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id")
 
                 val jsonResponse = JSONObject(response)
+                val newProductDTO: ProductDTO
                 if (jsonResponse.has("error")) {
-                    runOnUiThread { showToast(this, getString(R.string.error_getting_product))}
+                    newProductDTO = ProductDTO(id, name, price, null)
                     Log.e("QRCode", jsonResponse.getString("error"))
-                    return@thread
+                } else {
+                    val product = jsonResponse.get("product").toString()
+                    newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
                 }
-                val product = jsonResponse.get("product").toString()
-                val newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
+
                 val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
                 if (oldProduct != null) {
                     oldProduct.quantity++
+
+                    if (newProductDTO.url != null && oldProduct.url == null) {
+                        oldProduct.url = newProductDTO.url
+                    }
+
                     runOnUiThread { updateProduct(oldProduct) }
                 } else {
                     val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)

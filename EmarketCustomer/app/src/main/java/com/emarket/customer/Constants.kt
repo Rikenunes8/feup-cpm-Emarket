@@ -1,6 +1,9 @@
 package com.emarket.customer
 
 object Constants {
+    // Product Qr code Tag
+    const val TAG_ID = 0x41636D65                  // equal to "Acme"
+
     // Keys
     const val ENC_ALGO = "RSA/ECB/PKCS1Padding"
     const val SIGN_ALGO = "SHA256WithRSA"
@@ -21,7 +24,7 @@ object Constants {
     const val PAYMENT = "PAYMENT"
 
     // Server connection
-    const val SERVER_URL = "http://192.168.1.9:5000/"
+    const val SERVER_URL = "http://192.168.1.64:5000/"
     const val REGISTER_ENDPOINT = "register"
     const val PRODUCT_ENDPOINT = "product"
     const val USER_ENDPOINT = "user"

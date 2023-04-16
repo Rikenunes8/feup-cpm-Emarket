@@ -38,7 +38,7 @@ class NetworkService {
                     }
                     setRequestProperty("Content-Type", "application/json")
                     setRequestProperty("Accept", "application/json")
-                    connectTimeout = 5000 // 5 seconds
+                    connectTimeout = 3000 // 3 seconds
                     useCaches = false
                 }
 
