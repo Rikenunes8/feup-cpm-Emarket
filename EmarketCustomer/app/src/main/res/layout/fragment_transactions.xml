@@ -59,8 +59,8 @@
                     android:layout_height="wrap_content">
 
                     <TextView
-                        style="@style/DateTimeEdit"
                         android:id="@+id/date_bg_tv"
+                        style="@style/DateTimeEdit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ems="5" />
@@ -68,7 +68,7 @@
                     <ImageButton
                         android:id="@+id/bg_calendar_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:backgroundTint="@android:color/transparent"
                         android:src="@drawable/calendar"
                         app:tint="@color/gray" />

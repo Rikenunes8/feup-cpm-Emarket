@@ -40,7 +40,7 @@ class TransactionsFragment : Fragment() {
             (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
         binding.dateEndLl.setOnClickListener {
-            selectedEndDate = openDateDialog(binding.dateEndTv, selectedEndDate, minDate = selectedBgDate?.timeInMillis, maxDate = currentTime)
+            selectedEndDate = openDateDialog(binding.dateEndTv, selectedEndDate, minDate = selectedBgDate?.timeInMillis)
             filterTransactions()
             (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
         }
@@ -68,7 +68,7 @@ class TransactionsFragment : Fragment() {
         )
         // Show the date picker dialog
         minDate?.run { datePickerDialog.datePicker.minDate = minDate }
-        maxDate?.run { datePickerDialog.datePicker.maxDate = maxDate }
+        datePickerDialog.datePicker.maxDate = maxDate ?: currentTime
         datePickerDialog.show()
         return calendar
     }
