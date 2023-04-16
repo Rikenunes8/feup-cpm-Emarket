@@ -29,6 +29,9 @@
     <string name="label_subtotal">Subtotal:</string>
     <string name="label_discounted">Discounted:</string>
     <string name="label_accumulated">Accumulated:</string>
+    <string name="label_from_date">From:</string>
+    <string name="label_to_date">To:</string>
+
 
     <string name="tab_profile">Profile</string>
     <string name="tab_transactions">Transactions</string>
@@ -81,7 +84,6 @@
     <string name="scanner_prompt">Scan your product!</string>
     <string name="nfc_not_enabled">NFC is not enabled</string>
     <string name="nfc_not_supported">NFC is not supported</string>
-    <string name="label_from_date">From:</string>
     <string name="date_time_separator">-</string>
-    <string name="label_to_date">To:</string>
+
 </resources>

@@ -14,7 +14,6 @@ import androidx.cardview.widget.CardView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils.hasNfc
-import com.emarket.customer.Utils.showToast
 
 class SettingsActivity : AppCompatActivity() {
 

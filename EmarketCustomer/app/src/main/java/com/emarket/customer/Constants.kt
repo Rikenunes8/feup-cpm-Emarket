@@ -22,6 +22,7 @@ object Constants {
     const val NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED"
     const val IS_QRCODE = "IS_QRCODE"
     const val PAYMENT = "PAYMENT"
+    const val REGISTRATION_DATE = "REGISTRATION_DATE"
 
     // Server connection
     const val SERVER_URL = "http://192.168.1.240:5000/"

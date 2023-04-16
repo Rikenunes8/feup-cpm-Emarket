@@ -25,7 +25,6 @@
         android:visibility="gone"/>
 
     <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
         style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -66,18 +65,14 @@
                         android:ems="5"
                         android:inputType="date" />
 
-                    <TextView
+                    <ImageButton
+                        android:id="@+id/bg_calendar_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/date_time_separator" />
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@android:color/transparent"
+                        android:src="@drawable/calendar"
+                        app:tint="@color/gray" />
 
-                    <EditText
-                        style="@style/DateTimeEdit"
-                        android:id="@+id/time_bg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="3"
-                        android:inputType="time" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -116,18 +111,14 @@
                         android:ems="5"
                         android:inputType="date" />
 
-                    <TextView
+                    <ImageButton
+                        android:id="@+id/end_calendar_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/date_time_separator" />
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@android:color/transparent"
+                        android:src="@drawable/calendar"
+                        app:tint="@color/gray" />
 
-                    <EditText
-                        style="@style/DateTimeEdit"
-                        android:id="@+id/time_end"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ems="3"
-                        android:inputType="time" />
                 </LinearLayout>
 
             </LinearLayout>
