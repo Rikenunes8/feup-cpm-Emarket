@@ -81,4 +81,7 @@
     <string name="scanner_prompt">Scan your product!</string>
     <string name="nfc_not_enabled">NFC is not enabled</string>
     <string name="nfc_not_supported">NFC is not supported</string>
+    <string name="label_from_date">From:</string>
+    <string name="date_time_separator">-</string>
+    <string name="label_to_date">To:</string>
 </resources>
