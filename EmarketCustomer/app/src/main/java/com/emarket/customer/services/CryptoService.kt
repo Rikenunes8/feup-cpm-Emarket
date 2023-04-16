@@ -5,16 +5,11 @@ import android.security.KeyPairGeneratorSpec
 import android.util.Log
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo
-import org.bouncycastle.openssl.PEMParser
-import java.io.StringReader
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets
 import java.security.*
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
-import java.security.interfaces.RSAPublicKey
-import java.security.spec.X509EncodedKeySpec
 import java.util.*
 import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
@@ -183,14 +178,6 @@ class CryptoService {
         fun publicKeyToPKCS1(pubKey : PublicKey) : String {
             val encPubKey = Base64.getEncoder().encodeToString(pubKey.encoded)
             return "-----BEGIN PUBLIC KEY-----\n$encPubKey\n-----END PUBLIC KEY-----\n"
-        }
-
-        fun constructRSAPubKey(data: String) : RSAPublicKey {
-            val pemParser = PEMParser(StringReader(data))
-            val publicKeyInfo = pemParser.readObject() as SubjectPublicKeyInfo
-            val keySpec = X509EncodedKeySpec(publicKeyInfo.encoded)
-            val keyFactory = KeyFactory.getInstance("RSA")
-            return keyFactory.generatePublic(keySpec) as RSAPublicKey
         }
 
         fun storeCertificate(name: String, cert: String) {

@@ -8,14 +8,13 @@ object Constants {
     const val KEY_SIZE = 512
     const val STORE_KEY = "EmarketKey"
     const val ANDROID_KEYSTORE = "AndroidKeyStore"
+    const val SERVER_CERTIFICATE = "SERVER_CERTIFICATE"
     const val serialNr = 1234567890L
 
     // Shared preferences
     const val SHARED_PREFERENCES = "EmarketSharedPref"
     const val PREF_SEND_ENABLED = "SendEnabled"
     const val USER_KEY = "USER_KEY"
-    const val SERVER_PUB_KEY = "SERVER_PUB_KEY"
-    const val SERVER_CERTIFICATE = "SERVER_CERTIFICATE"
     const val BASKET_ITEMS = "BASKET_ITEMS"
     const val NOTIFICATIONS_ENABLED = "NOTIFICATIONS_ENABLED"
     const val IS_QRCODE = "IS_QRCODE"
