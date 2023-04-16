@@ -6,6 +6,7 @@ import android.content.Intent
 import com.emarket.customer.Constants
 import com.emarket.customer.R
 import com.emarket.customer.Utils
+import com.emarket.customer.Utils.getSignature
 import com.emarket.customer.activities.TransactionDetailsActivity
 import com.emarket.customer.activities.authentication.UserResponse
 import com.emarket.customer.activities.dbLayer
@@ -48,7 +49,8 @@ class Fetcher {
                 var newTransaction = false
                 try {
                     val user = UserViewModel(activity.application).user!!
-                    var query = "?user=${URLEncoder.encode(user.userId)}"
+                    val signature = getSignature(user.userId)
+                    var query = "?user=${URLEncoder.encode(user.userId)}&signature=${URLEncoder.encode(signature)}"
                     if (!complete) {
                         val date = dbLayer.getLastTransaction()?.date
                         if (date != null) query += "&date=${URLEncoder.encode(date)}"

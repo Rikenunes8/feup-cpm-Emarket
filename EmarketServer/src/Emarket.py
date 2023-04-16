@@ -53,11 +53,17 @@ class Emarket:
   '''
   Get user data. If date is provided, only transactions after that date will be returned.
   @param user_id: user id
+  @param signature: signature of the user id
   @param date: date in format 2023/04/03 - 17:24:44
   '''
-  def getUser(self, user_id : str, date : str = None) -> dict:
+  def getUser(self, user_id : str, signature : str, date : str = None) -> dict:
     user = self._db.findUserById(user_id)
     if (user == None): return {'error': 'User not found!'}
+
+    signatureDecoded = base64.b64decode(signature.encode())
+    key = getUserPublicKey(self._db, user_id)
+    try: rsa.verify(user_id.encode(), signatureDecoded, key)
+    except: return {'error': 'Signature verification failed!'}
     
     return userInformation(user, date)
   

@@ -30,7 +30,7 @@ def checkout():
 
 @routes.get('/user')
 def user():
-  res = emarket.getUser(request.args.get('user'), request.args.get('date'))
+  res = emarket.getUser(request.args.get('user'), request.args.get('signature'), request.args.get('date'))
   return makeResponse(res)
 
 @routes.post('/user')

@@ -61,26 +61,18 @@ object Utils {
 
     /**
      * Get the signature of the data
-     * @param jsonData the data to sign
-     * @return the signature of the data
+     * @param data the data to sign
+     * @return the signature of the data encoded in base64
      */
-    fun getSignature(jsonData: String): String {
-        val dataByteArray = jsonData.toByteArray()
+    fun getSignature(data: String): String {
+        val dataByteArray = data.toByteArray()
         val signature = CryptoService.signContent(dataByteArray, CryptoService.getPrivKey())!!
         return Base64.getEncoder().encodeToString(signature)
     }
 
     fun formatDate(date: String) : String {
-        val timestamp =
-            LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
+        val timestamp = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss"))
         return timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm"))
-    }
-
-    /* Utility top-level function */
-    fun byteArrayToHex(ba: ByteArray): String {
-        val sb = StringBuilder(ba.size * 2)
-        for (b in ba) sb.append(String.format("%02x", b))
-        return sb.toString()
     }
 
     fun hexStringToByteArray(s: String): ByteArray {
