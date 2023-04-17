@@ -42,14 +42,10 @@ class TransactionsFragment : Fragment() {
         if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
 
         binding.dateBgLl.setOnClickListener {
-            selectedBgDate = openDateDialog(binding.dateBgTv, selectedBgDate, maxDate = selectedEndDate?.timeInMillis)
-            filterTransactions()
-            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
+            openDateDialog(binding.dateBgTv, true, maxDate = selectedEndDate?.timeInMillis)
         }
         binding.dateEndLl.setOnClickListener {
-            selectedEndDate = openDateDialog(binding.dateEndTv, selectedEndDate, minDate = selectedBgDate?.timeInMillis)
-            filterTransactions()
-            (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
+            openDateDialog(binding.dateEndTv, false, minDate = selectedBgDate?.timeInMillis)
         }
 
         binding.filterBtn.setOnClickListener {
@@ -71,7 +67,6 @@ class TransactionsFragment : Fragment() {
                 binding.dateEndTv.text = ""
                 binding.filterBtn.setImageResource(R.drawable.filter)
             }
-
         }
 
         binding.colapseBtn.setOnClickListener {
@@ -85,7 +80,8 @@ class TransactionsFragment : Fragment() {
         return binding.root
     }
 
-    private fun openDateDialog(dateView: TextView, selectedDate: Calendar?, minDate: Long? = null, maxDate: Long? = null) : Calendar {
+    private fun openDateDialog(dateView: TextView, isBegin: Boolean, minDate: Long? = null, maxDate: Long? = null) : Calendar? {
+        val selectedDate = if (isBegin) selectedBgDate else selectedEndDate
         val calendar = selectedDate ?: Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
             requireContext(),
@@ -98,11 +94,16 @@ class TransactionsFragment : Fragment() {
                 // Update the text of your date input with the selected date
                 dateView.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(calendar.time)
                 binding.filterBtn.setImageResource(R.drawable.filter_off)
+
+                if (isBegin) selectedBgDate = calendar
+                else selectedEndDate = calendar
+
+                filterTransactions()
+                (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
             },
             selectedDate?.get(Calendar.YEAR) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.YEAR),
             selectedDate?.get(Calendar.MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.MONTH),
             selectedDate?.get(Calendar.DAY_OF_MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.DAY_OF_MONTH)
-
         )
         // Show the date picker dialog
         minDate?.run { datePickerDialog.datePicker.minDate = minDate }
@@ -118,10 +119,10 @@ class TransactionsFragment : Fragment() {
             }
             if (selectedBgDate == null && selectedEndDate == null) {
                 true
-            } else if (selectedBgDate == null && selectedEndDate != null) {
-                transactionDate <= selectedEndDate
-            } else if (selectedBgDate != null && selectedEndDate == null) {
-                transactionDate >= selectedBgDate
+            } else if (selectedBgDate == null) {
+                transactionDate <= selectedEndDate!!
+            } else if (selectedEndDate == null) {
+                transactionDate >= selectedBgDate!!
             } else {
                 transactionDate in selectedBgDate!!..selectedEndDate!!
             }
