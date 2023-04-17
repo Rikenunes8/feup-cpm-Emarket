@@ -14,8 +14,10 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.emarket.customer.R
+import com.emarket.customer.activities.CheckoutActivity
 import com.emarket.customer.controllers.Fetcher.Companion.transactions
 import com.emarket.customer.controllers.adapters.TransactionsListAdapter
+import com.emarket.customer.controllers.adapters.VoucherListAdapter
 import com.emarket.customer.databinding.FragmentTransactionsBinding
 import com.emarket.customer.models.Transaction
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -28,6 +30,13 @@ import java.util.*
  * create an instance of this fragment.
  */
 class TransactionsFragment : Fragment() {
+
+    companion object {
+        const val IS_FILTER_VISIBLE = "IS_FILTER_VISIBLE"
+        const val BG_DATE = "BG_DATE"
+        const val END_DATE = "END_DATE"
+    }
+
     private lateinit var binding: FragmentTransactionsBinding
     private val currentTime: Long = System.currentTimeMillis()
     private var selectedBgDate: Calendar? = null
@@ -37,6 +46,26 @@ class TransactionsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTransactionsBinding.inflate(layoutInflater)
+
+        if (savedInstanceState != null) {
+            selectedBgDate = savedInstanceState.getLong(BG_DATE).takeIf { it != 0L }?.let {
+                Calendar.getInstance().apply {
+                    timeInMillis = it
+                }
+            }
+            binding.dateBgTv.text = selectedBgDate?.let {
+                SimpleDateFormat("dd/MM/yyyy", Locale.US).format(it.time)
+            } ?: ""
+
+            selectedEndDate = savedInstanceState.getLong(END_DATE).takeIf { it != 0L }?.let {
+                Calendar.getInstance().apply {
+                    timeInMillis = it
+                }
+            }
+            binding.dateEndTv.text = selectedEndDate?.let {
+                SimpleDateFormat("dd/MM/yyyy", Locale.US).format(it.time)
+            } ?: ""
+        }
 
         filterTransactions()
         adapter = TransactionsListAdapter(filteredTransactions)
@@ -52,9 +81,8 @@ class TransactionsFragment : Fragment() {
 
         binding.filterBtn.setOnClickListener {
             if (binding.filterBb.visibility == View.INVISIBLE) {
-                val actionBarHeight = binding.filterBb.height
                 TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
-                setBottomMargin(binding.transactionsCl, actionBarHeight)
+                setBottomMargin(binding.transactionsCl, binding.filterBb.height)
 
                 TransitionManager.beginDelayedTransition(binding.filterBb, Slide(Gravity.BOTTOM))
                 binding.filterBb.visibility = View.VISIBLE
@@ -83,6 +111,12 @@ class TransactionsFragment : Fragment() {
         }
         
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        selectedBgDate?.let { outState.putLong(BG_DATE, it.timeInMillis) }
+        selectedEndDate?.let { outState.putLong(END_DATE, it.timeInMillis) }
+        super.onSaveInstanceState(outState)
     }
 
     private fun openDateDialog(dateView: TextView, isBegin: Boolean, minDate: Long? = null, maxDate: Long? = null) : Calendar? {
