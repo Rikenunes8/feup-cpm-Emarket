@@ -120,35 +120,26 @@ class TransactionsFragment : Fragment() {
 
     private fun filterTransactions() {
         selectedBgDate?.run {
-            this.set(Calendar.HOUR, 0)
+            this.set(Calendar.HOUR_OF_DAY, 0)
             this.set(Calendar.MINUTE, 0)
             this.set(Calendar.SECOND, 0)
-            println("BG")
-            println(this.timeInMillis)
         }
         selectedEndDate?.run {
-            this.set(Calendar.HOUR, 23)
+            this.set(Calendar.HOUR_OF_DAY, 23)
             this.set(Calendar.MINUTE, 59)
             this.set(Calendar.SECOND, 59)
-            println("END")
-            println(this.timeInMillis)
         }
         filteredTransactions = transactions.filter { transaction ->
             val transactionDate = Calendar.getInstance().apply {
                 time = SimpleDateFormat("yyyy/MM/dd - HH:mm:ss", Locale.getDefault()).parse(transaction.date!!) as Date
             }
-            println(transactionDate.timeInMillis)
             if (selectedBgDate == null && selectedEndDate == null) {
-                println("All nukl")
                 true
             } else if (selectedBgDate == null) {
-                println("bg null")
                 transactionDate <= selectedEndDate!!
             } else if (selectedEndDate == null) {
-                println("end nukl")
                 transactionDate >= selectedBgDate!!
             } else {
-                println("No null")
                 transactionDate >= selectedBgDate!! && transactionDate <= selectedEndDate!!
             }
         }.toMutableList()
