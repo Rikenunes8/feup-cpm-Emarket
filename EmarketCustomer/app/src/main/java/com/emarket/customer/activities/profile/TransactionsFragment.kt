@@ -2,9 +2,15 @@ package com.emarket.customer.activities.profile
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.emarket.customer.R
@@ -12,8 +18,10 @@ import com.emarket.customer.controllers.Fetcher.Companion.transactions
 import com.emarket.customer.controllers.adapters.TransactionsListAdapter
 import com.emarket.customer.databinding.FragmentTransactionsBinding
 import com.emarket.customer.models.Transaction
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * Use the [TransactionsFragment.newInstance] factory method to
@@ -33,7 +41,6 @@ class TransactionsFragment : Fragment() {
         binding.rvTransactions.adapter = TransactionsListAdapter(filteredTransactions)
         if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
 
-        //TODO: change this to not let nothing after current time
         binding.dateBgLl.setOnClickListener {
             selectedBgDate = openDateDialog(binding.dateBgTv, selectedBgDate, maxDate = selectedEndDate?.timeInMillis)
             filterTransactions()
@@ -43,6 +50,36 @@ class TransactionsFragment : Fragment() {
             selectedEndDate = openDateDialog(binding.dateEndTv, selectedEndDate, minDate = selectedBgDate?.timeInMillis)
             filterTransactions()
             (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
+        }
+
+        binding.filterBtn.setOnClickListener {
+            if (binding.filterBb.visibility == View.GONE) {
+                val typedValue = TypedValue()
+                requireContext().theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
+                val actionBarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
+                TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
+                setBottomMargin(binding.transactionsCl, actionBarHeight)
+
+                TransitionManager.beginDelayedTransition(binding.filterBb, Slide(Gravity.BOTTOM))
+                binding.filterBb.visibility = View.VISIBLE
+                if (selectedBgDate != null || selectedEndDate != null)
+                    binding.filterBtn.setImageResource(R.drawable.filter_off)
+            } else {
+                selectedBgDate = null
+                binding.dateBgTv.text = ""
+                selectedEndDate = null
+                binding.dateEndTv.text = ""
+                binding.filterBtn.setImageResource(R.drawable.filter)
+            }
+
+        }
+
+        binding.colapseBtn.setOnClickListener {
+            TransitionManager.beginDelayedTransition(binding.filterBb, Slide(Gravity.BOTTOM))
+            binding.filterBb.visibility = View.GONE
+            TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
+            setBottomMargin(binding.transactionsCl, 0)
+            binding.filterBtn.setImageResource(R.drawable.filter)
         }
         
         return binding.root
@@ -60,6 +97,7 @@ class TransactionsFragment : Fragment() {
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                 // Update the text of your date input with the selected date
                 dateView.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(calendar.time)
+                binding.filterBtn.setImageResource(R.drawable.filter_off)
             },
             selectedDate?.get(Calendar.YEAR) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.YEAR),
             selectedDate?.get(Calendar.MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.MONTH),
@@ -88,6 +126,14 @@ class TransactionsFragment : Fragment() {
                 transactionDate in selectedBgDate!!..selectedEndDate!!
             }
         }.toMutableList()
+    }
+
+    private fun setBottomMargin(v: View, bottomMargin: Int) {
+        if (v.layoutParams is MarginLayoutParams) {
+            val p = v.layoutParams as MarginLayoutParams
+            p.bottomMargin = bottomMargin
+            v.requestLayout()
+        }
     }
 
 
