@@ -51,10 +51,8 @@ class TransactionsFragment : Fragment() {
         }
 
         binding.filterBtn.setOnClickListener {
-            if (binding.filterBb.visibility == View.GONE) {
-                val typedValue = TypedValue()
-                requireContext().theme.resolveAttribute(android.R.attr.actionBarSize, typedValue, true)
-                val actionBarHeight = resources.getDimensionPixelSize(typedValue.resourceId)
+            if (binding.filterBb.visibility == View.INVISIBLE) {
+                val actionBarHeight = binding.filterBb.height
                 TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
                 setBottomMargin(binding.transactionsCl, actionBarHeight)
 
@@ -76,7 +74,7 @@ class TransactionsFragment : Fragment() {
 
         binding.colapseBtn.setOnClickListener {
             TransitionManager.beginDelayedTransition(binding.filterBb, Slide(Gravity.BOTTOM))
-            binding.filterBb.visibility = View.GONE
+            binding.filterBb.visibility = View.INVISIBLE
             TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
             setBottomMargin(binding.transactionsCl, 0)
             binding.filterBtn.setImageResource(R.drawable.filter)
