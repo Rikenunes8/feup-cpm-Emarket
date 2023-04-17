@@ -52,14 +52,17 @@ class NetworkService {
                 }
 
                 val responseCode = connection.responseCode
+                val stream =
+                    if (responseCode == HttpURLConnection.HTTP_OK) connection.inputStream
+                    else connection.errorStream
+                val resp = JSONObject(stream.bufferedReader().use(BufferedReader::readText))
+                stream.close()
+
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    val inputStream = connection.inputStream
-                    val resp = inputStream.bufferedReader().use(BufferedReader::readText)
-                    val responseJson = JSONObject(resp)
-                    response = responseJson.toString()
-                    inputStream.close()
-                } else {
-                    response = Gson().toJson(Response(responseCode, connection.responseMessage))
+                    response = resp.toString()
+                } else if (responseCode == HttpURLConnection.HTTP_BAD_REQUEST) {
+                    val error = if (resp.has("error")) resp.getString("error") else connection.responseMessage
+                    response = Gson().toJson(Response(responseCode, error))
                 }
             } catch (e: Exception) {
                 Log.e("NetworkService", e.message ?: "")

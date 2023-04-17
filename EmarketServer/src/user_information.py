@@ -29,10 +29,15 @@ def getTotalSpent(user : dict):
   return { 'totalSpent': user.get('totalSpent', 0) }
 
 def updateUserInformation(db: DB, user: dict):
-  uid = user.get('id')
+  uid = user.get('uuid')
+  name = user.get('name')
   cardNumber = user.get('cardNumber')
-  if cardNumber == None: return {'error': 'Missing cardNumber property!'}
+  if name == None and cardNumber == None : return {'error': 'Missing name or cardNumber property!'}
 
-  db.updateUserValues(uid, {'cardNo': cardNumber})
+  user = {}
+  if name: user['name'] = name
+  if cardNumber: user['cardNo'] = cardNumber
+
+  db.updateUserValues(uid, user)
   return {'success': 'User updated!', 'user': user}
 
