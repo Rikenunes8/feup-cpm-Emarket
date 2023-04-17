@@ -6,10 +6,7 @@ import android.transition.AutoTransition
 import android.transition.Slide
 import android.transition.TransitionManager
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -48,6 +45,19 @@ class TransactionsFragment : Fragment() {
         binding = FragmentTransactionsBinding.inflate(layoutInflater)
 
         if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(IS_FILTER_VISIBLE)) {
+                binding.filterBb.visibility =  View.VISIBLE
+                binding.filterBb.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        binding.filterBb.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        val height = binding.filterBb.height
+                        setBottomMargin(binding.transactionsCl, height)
+                    }
+                })
+            } else {
+                binding.filterBb.visibility = View.INVISIBLE
+            }
+
             selectedBgDate = savedInstanceState.getLong(BG_DATE).takeIf { it != 0L }?.let {
                 Calendar.getInstance().apply {
                     timeInMillis = it
@@ -114,6 +124,7 @@ class TransactionsFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(IS_FILTER_VISIBLE, binding.filterBb.visibility == View.VISIBLE)
         selectedBgDate?.let { outState.putLong(BG_DATE, it.timeInMillis) }
         selectedEndDate?.let { outState.putLong(END_DATE, it.timeInMillis) }
         super.onSaveInstanceState(outState)
@@ -126,11 +137,10 @@ class TransactionsFragment : Fragment() {
             requireContext(),
             R.style.DialogTheme,
             { _, year, monthOfYear, dayOfMonth ->
-                // Update the selected date when the user selects a date
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, monthOfYear)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                // Update the text of your date input with the selected date
+
                 dateView.text = SimpleDateFormat("dd/MM/yyyy", Locale.US).format(calendar.time)
                 binding.filterBtn.setImageResource(R.drawable.filter_off)
 
@@ -147,7 +157,6 @@ class TransactionsFragment : Fragment() {
             selectedDate?.get(Calendar.MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.MONTH),
             selectedDate?.get(Calendar.DAY_OF_MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.DAY_OF_MONTH)
         )
-        // Show the date picker dialog
         minDate?.run { datePickerDialog.datePicker.minDate = minDate }
         datePickerDialog.datePicker.maxDate = maxDate ?: currentTime
         datePickerDialog.show()
