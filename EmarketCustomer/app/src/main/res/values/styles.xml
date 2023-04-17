@@ -64,6 +64,28 @@
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">?attr/titleTextColor</item>
+        <item name="android:colorAccent">@color/green</item>
+        <!--selected Item color-->
+        <item name="colorControlActivated">@color/green</item>
+        <!-- arrow bordercolor(<>)-->
+        <item name="android:selectableItemBackgroundBorderless">?attr/colorSecondary</item>
+        <!-- Highlight item color-->
+        <item name="colorControlHighlight">@color/light_green</item>
+        <!--Calender Background color -->
+        <item name="android:windowBackground">?attr/colorSecondary</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/gray</item>
+        <!-- Calender Number color arrow color (< >) -->
+        <item name="android:textColorPrimary">?attr/colorOnSecondary</item>
+        <!--day , month-->
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/white</item>
+        <!-- Ok Cancel Color-->
+        <item name="android:buttonBarButtonStyle">@style/DialogTheme.Button</item>
+    </style>
+
+    <style name="DialogTheme.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/titleTextColor</item>
     </style>
 </resources>
