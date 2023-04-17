@@ -70,7 +70,7 @@
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
-    <string name="no_transactions">No past transactions</string>
+    <string name="no_transactions">No transactions to display</string>
     <string name="notification_message">Check out your latest transaction details!</string>
     <string name="notifications">Notifications</string>
     <string name="default_checkout_method">Default checkout method</string>

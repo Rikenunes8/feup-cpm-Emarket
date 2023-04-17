@@ -41,7 +41,7 @@ class TransactionsFragment : Fragment() {
         filterTransactions()
         adapter = TransactionsListAdapter(filteredTransactions)
         binding.rvTransactions.adapter = adapter
-        if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
+        if (filteredTransactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
 
         binding.dateBgLl.setOnClickListener {
             openDateDialog(binding.dateBgTv, true, maxDate = selectedEndDate?.timeInMillis)
@@ -67,6 +67,8 @@ class TransactionsFragment : Fragment() {
                 binding.dateEndTv.text = ""
                 filterTransactions()
                 adapter = TransactionsListAdapter(filteredTransactions)
+                if (filteredTransactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
+                else binding.tvNoTransactions.visibility = View.GONE
                 binding.rvTransactions.adapter = adapter
                 binding.filterBtn.setImageResource(R.drawable.filter)
             }
@@ -104,6 +106,8 @@ class TransactionsFragment : Fragment() {
                 filterTransactions()
                 adapter = TransactionsListAdapter(filteredTransactions)
                 binding.rvTransactions.adapter = adapter
+                if (filteredTransactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
+                else binding.tvNoTransactions.visibility = View.GONE
             },
             selectedDate?.get(Calendar.YEAR) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.YEAR),
             selectedDate?.get(Calendar.MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.MONTH),
