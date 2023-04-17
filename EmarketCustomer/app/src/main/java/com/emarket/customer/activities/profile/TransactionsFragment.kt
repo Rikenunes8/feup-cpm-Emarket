@@ -33,12 +33,14 @@ class TransactionsFragment : Fragment() {
     private var selectedBgDate: Calendar? = null
     private var selectedEndDate: Calendar? = null
     private lateinit var filteredTransactions: MutableList<Transaction>
+    private lateinit var adapter: TransactionsListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTransactionsBinding.inflate(layoutInflater)
 
         filterTransactions()
-        binding.rvTransactions.adapter = TransactionsListAdapter(filteredTransactions)
+        adapter = TransactionsListAdapter(filteredTransactions)
+        binding.rvTransactions.adapter = adapter
         if (transactions.isEmpty()) binding.tvNoTransactions.visibility = View.VISIBLE
 
         binding.dateBgLl.setOnClickListener {
@@ -99,7 +101,8 @@ class TransactionsFragment : Fragment() {
                 else selectedEndDate = calendar
 
                 filterTransactions()
-                (binding.rvTransactions.adapter as TransactionsListAdapter).notifyDataSetChanged()
+                adapter = TransactionsListAdapter(filteredTransactions)
+                binding.rvTransactions.adapter = adapter
             },
             selectedDate?.get(Calendar.YEAR) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.YEAR),
             selectedDate?.get(Calendar.MONTH) ?: Calendar.getInstance().apply { timeInMillis = currentTime }.get(Calendar.MONTH),
@@ -113,6 +116,7 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun filterTransactions() {
+
         filteredTransactions = transactions.filter { transaction ->
             val transactionDate = Calendar.getInstance().apply {
                 timeInMillis = SimpleDateFormat("yyyy/MM/dd - HH:mm:ss", Locale.getDefault()).parse(transaction.date).time
