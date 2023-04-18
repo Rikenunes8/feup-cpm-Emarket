@@ -29,6 +29,9 @@
     <string name="label_subtotal">Subtotal:</string>
     <string name="label_discounted">Discounted:</string>
     <string name="label_accumulated">Accumulated:</string>
+    <string name="label_from_date">From:</string>
+    <string name="label_to_date">To:</string>
+
 
     <string name="tab_profile">Profile</string>
     <string name="tab_transactions">Transactions</string>
@@ -68,7 +71,7 @@
     <string name="date">Date</string>
     <string name="voucher">Voucher</string>
     <string name="no_vouchers">No vouchers</string>
-    <string name="no_transactions">No past transactions</string>
+    <string name="no_transactions">No transactions to display</string>
     <string name="notification_message">Check out your latest transaction details!</string>
     <string name="notifications">Notifications</string>
     <string name="default_checkout_method">Default checkout method</string>
@@ -82,4 +85,6 @@
     <string name="scanner_prompt">Scan your product!</string>
     <string name="nfc_not_enabled">NFC is not enabled</string>
     <string name="nfc_not_supported">NFC is not supported</string>
+    <string name="date_time_separator">-</string>
+
 </resources>

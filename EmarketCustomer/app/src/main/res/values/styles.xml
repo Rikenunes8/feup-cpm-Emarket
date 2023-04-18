@@ -53,5 +53,39 @@
         <item name="colorControlActivated">?attr/titleTextColor</item>
     </style>
 
+    <style name="DateTimeEdit">
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:layout_marginVertical">1.5dp</item>
+    </style>
 
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:colorAccent">@color/green</item>
+        <!--selected Item color-->
+        <item name="colorControlActivated">@color/green</item>
+        <!-- arrow bordercolor(<>)-->
+        <item name="android:selectableItemBackgroundBorderless">?attr/colorSecondary</item>
+        <!-- Highlight item color-->
+        <item name="colorControlHighlight">@color/light_green</item>
+        <!--Calender Background color -->
+        <item name="android:windowBackground">?attr/colorSecondary</item>
+        <!-- Week TextColor-->
+        <item name="android:textColorSecondary">@color/gray</item>
+        <!-- Calender Number color arrow color (< >) -->
+        <item name="android:textColorPrimary">?attr/colorOnSecondary</item>
+        <!--day , month-->
+        <item name="android:textColorPrimaryInverse">@color/white</item>
+        <!-- year-->
+        <item name="android:textColorSecondaryInverse">@color/white</item>
+        <!-- Ok Cancel Color-->
+        <item name="android:buttonBarButtonStyle">@style/DialogTheme.Button</item>
+    </style>
+
+    <style name="DialogTheme.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/titleTextColor</item>
+    </style>
 </resources>
