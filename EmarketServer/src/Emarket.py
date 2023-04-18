@@ -50,7 +50,8 @@ class Emarket:
   def getUser(self, user_id : str, signature : str, date : str = None) -> dict:
     user = self._db.findUserById(user_id)
     if (user == None): return {'error': 'User not found!'}
-
+    if (signature == None): return {'error': 'Missing signature property!'}
+    
     signatureDecoded = base64.b64decode(signature.encode())
     key = getUserPublicKey(self._db, user_id)
     try: rsa.verify(user_id.encode(), signatureDecoded, key)
