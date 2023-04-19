@@ -129,7 +129,18 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
     }
 
     fun addProduct(product : Product) {
-        if (getProduct(product.uuid) != null) return
+        val oldProduct = getProduct(product.uuid)
+        if (oldProduct != null) {
+            if (oldProduct.url == null && product.url != null)
+                writableDatabase.update(
+                    tableProducts,
+                    ContentValues().also { it.put(colProductUrl, product.url) },
+                    "$keyProductId = ?",
+                    arrayOf(product.uuid)
+                )
+            return
+        }
+
         val values = ContentValues().also {
             it.put(keyProductId, product.uuid)
             it.put(colProductName, product.name)
