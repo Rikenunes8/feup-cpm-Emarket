@@ -1,0 +1,46 @@
+[{
+  "uuid": "01dc113b-8a0b-4ea4-9957-6877c131d500",
+  "name": "Banana",
+  "price": 1.15,
+  "url": "https://i.postimg.cc/442PzSFK/banana.png"
+},{
+  "uuid": "4121090f-e5da-40a3-8ff6-3928f0b625c6",
+  "name": "Apple",
+  "price": 2.5,
+  "url": "https://i.postimg.cc/RZrmhNM0/apple.png"
+},{
+  "uuid": "8f688ea3-62a5-4ffc-acec-b148786734eb",
+  "name": "Pear",
+  "price": 1.75,
+  "url": "https://i.postimg.cc/y86sRWJX/pear.png"
+},{
+  "uuid": "4e3861bf-04f3-4e6b-8a03-17a19aea6a58",
+  "name": "Microwave",
+  "price": 49.99,
+  "url": "https://i.postimg.cc/rFMk6z9X/micorwave.png"
+},{
+  "uuid": "9391b20d-a642-406d-bb6b-cf54ee81fef6",
+  "name": "Lasagna",
+  "price": 5.5,
+  "url": "https://i.postimg.cc/K8Cp2Hyk/lasagna.png"
+},{
+  "uuid": "fc51c12b-2184-49d6-b96a-80aa71d8835b",
+  "name": "Pasta",
+  "price": 1.49,
+  "url": "https://i.postimg.cc/Fsp18M3p/pasta.png"
+},{
+  "uuid": "b782eeb6-e3ab-4233-a42b-805f2c47157f",
+  "name": "Butter",
+  "price": 2.5,
+  "url": "https://i.postimg.cc/W4nZndSN/butter.png"
+},{
+  "uuid": "20f0e993-085e-4e16-b23d-d818dd63c90e",
+  "name": "Octopus",
+  "price": 27.5,
+  "url": "https://i.postimg.cc/wMbck1qy/octopus.png"
+},{
+  "uuid": "ccd7b54e-d44b-4f46-a195-3789fb3703c1",
+  "name": "Chocolate",
+  "price": 2.15,
+  "url": "https://i.postimg.cc/pdcqmpgS/chocolate.png"
+}]

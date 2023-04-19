@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.emarket.customer.Database
 import com.emarket.customer.R
@@ -32,6 +31,5 @@ class InitialActivity : AppCompatActivity() {
             else startActivity(Intent(this, RegisterActivity::class.java))
             finish()
         }, 2000)
-
     }
 }

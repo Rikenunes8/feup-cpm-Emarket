@@ -35,11 +35,4 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     override fun getCount(): Int {
         return 2
     }
-
-    companion object {
-        @JvmStatic
-        fun getTabsCount(): Int {
-            return 2
-        }
-    }
 }

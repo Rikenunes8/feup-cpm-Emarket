@@ -177,45 +177,54 @@ class BasketActivity : AppCompatActivity() {
             tag[bName]
             val name = String(bName, StandardCharsets.ISO_8859_1)
 
-            thread(start = true) {
-
-                val response = NetworkService.makeRequest(
-                    RequestType.GET,
-                    Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id")
-
-                val jsonResponse = JSONObject(response)
-                val newProductDTO: ProductDTO
-                if (jsonResponse.has("error")) {
-                    newProductDTO = ProductDTO(id, name, price, null)
-                    Log.e("QRCode", jsonResponse.getString("error"))
-                } else {
-                    val product = jsonResponse.get("product").toString()
-                    newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
-                }
-
-                val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
-                if (oldProduct != null) {
-                    oldProduct.quantity++
-
-                    if (newProductDTO.url != null && oldProduct.url == null) {
-                        oldProduct.url = newProductDTO.url
-                    }
-
-                    runOnUiThread { updateProduct(oldProduct) }
-                } else {
-                    val newProduct = Product(newProductDTO.uuid, newProductDTO.name, newProductDTO.price, newProductDTO.url)
-                    dbLayer.addProduct(newProduct)
-
-                    runOnUiThread {
-                        addProduct(newProduct)
-                        enableAddProduct()
-                        enableCheckout()
-                    }
-                }
-            }
+            processProduct(id, name, price)
         } catch (e: java.lang.Exception) {
             Log.e("QRCode", e.toString())
             showToast(this, "Bad QR code format")
+        }
+    }
+
+    private fun processProduct(id: String, name: String, price: Double) {
+        thread(start = true) {
+            val response = NetworkService.makeRequest(
+                RequestType.GET,
+                Constants.SERVER_URL + Constants.PRODUCT_ENDPOINT + "/$id"
+            )
+
+            val jsonResponse = JSONObject(response)
+            val newProductDTO: ProductDTO
+            if (jsonResponse.has("error")) {
+                newProductDTO = ProductDTO(id, name, price, null)
+                Log.e("QRCode", jsonResponse.getString("error"))
+            } else {
+                val product = jsonResponse.get("product").toString()
+                newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
+            }
+
+            val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
+            if (oldProduct != null) {
+                oldProduct.quantity++
+
+                if (newProductDTO.url != null && oldProduct.url == null) {
+                    oldProduct.url = newProductDTO.url
+                }
+
+                runOnUiThread { updateProduct(oldProduct) }
+            } else {
+                val newProduct = Product(
+                    newProductDTO.uuid,
+                    newProductDTO.name,
+                    newProductDTO.price,
+                    newProductDTO.url
+                )
+                dbLayer.addProduct(newProduct)
+
+                runOnUiThread {
+                    addProduct(newProduct)
+                    enableAddProduct()
+                    enableCheckout()
+                }
+            }
         }
     }
 

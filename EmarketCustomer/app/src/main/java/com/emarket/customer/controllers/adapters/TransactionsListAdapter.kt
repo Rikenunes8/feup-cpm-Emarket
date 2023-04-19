@@ -54,5 +54,4 @@ class TransactionsListAdapter(private val transactionItems: MutableList<Transact
     override fun getItemCount(): Int {
         return transactionItems.size
     }
-
 }

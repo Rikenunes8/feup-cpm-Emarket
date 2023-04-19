@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -63,5 +64,12 @@ class PaymentNfcActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putBoolean(FINISH_BTN_VISIBLE, finishPaymentBtn.visibility == View.VISIBLE)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home -> Fetcher.fetchUserData(this, complete = false, force = true)
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

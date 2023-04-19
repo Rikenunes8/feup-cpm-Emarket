@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun paymentListener(array: ByteArray) {
+        nfc?.disableReaderMode(this)
         val payment = String(array)
         processPayment(payment)
     }
