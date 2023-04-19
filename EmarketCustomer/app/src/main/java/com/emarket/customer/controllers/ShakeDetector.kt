@@ -9,13 +9,12 @@ import kotlin.math.abs
 
 class ShakeDetector(ctx: Context, listener: () -> Unit) {
     companion object {
-        private val MIN_SHAKE_ACCELERATION = 12
-        private val MIN_MOVEMENTS = 8
-        private val MAX_SHAKE_DURATION = 800
-        private val X = 0
-        private val Y = 1
-        private val Z = 2
-
+        private const val MIN_SHAKE_ACCELERATION = 12
+        private const val MIN_MOVEMENTS = 8
+        private const val MAX_SHAKE_DURATION = 800
+        private const val X = 0
+        private const val Y = 1
+        private const val Z = 2
     }
 
     private val sm = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager

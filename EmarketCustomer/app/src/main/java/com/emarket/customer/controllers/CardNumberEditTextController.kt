@@ -5,9 +5,11 @@ import android.text.InputFilter
 import android.text.TextWatcher
 
 class CardNumberEditTextController : TextWatcher {
-    private val SEPARATOR = "-"
-    private val DIGIT_NUMBER = 16
-    private val GROUP_SIZE = 4
+    companion object {
+        private const val SEPARATOR = "-"
+        private const val DIGIT_NUMBER = 16
+        private const val GROUP_SIZE = 4
+    }
 
     private var current = ""
     private val nonDigits = Regex("\\D")
