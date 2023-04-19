@@ -19,7 +19,6 @@ import com.emarket.customer.services.NotificationService
 import com.emarket.customer.services.RequestType
 import com.google.gson.Gson
 import java.net.URLEncoder
-import java.time.LocalDateTime
 import java.util.*
 import kotlin.concurrent.thread
 

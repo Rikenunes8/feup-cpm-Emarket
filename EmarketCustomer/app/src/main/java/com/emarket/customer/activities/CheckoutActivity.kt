@@ -13,7 +13,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils
 import com.emarket.customer.Utils.hasNfc
 import com.emarket.customer.Utils.showToast
 import com.emarket.customer.activities.payment.PaymentNfcActivity

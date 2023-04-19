@@ -1,11 +1,9 @@
 package com.emarket.customer.services
 
-import android.content.Context
 import android.content.Intent
 import android.nfc.cardemulation.HostApduService
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils.hexStringToByteArray

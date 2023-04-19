@@ -195,6 +195,5 @@ class CryptoService {
                 getCertificate(name)
             }
         }
-
     }
 }

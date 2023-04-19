@@ -55,9 +55,9 @@ class TransactionsFragment : Fragment() {
             if (binding.filterBb.visibility == View.INVISIBLE) {
                 TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
                 setBottomMargin(binding.transactionsCl, binding.filterBb.height)
-
                 TransitionManager.beginDelayedTransition(binding.filterBb, Slide(Gravity.BOTTOM))
                 binding.filterBb.visibility = View.VISIBLE
+
                 if (selectedBgDate != null || selectedEndDate != null)
                     binding.filterBtn.setImageResource(R.drawable.filter_off)
             } else {
@@ -75,6 +75,7 @@ class TransactionsFragment : Fragment() {
             binding.filterBb.visibility = View.INVISIBLE
             TransitionManager.beginDelayedTransition(binding.transactionsCl, AutoTransition())
             setBottomMargin(binding.transactionsCl, 0)
+
             binding.filterBtn.setImageResource(R.drawable.filter)
         }
         
@@ -187,8 +188,6 @@ class TransactionsFragment : Fragment() {
             v.requestLayout()
         }
     }
-
-
 }
 
 

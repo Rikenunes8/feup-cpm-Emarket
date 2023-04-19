@@ -8,52 +8,55 @@ import android.hardware.SensorManager
 import kotlin.math.abs
 
 class ShakeDetector(ctx: Context, listener: () -> Unit) {
-  private val MIN_SHAKE_ACCELERATION = 12
-  private val MIN_MOVEMENTS = 8
-  private val MAX_SHAKE_DURATION = 800
-  private val X = 0
-  private val Y = 1
-  private val Z = 2
+    companion object {
+        private val MIN_SHAKE_ACCELERATION = 12
+        private val MIN_MOVEMENTS = 8
+        private val MAX_SHAKE_DURATION = 800
+        private val X = 0
+        private val Y = 1
+        private val Z = 2
 
-  private val sm = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-  private var startTime = 0L
-  private var moveCount = 0
+    }
 
-  private val sensorListener = object: SensorEventListener {
-      override fun onSensorChanged(event: SensorEvent) {
-          if (getMaxCurrentLinearAcceleration(event.values) <= MIN_SHAKE_ACCELERATION) return
-          val now = System.currentTimeMillis()
-          if (startTime == 0L) startTime = now
-          val elapsedTime = now - startTime
-          if (elapsedTime > MAX_SHAKE_DURATION) resetShakes()
-          else {
-              moveCount++
-              if (moveCount < MIN_MOVEMENTS) return
-              listener()
-              resetShakes()
-          }
-      }
+    private val sm = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    private var startTime = 0L
+    private var moveCount = 0
 
-      override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
- }
+    private val sensorListener = object: SensorEventListener {
+        override fun onSensorChanged(event: SensorEvent) {
+            if (getMaxCurrentLinearAcceleration(event.values) <= MIN_SHAKE_ACCELERATION) return
+            val now = System.currentTimeMillis()
+            if (startTime == 0L) startTime = now
+            val elapsedTime = now - startTime
+            if (elapsedTime > MAX_SHAKE_DURATION) resetShakes()
+            else {
+                moveCount++
+                if (moveCount < MIN_MOVEMENTS) return
+                listener()
+                resetShakes()
+            }
+        }
 
-  fun startSensing() {
-      val linAccel = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
-      linAccel?.let {
-          sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_UI)
-      }
-  }
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    }
 
-  fun stopSensing() {
-      sm.unregisterListener(sensorListener)
-  }
+    fun startSensing() {
+        val linAccel = sm.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+        linAccel?.let {
+            sm.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
 
-  private fun getMaxCurrentLinearAcceleration(acceleration: FloatArray): Float {
-      return maxOf(abs(acceleration[X]), abs(acceleration[Y]), abs(acceleration[Z]))
-  }
+    fun stopSensing() {
+        sm.unregisterListener(sensorListener)
+    }
 
-  private fun resetShakes() {
-      startTime = 0L
-      moveCount = 0
-  }
+    private fun getMaxCurrentLinearAcceleration(acceleration: FloatArray): Float {
+        return maxOf(abs(acceleration[X]), abs(acceleration[Y]), abs(acceleration[Z]))
+    }
+
+    private fun resetShakes() {
+        startTime = 0L
+        moveCount = 0
+    }
 }

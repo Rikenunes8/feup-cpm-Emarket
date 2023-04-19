@@ -29,4 +29,3 @@ data class ProductToCheckout(
     val price: Double,
     val quantity: Int
 )
-

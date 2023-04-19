@@ -8,7 +8,6 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatDialog
 import com.emarket.customer.R
-import com.emarket.customer.Utils
 import com.emarket.customer.controllers.CardNumberEditTextController
 
 enum class EditDialogType {
