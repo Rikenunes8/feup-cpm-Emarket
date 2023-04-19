@@ -9,7 +9,7 @@
     <string name="title_thank_you">Thank you for choosing ACME!</string>
     <string name="title_error">ACME says sorry</string>
 
-    <string name="body_scan">Finish your order by scanning the QRCode on your app</string>
+    <string name="body_scan">Finish your order by scanning your payment QRCode or approximating your device</string>
     <string name="body_success">Payment concluded successfully</string>
     <string name="body_error">There was a problem at checkout</string>
 
