@@ -32,4 +32,4 @@ Run the following command to start the flask application exposing the REST API t
 python3 app.py
 ```
 
-Register the ip address where the server because you will need it to configure the other apps of the system.
+Register the ip address where the server is running because you will need it to configure the other apps of the system.

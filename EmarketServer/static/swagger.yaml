@@ -50,7 +50,7 @@ paths:
       description: Checkout and process a user's purchase
       operationId: checkout
       requestBody:
-        description: User payment singed with the user's private key. The data field must be in a string format, however is should have the represented topology
+        description: User payment signed with the user's private key. The data field must be in a string format, and it should have the represented topology
         required: true
         content:
           application/json:
@@ -64,7 +64,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/checkout_success'
         "400":
-          descritption:
+          description:
           content:
             application/json:
               schema:
@@ -153,7 +153,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/product_complete'
         "400":
-          descritption:
+          description:
           content:
             application/json:
               schema:
@@ -299,7 +299,7 @@ components:
               properties: 
                 toDiscount:
                   type: boolean
-                  description: Whether the user is wants to disocunt the accumulated amount or not
+                  description: Whether the user is wants to discount the accumulated amount or not
                 voucher:
                   type: string
                   description: The voucher UUID

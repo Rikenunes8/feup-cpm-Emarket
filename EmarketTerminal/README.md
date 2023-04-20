@@ -1,6 +1,6 @@
 # ACME Emarket Terminal
 
-This is the ACME Emarket Terminal application that allows customers to proceed with the checkout and exit the supermarket at the end of their shiopping.
+This is the ACME Emarket Terminal application that allows customers to proceed with the checkout and exit the supermarket at the end of their shopping.
 
 ## How to run
 
