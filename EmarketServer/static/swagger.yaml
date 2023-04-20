@@ -20,9 +20,16 @@ paths:
   /register:
     post:
       tags:
-      - Authentication
+      - ACME
       description: Register a user in the Emarket server
       operationId: register
+      requestBody:
+        description: The user's information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registration_body'
       responses:
         "200":
           description: Success
@@ -36,6 +43,122 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+  /checkout:
+    post:
+      tags:
+      - ACME
+      description: Checkout and process a user's purchase
+      operationId: checkout
+      requestBody:
+        description: User payment singed with the user's private key. The data field must be in a string format, however is should have the represented topology
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/checkout_body'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/checkout_success'
+        "400":
+          descritption:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /user:
+    get:
+      tags:
+      - ACME
+      description: Get the user's information
+      operationId: user
+      parameters:
+        - in: path
+          name: user
+          description: The user's unique identifier
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: signature
+          description: The user's unique identifier signature
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: date
+          description: The date of the last transaction received
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+        "400":
+          descritption:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+      - ACME
+      description: Edit user information (name and/or cardNo)
+      operationId: edit_user
+      requestBody:
+        description: The user's information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_body'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/edit_success'
+        "400":
+          descritption:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /products/{uuid}:
+    get:
+      tags:
+      - ACME
+      description: Get the product's information
+      operationId: product
+      parameters:
+        - in: path
+          name: uuid
+          description: The product's unique identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product_complete'
+        "400":
+          descritption:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
 
 
 components:
@@ -54,13 +177,241 @@ components:
           type: string
       example:
         error: Content-Type not supported!
+    
+    product_transaction:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: The product's unique identifier
+        name:
+          type: string
+          description: The product's name
+        price:
+          type: number
+          description: The product's price
+        quantity:
+          type: number
+          description: The product's quantity
+      example:
+        uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+        name: "Banana"
+        price: 1.5
+        quantity: 2
+    product_complete:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: The product's unique identifier
+        name:
+          type: string
+          description: The product's name
+        price:
+          type: number
+          description: The product's price
+        url:
+          type: string
+          description: The product's image url (hosted on a third party server)
+      example:
+        uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+        name: "Banana"
+        price: 1.5
+        url: "https://www.hostedphoto.com"
+    voucher:
+      type: object
+      properties:
+        uuid:
+          type: string
+          description: The voucher's unique identifier
+        percentage:
+          type: number
+          description: The voucher's value
+        used:
+          type: boolean
+          description: Whether the voucher has been used or not
+      example:
+        uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+        percentage: 15
+    transaction:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The transaction's date
+          example: "2021/04/08 15:48:00"
+        total:
+          type: number
+          description: The transaction's total amount
+          example: 12.67
+        discounted:
+          type: number
+          description: The transaction's discounted amount or null if no discount was applied
+          example: 2.67
+        voucher:
+          description: The voucher used in the transaction or null if no voucher was used
+          $ref: '#/components/schemas/voucher'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/product_transaction'
+
+    registration_body:
+      type: object
+      properties:
+        name:
+          type: string
+        nickname:
+          type: string
+        pubKey:
+          type: string
+        cardNo:
+          type: string
+      example:
+        name: "John Doe"
+        nickname: "johndoe"
+        cardNo: "1234-5678-9012-3456" 
+        pubKey: "-----BEGIN PUBLIC KEY-----MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAK6ZJPFVIyo27msb0VDVNH0LEz+uaoTPUOdIwKFxVsGphfG91ilvhonerGHUKeObS68C+yeLuONvuLhdw7h0Z40CAwEAAQ==-----END PUBLIC KEY-----"
     registration_complete:
       type: object
       properties:
         uuid:
           type: string
-        serverPubKey:
+          description: The user's unique identifier encrypted with the user's public key
+        certificate:
           type: string
       example:
         uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
-        serverPubKey: "-----BEGIN RSA PUBLIC KEY-----\nMEgCQQChrfHt3j8cPskHq4WbXYvbzg3q+lsQyA1JdPxghPWR2DsG2ersL/ELAReg\nhtspgEmg+YfU6apHVMtHWefUacelAgMBAAE=\n-----END RSA PUBLIC KEY-----\n"
+        certificate: "-----BEGIN CERTIFICATE-----\nMIIBFTCBwKADAgECAgQAuPR8MA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNVBAMTB0FjbWVLZXkwHhcN\nMjMwNDA4MTU0NDQzWhcNNDMwNDA4MTU0NDQzWjASMRAwDgYDVQQDEwdBY21lS2V5MFwwDQYJKoZI\nhvcNAQEBBQADSwAwSAJBAK4d/uOc7QTNSgPNgYu7JgVaFWwtyZko77zGTRYUuFzvsDwetij+Qljl\n7pmthgx6jZD3Z772P2yuKAWvpmTOaP8CAwEAATANBgkqhkiG9w0BAQsFAANBADSqBIJScA11K6VN\nu7Szvp2hR6IOeKoC2FT3bmcMANrFmhe5EntaQaSCTFuXQ4wLmwaWRBQN2uQ9R1sJSz0pRjI=\n-----END CERTIFICATE-----\n"
+    checkout_body:
+      type: object
+      properties:
+        data:
+          description: The user's payment data
+          type: object
+          properties:
+            userUUID:
+              type: string
+              description: The user's unique identifier
+            basket:
+              description: The user's basket
+              type: object
+              properties: 
+                toDiscount:
+                  type: boolean
+                  description: Whether the user is wants to disocunt the accumulated amount or not
+                voucher:
+                  type: string
+                  description: The voucher UUID
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      uuid:
+                        type: string
+                        description: The product's unique identifier
+                      price:
+                        type: number
+                        description: The product's price
+                      quantity:
+                        type: integer
+                        description: The product's quantity
+        signature:
+          type: string
+          description: The user's payment data signature
+      example:
+        data:
+          userUUID: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+          basket:
+            toDiscount: true
+            voucher: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+            products:
+              - uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+                price: 10.0
+                quantity: 1
+              - uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+                price: 20.0
+                quantity: 2
+        signature: "MIIBFTCBwKADAgECAgQAuPR8MA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNVBAMTB0FjbWVLZXkwHhcN\nMjMwNDA4MTU0NDQzWhcNNDMwNDA4MTU0NDQzWjASMRAwDgYDVQQDEwdBY21lS2V5MFwwDQYJKoZI\nhvcNAQEBBQADSwAwSAJBAK4d/uOc7QTNSgPNgYu7JgVaFWwtyZko77zGTRYUuFzvsDwetij+Qljl\n7pmthgx6jZD3Z772P2yuKAWvpmTOaP8CAwEAATANBgkqhkiG9w0BAQsFAANBADSqBIJScA11K6VN\nu7Szvp2hR6IOeKoC2FT3bmcMANrFmhe5EntaQaSCTFuXQ4wLmwaWRBQN2uQ9R1sJSz0pRjI"
+    checkout_success:
+      type: object
+      properties:
+        status:
+          type: string
+        total:
+          type: number
+          description: The total amount of the user's purchase
+      example:
+        status: You are free to go!
+        total: 30.0
+    user:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/transaction'
+        vouchers:
+          type: array
+          items:
+            $ref: '#/components/schemas/voucher'
+        ammount_to_discount:
+          type: number
+          description: The amount of money the user can discount
+          example: 10.5
+        total_spent:
+          type: number
+          description: The total amount spent by the user
+          example: 30.75
+    user_body:
+      type: object
+      properties:
+        data:
+          description: The user's payment data
+          type: object
+          properties:
+            uuid:
+              type: string
+              description: The user's unique identifier           
+              required: true
+            name:
+              type: string
+              description: The user's name
+            cardNumber:
+              type: string
+              description: The user's card number
+        signature:
+          type: string
+          description: The user's information data signature
+      example:
+        data:
+          uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+          name: "John Doe"
+          cardNumber: "1234-5678-9012-3456"
+        signature: "MIIBFTCBwKADAgECAgQAuPR8MA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNVBAMTB0FjbWVLZXkwHhcN\nMjMwNDA4MTU0NDQzWhcNNDMwNDA4MTU0NDQzWjASMRAwDgYDVQQDEwdBY21lS2V5MFwwDQYJKoZI\nhvcNAQEBBQADSwAwSAJBAK4d/uOc7QTNSgPNgYu7JgVaFWwtyZko77zGTRYUuFzvsDwetij+Qljl\n7pmthgx6jZD3Z772P2yuKAWvpmTOaP8CAwEAATANBgkqhkiG9w0BAQsFAANBADSqBIJScA11K6VN\nu7Szvp2hR6IOeKoC2FT3bmcMANrFmhe5EntaQaSCTFuXQ4wLmwaWRBQN2uQ9R1sJSz0pRjI"
+    edit_success:
+      type: object
+      properties:
+        status:
+          type: string
+        user:
+          type: object
+          properties:
+            type: object
+            properties:
+              uuid:
+                type: string
+                description: The user's unique identifier
+              name:
+                type: string
+                description: The user's name
+              cardNumber:
+                type: string
+                description: The user's card number
+      example:
+        status: You are free to go!
+        user:
+          uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
+          name: "John Doe"
+          cardNumber: "1234-5678-9012-3456"
