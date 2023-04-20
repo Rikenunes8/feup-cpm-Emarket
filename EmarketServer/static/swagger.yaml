@@ -7,7 +7,7 @@ paths:
   /heartbeat:
     get:
       tags:
-      - Health check
+        - Health check
       description: Checks the server connection
       operationId: heartbeat
       responses:
@@ -16,11 +16,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/status_ok'
+                $ref: "#/components/schemas/status_ok"
   /register:
     post:
       tags:
-      - ACME
+        - ACME
       description: Register a user in the Emarket server
       operationId: register
       requestBody:
@@ -29,24 +29,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/registration_body'
+              $ref: "#/components/schemas/registration_body"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/registration_complete'
+                $ref: "#/components/schemas/registration_success"
         "400":
           descritption:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: "#/components/schemas/error"
   /checkout:
     post:
       tags:
-      - ACME
+        - ACME
       description: Checkout and process a user's purchase
       operationId: checkout
       requestBody:
@@ -55,24 +55,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/checkout_body'
+              $ref: "#/components/schemas/checkout_body"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/checkout_success'
+                $ref: "#/components/schemas/checkout_success"
         "400":
           description:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: "#/components/schemas/error"
   /user:
     get:
       tags:
-      - ACME
+        - ACME
       description: Get the user's information
       operationId: user
       parameters:
@@ -100,16 +100,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/user'
+                $ref: "#/components/schemas/user"
         "400":
           descritption:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: "#/components/schemas/error"
     post:
       tags:
-      - ACME
+        - ACME
       description: Edit user information (name and/or cardNo)
       operationId: edit_user
       requestBody:
@@ -118,24 +118,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/user_body'
+              $ref: "#/components/schemas/user_body"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/edit_success'
+                $ref: "#/components/schemas/edit_success"
         "400":
           descritption:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: "#/components/schemas/error"
   /products/{uuid}:
     get:
       tags:
-      - ACME
+        - ACME
       description: Get the product's information
       operationId: product
       parameters:
@@ -151,15 +151,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/product_complete'
+                $ref: "#/components/schemas/product_complete"
         "400":
           description:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
-
-
+                $ref: "#/components/schemas/error"
 
 components:
   schemas:
@@ -177,7 +175,7 @@ components:
           type: string
       example:
         error: Content-Type not supported!
-    
+
     product_transaction:
       type: object
       properties:
@@ -239,7 +237,7 @@ components:
         date:
           type: string
           description: The transaction's date
-          example: "2021/04/08 15:48:00"
+          example: "2021/04/08 - 15:48:00"
         total:
           type: number
           description: The transaction's total amount
@@ -250,11 +248,30 @@ components:
           example: 2.67
         voucher:
           description: The voucher used in the transaction or null if no voucher was used
-          $ref: '#/components/schemas/voucher'
+          $ref: "#/components/schemas/voucher"
         products:
           type: array
           items:
-            $ref: '#/components/schemas/product_transaction'
+            $ref: "#/components/schemas/product_transaction"
+    user:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/transaction"
+        vouchers:
+          type: array
+          items:
+            $ref: "#/components/schemas/voucher"
+        ammount_to_discount:
+          type: number
+          description: The amount of money the user can discount
+          example: 10.5
+        total_spent:
+          type: number
+          description: The total amount spent by the user
+          example: 30.75
 
     registration_body:
       type: object
@@ -270,9 +287,9 @@ components:
       example:
         name: "John Doe"
         nickname: "johndoe"
-        cardNo: "1234-5678-9012-3456" 
+        cardNo: "1234-5678-9012-3456"
         pubKey: "-----BEGIN PUBLIC KEY-----MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAK6ZJPFVIyo27msb0VDVNH0LEz+uaoTPUOdIwKFxVsGphfG91ilvhonerGHUKeObS68C+yeLuONvuLhdw7h0Z40CAwEAAQ==-----END PUBLIC KEY-----"
-    registration_complete:
+    registration_success:
       type: object
       properties:
         uuid:
@@ -296,7 +313,7 @@ components:
             basket:
               description: The user's basket
               type: object
-              properties: 
+              properties:
                 toDiscount:
                   type: boolean
                   description: Whether the user is wants to discount the accumulated amount or not
@@ -345,25 +362,6 @@ components:
       example:
         status: You are free to go!
         total: 30.0
-    user:
-      type: object
-      properties:
-        transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/transaction'
-        vouchers:
-          type: array
-          items:
-            $ref: '#/components/schemas/voucher'
-        ammount_to_discount:
-          type: number
-          description: The amount of money the user can discount
-          example: 10.5
-        total_spent:
-          type: number
-          description: The total amount spent by the user
-          example: 30.75
     user_body:
       type: object
       properties:
@@ -373,7 +371,7 @@ components:
           properties:
             uuid:
               type: string
-              description: The user's unique identifier           
+              description: The user's unique identifier
               required: true
             name:
               type: string
