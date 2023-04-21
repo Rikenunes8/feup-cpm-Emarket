@@ -8,23 +8,17 @@ import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.ImageView
 import com.emarket.customer.R
-import com.emarket.customer.Utils.buildPayment
 import com.emarket.customer.Utils.showToast
-import com.emarket.customer.Utils.signDataJson
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher.Companion.fetchUserData
-import com.emarket.customer.models.Basket
+import com.emarket.customer.services.CryptoService.Companion.getPrivKey
+import com.emarket.customer.services.CryptoService.Companion.signContent
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.concurrent.thread
-
-data class Payment(
-    val userUUID: String,
-    val basket: Basket
-)
 
 class PaymentQRCodeActivity : AppCompatActivity() {
     private val qrCodeImageview by lazy { findViewById<ImageView>(R.id.payment_qrcode_iv) }
@@ -37,9 +31,9 @@ class PaymentQRCodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment_qrcode)
 
-        val paymentJson = buildPayment(this.application, intent)
-        val qrContent = signDataJson(paymentJson)
-        val qrContentEncoded = String(qrContent.toByteArray(), StandardCharsets.ISO_8859_1)
+        val payment = intent.getByteArrayExtra("PAYMENT")!!
+        val signature = signContent(payment, getPrivKey())!!
+        val qrContentEncoded = String(signature + payment, StandardCharsets.ISO_8859_1)
 
         finishPaymentBtn.setOnClickListener {
             fetchUserData(this, complete = false, force = true)
