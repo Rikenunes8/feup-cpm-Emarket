@@ -13,9 +13,10 @@ import android.widget.ImageButton
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.R
-import com.emarket.customer.Utils
 import com.emarket.customer.activities.BasketActivity
 import com.emarket.customer.controllers.Fetcher
+import com.emarket.customer.services.CryptoService
+import java.nio.charset.StandardCharsets
 
 class PaymentNfcActivity : AppCompatActivity() {
     companion object {
@@ -43,8 +44,9 @@ class PaymentNfcActivity : AppCompatActivity() {
             finish()
         }
 
-        val paymentJson = Utils.buildPayment(this.application, intent)
-        val nfcContent = Utils.signDataJson(paymentJson)
+        val payment = intent.getByteArrayExtra("PAYMENT")!!
+        val signature = CryptoService.signContent(payment, CryptoService.getPrivKey())!!
+        val nfcContent = String(signature + payment, StandardCharsets.ISO_8859_1)
         PreferenceManager.getDefaultSharedPreferences(applicationContext).edit().putString(Constants.PAYMENT, nfcContent).apply()
     }
 

@@ -49,9 +49,8 @@ class MainActivity : AppCompatActivity() {
         nfc?.disableReaderMode(this)
     }
 
-    private fun paymentListener(array: ByteArray) {
+    private fun paymentListener(payment: ByteArray) {
         nfc?.disableReaderMode(this)
-        val payment = String(array)
         processPayment(payment)
     }
 
@@ -96,15 +95,14 @@ class MainActivity : AppCompatActivity() {
     private val readQRCode = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val intentResult : IntentResult? = IntentIntegrator.parseActivityResult(it.resultCode, it.data)
         if (intentResult?.contents != null) {
-            val data = intentResult.contents.toByteArray(StandardCharsets.ISO_8859_1).decodeToString()
+            val data = intentResult.contents.toByteArray(StandardCharsets.ISO_8859_1)
             processPayment(data)
         }
     }
 
-    private fun processPayment(data : String) {
+    private fun processPayment(data : ByteArray) {
         thread(start = true) {
             val res = makeRequest(
-                RequestType.POST,
                 Constants.SERVER_URL + Constants.CHECKOUT_ENDPOINT,
                 data)
             runOnUiThread {

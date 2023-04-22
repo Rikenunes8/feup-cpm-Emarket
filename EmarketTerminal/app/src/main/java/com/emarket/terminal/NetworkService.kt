@@ -13,17 +13,13 @@ data class Response(
     val code : Int?,
     val error : String
 )
-enum class RequestType {
-    GET, POST
-}
 
 class NetworkService {
 
     companion object {
         fun makeRequest(
-            requestType: RequestType = RequestType.GET,
             endpoint: String,
-            requestBody: String
+            requestBody: ByteArray
         ): String {
             var connection: HttpURLConnection? = null
             var response: String? = null
@@ -31,23 +27,18 @@ class NetworkService {
             try {
                 connection = URL(endpoint).openConnection() as HttpURLConnection
                 connection.run {
-                    requestMethod = when (requestType) {
-                        RequestType.GET -> "GET"
-                        RequestType.POST -> "POST"
-                    }
-                    setRequestProperty("Content-Type", "application/json")
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/octet-stream")
                     setRequestProperty("Accept", "application/json")
                     connectTimeout = 5000 // 5 seconds
                     useCaches = false
                 }
 
-                if (requestType == RequestType.POST) {
-                    connection.doOutput = true
-                    DataOutputStream(connection.outputStream).run {
-                        writeBytes(requestBody)
-                        flush()
-                        close()
-                    }
+                connection.doOutput = true
+                DataOutputStream(connection.outputStream).run {
+                    write(requestBody)
+                    flush()
+                    close()
                 }
 
                 val responseCode = connection.responseCode

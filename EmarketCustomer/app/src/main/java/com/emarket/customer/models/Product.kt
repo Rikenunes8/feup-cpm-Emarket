@@ -20,12 +20,3 @@ data class Product (
     var url: String? = null,
     var quantity: Int = 1
 )
-
-/**
- * Product sent inside a checkout
- */
-data class ProductToCheckout(
-    val uuid: String,
-    val price: Double,
-    val quantity: Int
-)

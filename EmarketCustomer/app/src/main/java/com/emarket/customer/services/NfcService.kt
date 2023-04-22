@@ -7,6 +7,7 @@ import android.preference.PreferenceManager
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.emarket.customer.Constants
 import com.emarket.customer.Utils.hexStringToByteArray
+import java.nio.charset.StandardCharsets
 
 object Card {
     /* Card internal state */
@@ -30,7 +31,7 @@ class NfcService : HostApduService() {
             return Card.UNKNOWN_CMD_SW  // if app not running PaymentNfcActivity don't send anything
         }
         return if (Card.SELECT_APDU.contentEquals(command)) {
-            Card.payment = content.encodeToByteArray()
+            Card.payment = content.toByteArray(StandardCharsets.ISO_8859_1)
             if (Card.payment.size <= Card.MAX_RES_SIZE) { // send complete payment (no second part)
                 byteArrayOf(0) + Card.payment + Card.OK_SW
             } else {    // send first part if too big

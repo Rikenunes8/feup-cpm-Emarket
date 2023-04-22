@@ -1,16 +1,10 @@
 package com.emarket.customer
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.nfc.NfcAdapter
 import android.util.TypedValue
 import android.widget.Toast
-import com.emarket.customer.activities.payment.Payment
-import com.emarket.customer.models.Basket
-import com.emarket.customer.models.UserViewModel
 import com.emarket.customer.services.CryptoService
-import com.google.gson.Gson
 import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -43,20 +37,6 @@ object Utils {
         val typedValue = TypedValue()
         context.theme.resolveAttribute(attributeId, typedValue, true)
         return typedValue.resourceId
-    }
-
-    fun signDataJson(content: String): String {
-        val signatureEncoded = getSignature(content)
-        return Gson().toJson(DataSigned(signatureEncoded, content))
-    }
-
-    fun buildPayment(application: Application, intent: Intent) : String {
-        val basketJSON = intent.getStringExtra("Basket")
-        val basket = Gson().fromJson(basketJSON, Basket::class.java)
-
-        val storedUser = UserViewModel(application).user
-        val userUUID = storedUser!!.userId
-        return Gson().toJson(Payment(userUUID, basket))
     }
 
     /**

@@ -23,13 +23,16 @@ import com.emarket.customer.controllers.adapters.VoucherListAdapter
 import com.emarket.customer.models.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
+import java.util.UUID
+import kotlin.math.roundToInt
 
 
 class CheckoutActivity : AppCompatActivity() {
     companion object {
         const val SELECTED_VOUCHER = "SELECTED_VOUCHER"
     }
-    private lateinit var basket : Basket
     private lateinit var products : MutableList<Product>
 
     private val voucherView by lazy { findViewById<RecyclerView>(R.id.rv_voucher) }
@@ -124,19 +127,37 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun goToPayment(to: Class<*>) {
-        basket = getBasketFromProducts()
+        val userUuidString = UserViewModel(application).user!!.userId
+        val userUuid = UUID.fromString(userUuidString)
+        val voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
+        val voucherLen = 1 + (if (voucher == null) 0 else 16)
+        val productsLen = products.size * (16 + 2 + 1 + 1)
+
+        val len = 16 + 1 + voucherLen + 1 + productsLen
+        val tag = ByteBuffer.allocate(len).apply {
+            putLong(userUuid.mostSignificantBits)
+            putLong(userUuid.leastSignificantBits)
+            if (discountCheck.isChecked) put(1) else put(0)
+            if (voucher == null) put(0) else put(1)
+            voucher?.let {
+                val voucherUUID = UUID.fromString(voucher.id)
+                putLong(voucherUUID.mostSignificantBits)
+                putLong(voucherUUID.leastSignificantBits)
+            }
+            put(products.size.toByte())
+            products.forEach {
+                val productUUID = UUID.fromString(it.uuid)
+                putLong(productUUID.mostSignificantBits)
+                putLong(productUUID.leastSignificantBits)
+                putShort(it.price.toInt().toShort())
+                put(((it.price*100).roundToInt() % 100).toByte())
+                put(it.quantity.toByte())
+            }
+        }
 
         val intent = Intent(this, to).apply {
-            putExtra("Basket", Gson().toJson(basket))
+            putExtra("PAYMENT", tag.array())
         }
         startActivity(intent)
-    }
-
-    private fun getBasketFromProducts() : Basket {
-        return Basket(
-            products.map { ProductToCheckout(it.uuid, it.price, it.quantity) },
-            discountCheck.isChecked,
-            (voucherView.adapter as VoucherListAdapter).getSelectedItem()?.id
-        )
     }
 }
