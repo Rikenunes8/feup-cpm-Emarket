@@ -149,7 +149,7 @@ class Database(ctx: Context) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) 
         }
         writableDatabase.insert(tableProducts, null, values)
     }
-    private fun getProduct(id: String?) : ProductDTO? {
+    fun getProduct(id: String?) : ProductDTO? {
         if (id == null) return null
         var product: ProductDTO? = null
         val query = "SELECT * FROM $tableProducts WHERE $keyProductId = ?"
