@@ -1,6 +1,4 @@
 import uuid
-import base64
-import json
 import rsa
 from datetime import datetime
 
@@ -48,53 +46,69 @@ def checkout(db: DB, validation: tuple) -> dict:
   return {'success': 'You are free to go!', 'total': total_paid}
 
 
-def validateCheckout(db: DB, data: dict) -> str:
-  # Check if data json structure is valid
-  if data.get('data') == None: 'Missing data property!'
-  if data.get('signature' == None): 'Missing signature property!'
-  paymentStr = data['data']
-  payment = json.loads(paymentStr)
-  uid = payment.get('userUUID')
-  basket = payment.get('basket')
-  if uid == None: 'Missing userUUID property!'
-  if basket == None: 'Missing basket property!'
+def validateCheckout(db: DB, origin) -> str:
+  data = origin
+  signature = data[:64]
+  data = data[64:]
+  userUUID = str(uuid.UUID(bytes=data[:16]))
+  hasDiscount = data[16]
+  hasVoucher = data[17]
+  print()
+  print(signature)
+  print(userUUID)
+  print(hasDiscount)
+  print(hasVoucher)
+  print()
+
+  voucherId = None
+  if (hasVoucher):
+    voucherId = str(uuid.UUID(bytes=data[18:34]))
+    data = data[34:]
+  else:
+    data = data[18:]
+
+  products = []
+  i = 0
+  productsSize = data[i]
+  i += 1
+  for _ in range(productsSize):
+    productUUID = str(uuid.UUID(bytes=data[i:i+16]))
+    priceInteger = int.from_bytes(data[i+16:i+18], "big", signed=True)
+    priceDecimal = int.from_bytes(data[i+18:i+20], "big", signed=True)
+    quantity = data[i+20]
+    data = data[i+20:]
+    product = {
+      "uuid": productUUID,
+      "price": priceInteger + priceDecimal/100,
+      "quantity": quantity
+    }
+    products.append(product)
+
 
   # Check if user with uuid exists
-  user = db.findUserById(uid)
+  user = db.findUserById(userUUID)
   if (user == None): 'User not found!'
 
   # Verify signature
-  signatureDecoded = base64.b64decode(data['signature'].encode())
-  key = getUserPublicKey(db, uid)
-  try: rsa.verify(paymentStr.encode(), signatureDecoded, key)
+  key = getUserPublicKey(db, userUUID)
+  try: rsa.verify(origin[64:], signature, key)
   except: return 'Signature verification failed!'
-
-  # Check if to_discount is valid
-  to_discount = basket.get('toDiscount')
-  if to_discount == None: return 'Missing toDiscount property!'
 
   # Check if voucher is valid
   voucher = None
-  voucher_id = basket.get('voucher')
-  if voucher_id != None:
+  if voucherId != None:
     userVouchers = user.get('vouchers')
-    vouchers = list(filter(lambda v: v['id'] == voucher_id, userVouchers))
+    vouchers = list(filter(lambda v: v['id'] == voucherId, userVouchers))
     if len(vouchers) == 0: return 'Voucher not found!'
     elif len(vouchers) > 1: return 'Multiple vouchers found!'
     voucher = vouchers[0]
       
   # Check if products are valid
-  products = basket.get('products')
-  if products == None: return 'Missing products property!'
   if len(products) == 0: return 'Basket is empty!'
   for product in products:
-    if product.get('uuid') == None: return 'Missing id property in product!'
-    if product.get('price') == None: return 'Missing price property in product!'
-    if product.get('quantity') == None: return 'Missing quantity property in product!'
-
     p = db.findProductById(product['uuid'])
     if p == None: return 'Product not found!'
     if p['price'] != product['price']: return 'Product price changed!'
     product['name'] = p['name']
 
-  return (user, products, voucher, to_discount)
+  return (user, products, voucher, hasDiscount)

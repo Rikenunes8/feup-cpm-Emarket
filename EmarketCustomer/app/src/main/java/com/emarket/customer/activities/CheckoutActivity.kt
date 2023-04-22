@@ -131,28 +131,27 @@ class CheckoutActivity : AppCompatActivity() {
         val userUuid = UUID.fromString(userUuidString)
         val voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
         val voucherLen = 1 + (if (voucher == null) 0 else 16)
-        val productsLen = products.fold(0) { len, product -> len + 16 + 2 + 2 + 1 + 1 + product.name.length }
+        val productsLen = products.fold(0) { len, _ -> len + 16 + 2 + 2 + 1 }
 
-        val len = 16 + 1 + voucherLen + productsLen
+        val len = 16 + 1 + voucherLen + 1 + productsLen
         val tag = ByteBuffer.allocate(len).apply {
             putLong(userUuid.mostSignificantBits)
             putLong(userUuid.leastSignificantBits)
             if (discountCheck.isChecked) put(1) else put(0)
             if (voucher == null) put(0) else put(1)
-            voucher.let {
-                val voucherUUID = UUID.fromString(voucher!!.id)
+            voucher?.let {
+                val voucherUUID = UUID.fromString(voucher.id)
                 putLong(voucherUUID.mostSignificantBits)
                 putLong(voucherUUID.leastSignificantBits)
             }
+            put(products.size.toByte())
             products.forEach {
                 val productUUID = UUID.fromString(it.uuid)
                 putLong(productUUID.mostSignificantBits)
                 putLong(productUUID.leastSignificantBits)
                 putShort(it.price.toInt().toShort())
                 putShort(((it.price*100) % 100).toInt().toShort())
-                putChar(it.quantity.toChar())
-                put(it.name.length.toByte())
-                put(it.name.toByteArray(StandardCharsets.ISO_8859_1))
+                put(it.quantity.toByte())
             }
         }
 

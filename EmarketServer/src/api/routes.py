@@ -24,8 +24,7 @@ def register():
 
 @routes.post('/checkout')
 def checkout():
-  if (not isContentJson(request)): return notJson()
-  res = emarket.checkout(request.json)
+  res = emarket.checkout(request.data)
   return makeResponse(res)
 
 @routes.get('/user')

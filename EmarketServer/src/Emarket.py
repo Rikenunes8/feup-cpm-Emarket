@@ -44,9 +44,12 @@ class Emarket:
     return {'uuid': uidEncoded, 'certificate': self._certificate}
   
   def checkout(self, data : dict) -> dict:
-    validation = validateCheckout(self._db, data)
-    if (type(validation) == str): return {'error': validation}
-    return checkout_(self._db, validation)
+    try:
+      validation = validateCheckout(self._db, data)
+      if (type(validation) == str): return {'error': validation}
+      return checkout_(self._db, validation)
+    except:
+      return {'error': "Error decoding the payment!"}
 
   '''
   Get user data. If date is provided, only transactions after that date will be returned.
