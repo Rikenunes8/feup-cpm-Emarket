@@ -53,12 +53,6 @@ def validateCheckout(db: DB, origin) -> str:
   userUUID = str(uuid.UUID(bytes=data[:16]))
   hasDiscount = data[16]
   hasVoucher = data[17]
-  print()
-  print(signature)
-  print(userUUID)
-  print(hasDiscount)
-  print(hasVoucher)
-  print()
 
   voucherId = None
   if (hasVoucher):
