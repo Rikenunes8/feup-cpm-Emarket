@@ -131,7 +131,7 @@ class CheckoutActivity : AppCompatActivity() {
         val userUuid = UUID.fromString(userUuidString)
         val voucher = (voucherView.adapter as VoucherListAdapter).getSelectedItem()
         val voucherLen = 1 + (if (voucher == null) 0 else 16)
-        val productsLen = products.fold(0) { len, _ -> len + 16 + 2 + 2 + 1 }
+        val productsLen = products.size * (16 + 2 + 1 + 1)
 
         val len = 16 + 1 + voucherLen + 1 + productsLen
         val tag = ByteBuffer.allocate(len).apply {
@@ -150,7 +150,7 @@ class CheckoutActivity : AppCompatActivity() {
                 putLong(productUUID.mostSignificantBits)
                 putLong(productUUID.leastSignificantBits)
                 putShort(it.price.toInt().toShort())
-                putShort(((it.price*100) % 100).toInt().toShort())
+                put(((it.price*100).roundToInt() % 100).toByte())
                 put(it.quantity.toByte())
             }
         }

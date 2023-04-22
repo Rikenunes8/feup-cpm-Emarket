@@ -9,7 +9,9 @@ def notJson():
 def isContentJson(request):
   return request.headers.get('Content-Type') == 'application/json'
 def makeResponse(res):
-  if (res.get('error') is not None): return make_response(jsonify(res), 400)
+  if (res.get('error') is not None): 
+    print(res)
+    return make_response(jsonify(res), 400)
   return jsonify(res)
 
 @routes.get('/heartbeat')
@@ -24,6 +26,8 @@ def register():
 
 @routes.post('/checkout')
 def checkout():
+  if request.headers.get('Content-Type') != 'application/octet-stream':
+    return makeResponse({'error': 'Content-Type not supported!'})
   res = emarket.checkout(request.data)
   return makeResponse(res)
 

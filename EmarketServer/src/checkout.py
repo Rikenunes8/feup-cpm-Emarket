@@ -27,9 +27,9 @@ def checkout(db: DB, validation: tuple) -> dict:
   discounted = discounted if discounted != None else 0.0
 
   # Add vouchers and recalculate the total spent
-  total_paid = total - discounted
+  total_paid = round(total - discounted, 2)
   previous_total_spent = user['totalSpent']
-  total_spent = previous_total_spent + total_paid
+  total_spent = round(previous_total_spent + total_paid, 2)
   spent_since_last_voucher_generated = total_paid + (previous_total_spent % VOUCHER_GENERATION_THRESHOLD)
   for _ in range(int(spent_since_last_voucher_generated // VOUCHER_GENERATION_THRESHOLD)):
     new_voucher = {'id': str(uuid.uuid4()), 'discount': VOUCHER_DISCOUNT}
@@ -41,7 +41,7 @@ def checkout(db: DB, validation: tuple) -> dict:
     amount_to_discount += total_paid * voucher['discount']/100
     db.removeUserVoucher(user['uuid'], voucher['id'])
 
-  db.updateUserValues(user['uuid'], {'totalSpent': total_spent, 'amountToDiscount': amount_to_discount})
+  db.updateUserValues(user['uuid'], {'totalSpent': total_spent, 'amountToDiscount': round(amount_to_discount, 2)})
 
   return {'success': 'You are free to go!', 'total': total_paid}
 
@@ -62,18 +62,17 @@ def validateCheckout(db: DB, origin) -> str:
     data = data[18:]
 
   products = []
-  i = 0
-  productsSize = data[i]
-  i += 1
+  productsSize = data[0]
+  data = data[1:]
   for _ in range(productsSize):
-    productUUID = str(uuid.UUID(bytes=data[i:i+16]))
-    priceInteger = int.from_bytes(data[i+16:i+18], "big", signed=True)
-    priceDecimal = int.from_bytes(data[i+18:i+20], "big", signed=True)
-    quantity = data[i+20]
-    data = data[i+20:]
+    productUUID = str(uuid.UUID(bytes=data[:16]))
+    priceInteger = int.from_bytes(data[16:18], "big", signed=True)
+    priceDecimal = data[18]
+    quantity = data[19]
+    data = data[20:]
     product = {
       "uuid": productUUID,
-      "price": priceInteger + priceDecimal/100,
+      "price": round(priceInteger + priceDecimal/100, 2),
       "quantity": quantity
     }
     products.append(product)
