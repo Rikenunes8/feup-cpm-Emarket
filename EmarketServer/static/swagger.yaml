@@ -52,10 +52,11 @@ paths:
       requestBody:
         description: User payment signed with the user's private key. The data field must be in a string format, and it should have the represented topology
         required: true
-        content:
-          application/json:
+        content: 
+          application/octet-stream:
             schema:
-              $ref: "#/components/schemas/checkout_body"
+              type: string
+              format: binary
       responses:
         "200":
           description: Success
@@ -300,57 +301,6 @@ components:
       example:
         uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
         certificate: "-----BEGIN CERTIFICATE-----\nMIIBFTCBwKADAgECAgQAuPR8MA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNVBAMTB0FjbWVLZXkwHhcN\nMjMwNDA4MTU0NDQzWhcNNDMwNDA4MTU0NDQzWjASMRAwDgYDVQQDEwdBY21lS2V5MFwwDQYJKoZI\nhvcNAQEBBQADSwAwSAJBAK4d/uOc7QTNSgPNgYu7JgVaFWwtyZko77zGTRYUuFzvsDwetij+Qljl\n7pmthgx6jZD3Z772P2yuKAWvpmTOaP8CAwEAATANBgkqhkiG9w0BAQsFAANBADSqBIJScA11K6VN\nu7Szvp2hR6IOeKoC2FT3bmcMANrFmhe5EntaQaSCTFuXQ4wLmwaWRBQN2uQ9R1sJSz0pRjI=\n-----END CERTIFICATE-----\n"
-    checkout_body:
-      type: object
-      properties:
-        data:
-          description: The user's payment data
-          type: object
-          properties:
-            userUUID:
-              type: string
-              description: The user's unique identifier
-            basket:
-              description: The user's basket
-              type: object
-              properties:
-                toDiscount:
-                  type: boolean
-                  description: Whether the user is wants to discount the accumulated amount or not
-                voucher:
-                  type: string
-                  description: The voucher UUID
-                products:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      uuid:
-                        type: string
-                        description: The product's unique identifier
-                      price:
-                        type: number
-                        description: The product's price
-                      quantity:
-                        type: integer
-                        description: The product's quantity
-        signature:
-          type: string
-          description: The user's payment data signature
-      example:
-        data:
-          userUUID: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
-          basket:
-            toDiscount: true
-            voucher: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
-            products:
-              - uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
-                price: 10.0
-                quantity: 1
-              - uuid: "5e18e41f-4d8e-4266-a14e-26cc13d639e4"
-                price: 20.0
-                quantity: 2
-        signature: "MIIBFTCBwKADAgECAgQAuPR8MA0GCSqGSIb3DQEBCwUAMBIxEDAOBgNVBAMTB0FjbWVLZXkwHhcN\nMjMwNDA4MTU0NDQzWhcNNDMwNDA4MTU0NDQzWjASMRAwDgYDVQQDEwdBY21lS2V5MFwwDQYJKoZI\nhvcNAQEBBQADSwAwSAJBAK4d/uOc7QTNSgPNgYu7JgVaFWwtyZko77zGTRYUuFzvsDwetij+Qljl\n7pmthgx6jZD3Z772P2yuKAWvpmTOaP8CAwEAATANBgkqhkiG9w0BAQsFAANBADSqBIJScA11K6VN\nu7Szvp2hR6IOeKoC2FT3bmcMANrFmhe5EntaQaSCTFuXQ4wLmwaWRBQN2uQ9R1sJSz0pRjI"
     checkout_success:
       type: object
       properties:
