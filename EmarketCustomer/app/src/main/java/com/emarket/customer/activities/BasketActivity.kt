@@ -113,6 +113,7 @@ class BasketActivity : AppCompatActivity() {
     }
 
     private fun startScanUponPermission() {
+        if (!canAddMoreProducts()) return
         val permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startScan()
@@ -227,8 +228,7 @@ class BasketActivity : AppCompatActivity() {
         checkoutBtn.alpha = if (checkoutBtn.isEnabled) 1f else .5f
     }
     private fun enableAddProduct() {
-        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
-        addBtn.isEnabled = numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
+        addBtn.isEnabled = canAddMoreProducts()
         addBtn.alpha = if (addBtn.isEnabled) 1f else .5f
     }
 
@@ -247,5 +247,10 @@ class BasketActivity : AppCompatActivity() {
     private fun updateTotal() {
         val sum = productItems.fold(0.0) { total, product -> total + product.price * product.quantity }
         totalView.text = getString(R.string.template_price, sum)
+    }
+
+    private fun canAddMoreProducts() : Boolean {
+        val numberOfItems = productItems.fold(0) { count, product -> count + product.quantity }
+        return numberOfItems < MAXIMUM_NUMBER_OF_ITEMS
     }
 }
