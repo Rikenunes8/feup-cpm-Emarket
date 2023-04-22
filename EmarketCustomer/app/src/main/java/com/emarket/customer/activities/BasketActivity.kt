@@ -192,38 +192,32 @@ class BasketActivity : AppCompatActivity() {
             )
 
             val jsonResponse = JSONObject(response)
-            val newProductDTO: ProductDTO
+            val productDTO: ProductDTO
             if (jsonResponse.has("error")) {
-                newProductDTO = ProductDTO(id, name, price, null)
+                val auxProduct = dbLayer.getProduct(id)
+                productDTO = auxProduct ?: ProductDTO(id, name, price, null)
                 Log.e("QRCode", jsonResponse.getString("error"))
             } else {
                 val product = jsonResponse.get("product").toString()
-                newProductDTO = Gson().fromJson(product, ProductDTO::class.java)
+                productDTO = Gson().fromJson(product, ProductDTO::class.java)
             }
 
-            val oldProduct = productItems.find { it.uuid == newProductDTO.uuid }
+            val oldProduct = productItems.find { it.uuid == productDTO.uuid }
             if (oldProduct != null) {
-                oldProduct.quantity++
-
-                if (newProductDTO.url != null && oldProduct.url == null) {
-                    oldProduct.url = newProductDTO.url
+                if (productDTO.url != null && oldProduct.url == null) {
+                    oldProduct.url = productDTO.url
                 }
-
+                oldProduct.quantity++
                 runOnUiThread { updateProduct(oldProduct) }
             } else {
-                val newProduct = Product(
-                    newProductDTO.uuid,
-                    newProductDTO.name,
-                    newProductDTO.price,
-                    newProductDTO.url
-                )
+                val newProduct = Product(productDTO.uuid, productDTO.name, productDTO.price, productDTO.url)
                 dbLayer.addProduct(newProduct)
+                runOnUiThread { addProduct(newProduct) }
+            }
 
-                runOnUiThread {
-                    addProduct(newProduct)
-                    enableAddProduct()
-                    enableCheckout()
-                }
+            runOnUiThread {
+                enableAddProduct()
+                enableCheckout()
             }
         }
     }
