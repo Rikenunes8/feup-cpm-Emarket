@@ -17,7 +17,7 @@ class NotificationService {
             val nm = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val nc = NotificationChannel("EmarketChannel", "emarket_channel", NotificationManager.IMPORTANCE_HIGH)
             nm.createNotificationChannel(nc)
-            val pi = PendingIntent.getActivity(ctx, 0, newIntent, PendingIntent.FLAG_IMMUTABLE)
+            val pi = PendingIntent.getActivity(ctx, 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT)
 
             //Create Notification Object
             val notification: Notification = Notification.Builder(ctx, nc.id)
